@@ -1,0 +1,177 @@
+//@import "var.styl"
+
+//字体
+pingfang-light = PingFangSC-Light
+pingfang-regular = PingFangSC-Regular
+pingfang-bold = PingFangSC-Medium
+siyuan = 'Noto Serif', 'Noto Serif CJK SC', 'Noto Serif CJK', 'Source Han Serif SC', 'Source Han Serif', 'source-han-serif-sc'
+
+font-family-light = pingfang-light, siyuan, sans-serif
+font-family-regular = pingfang-regular, siyuan, sans-serif
+font-family-bold = pingfang-bold, siyuan, sans-serif
+
+extra-large = 1.25em
+large = 1.125em
+medium = 1em
+small = 0.875em
+extra-small = 0.8125em
+extra-extra-small = 0.75em
+
+//color
+main-color = #000
+sub-color1 = #000
+sub-color2 = #000
+sub-color3 = #000
+sub-color4 = #000
+neutral-text-color1 = #303133
+neutral-text-color2 = #606266
+neutral-text-color3 = #909399
+neutral-text-color4 = #C0C4CC
+neutral-border-color1 = #DCDFE6
+neutral-border-color2 = #E4E7ED
+neutral-border-color3 = #EBEEF5
+neutral-border-color4 = #F2F6FC
+
+success-color = #13CE66
+error-color = #FF4949
+warning-color = #F7BA2A
+inof-color = #20A0FF
+
+black = #1F2D3D
+light-black = #324057
+extra-light-Black = #475669
+silver = #8492A6
+light-silver = #99A9BF
+extra-light-silver = #C0CCDA
+gray = #D3DCE6
+light-gray = #E5E9F2
+extra-light-gray = #EFF2F7
+dark-white = #F9FAFC
+white = #FFFFFF
+//
+
+primary-text-color = light-black
+secondary-text-color = #e60814
+
+first-level = opacity 1
+second-level = opacity 0.75
+third-level = opacity 0.5
+
+input
+  appearance none
+  border-radius 0
+  border 0
+  outline 0
+  font-size inherit
+  width 100%
+
+input[type="button"]
+  border none
+  border-radius 0
+
+input[type="button"]:disabled
+  background primary-text-color
+  opacity 0.3
+
+.slide-left-enter
+  transform translateX(100%)
+
+.slide-left-enter-to
+  transition transform 0.3s
+  transform translateX(0)
+
+.slide-right-enter
+  transform translateX(-100%)
+
+.slide-right-enter-to
+  transition transform 0.3s
+  transform translateX(0)
+.flex
+  display flex
+
+.flex-row, .flex-col
+  @extend .flex
+
+.flex-row
+  flex-direction row
+
+.flex-col
+  flex-direction column
+
+.center
+  display flex
+  justify-content center
+  align-items center
+
+.hr-line
+  content ''
+  position absolute
+  left 0
+  right 0
+  bottom 0
+  border-top 1px solid
+  transform-origin 0 0
+  transform scaleY(0.5)
+
+@media (-webkit-min-device-pixel-ratio: 2)
+  .hr-line
+      transform-origin 0 0
+      transform scaleY(0.5)
+
+section:not(:last-child)
+  margin-bottom 1em
+
+section
+  .title, .tip
+    padding 0 10px
+    font-size 0.8em
+    font-family font-family-light
+    {third-level}
+
+  .tip
+    {second-level}
+    color: secondary-text-color
+    text-align right
+
+.fix-bottom
+  position fixed
+  left 0
+  right 0
+  bottom 10px
+  z-index 3000
+
+input[type="button"].nofix-button
+  width calc(100% - 20px)
+  margin 10px auto
+  border-radius 10px
+
+.miss
+  @extend .center
+  background #BBB
+  color #fff
+  line-height 5em
+  font-size 3em
+
+.primary-btn
+  @extend .center
+  background secondary-text-color
+  color #fff
+  line-height 2.2em
+  font-size 1.2em
+
+.cell
+  @extend .flex-row
+  justify-content space-between
+  align-items center
+  line-height 3em
+  padding 0 0.2rem
+  background #fff
+  position relative
+
+.cell:after
+  @extend .hr-line
+  color #d9d9d9
+
+
+
+
