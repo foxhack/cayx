@@ -2,8 +2,9 @@
   <div id="app">
     <transition :name="transitionName">
       <div>
-        <navigation-bar :title="title" :showBack="showBack"></navigation-bar>
-        <router-view class="page"></router-view>
+        <navigation-bar :title="title" :showBack="showBack"  v-if="showBack"></navigation-bar>
+        <router-view></router-view>
+        <main-menu v-if="!showBack"></main-menu>
       </div>
     </transition>
   </div>
@@ -11,6 +12,7 @@
 
 <script>
   import NavigationBar from '@/components/navigationBar'
+  import Menu from '@/components/menu'
   export default {
     name       : 'App',
     data(){
@@ -18,15 +20,15 @@
         transitionName : ''
       }
     },
-    computed:{
+    computed   : {
       title(){
         return this.$store.state.title
       },
       showBack(){
-        return !(this.$route.path =='/product' || this.$route.path=='/user')
+        return !(this.$route.path=='/product' || this.$route.path=='/product/' || this.$route.path=='/user' || this.$route.path=='/user/')
       }
     },
-    components : { NavigationBar },
+    components : { 'main-menu':Menu, NavigationBar },
     watch      : {
       '$route' (to, from) {
         const toDepth = to.path.split('/').length
@@ -70,11 +72,6 @@
       font-size: 18px
     }
   }
-
-  #app
-    min-height 100vh
-    padding-top 2.4em
-    padding-bottom 3em
 
   .mint-field-core
     {third-level}

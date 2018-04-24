@@ -22,7 +22,7 @@
         <mt-cell v-if="userInfo && userInfo.name" title="持卡人姓名">{{userInfo.name}}</mt-cell>
         <mt-field v-else label="持卡人姓名" placeholder="请输入真实的持卡人中文姓名" v-model="post.username"></mt-field>
         <mt-field label="银行卡号" type="number" placeholder="请输入银行卡号" v-model="post.bankCardNo"></mt-field>
-        <mt-cell v-if="userInfo && userInfo.cardNo" title="持卡人身份证号">{{userInfo.cardNo}}</mt-cell>
+        <mt-cell v-if="userInfo && userInfo.cardNo" title="身份证号">{{userInfo.cardNo}}</mt-cell>
         <mt-field v-else label="身份证号" placeholder="请输入有效的证件号码" v-model="post.cardNo"></mt-field>
         <mt-cell v-if="userInfo && userInfo.mobile && !changeMobile" title="手机号" label="银行预留手机号" @click.native="changeMobile=true">{{userInfo.mobile}}</mt-cell>
         <mt-field v-if="!userInfo ||userInfo && !userInfo.mobile|| changeMobile" label="手机号" type="number" placeholder="请输入在银行预留的手机号" v-model="post.bankMobile"></mt-field>

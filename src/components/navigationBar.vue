@@ -1,7 +1,9 @@
 <template>
-  <div class="top-wrapper">
-    <div class="go-back" v-if="showBack" @click="goback()"><返回</div>
-    <div class="nav">{{title}}</div>
+  <div id="nav">
+    <div class="wrapper">
+      <div class="go-back" v-if="showBack" @click="goback"><返回</div>
+      <div class="title">{{title}}</div>
+    </div>
   </div>
 </template>
 <script>
@@ -9,6 +11,7 @@
     props : ['title','showBack'],
     methods:{
       goback(){
+        console.log('返回')
         this.$router.go(-1)
       }
     }
@@ -16,17 +19,21 @@
 </script>
 <style lang="stylus" scoped>
   @import '../style/base.styl'
-  .top-wrapper
+  #nav
+    height 2.8em
+    position relative
+
+  .wrapper
     @extend .center
-    z-index 3000
-    height 2.4em
+    background-color white
+    z-index 2000
     position fixed
+    height 2.8em
     top 0
     left 0
     right 0
-    background-color white
 
-  .nav:after
+  .wrapper:after
     @extend .hr-line
 
   .go-back

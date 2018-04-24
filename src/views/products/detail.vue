@@ -21,7 +21,7 @@
     name     : 'ProductDetail',
     computed : {
       bindBank(){
-        return this.$store.state.user.userStatus.isBindCard
+        return this.$store.state.user && this.$store.state.user.userStatus.isBindCard
       },
       product(){
         return this.$store.getters.getProductById(this.$route.params.pid)

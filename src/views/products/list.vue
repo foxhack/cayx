@@ -29,7 +29,6 @@
   .product-list-wrapper
     padding 0.2rem
     background #af2d2d
-    min-height calc(100vh - 5.4em + 4px)
 
   .more
     color #fff

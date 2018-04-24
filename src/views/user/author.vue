@@ -12,8 +12,8 @@
       }
     },
     created(){
-      let code = getQueryString("code");
-//      let code='123'
+//      let code = getQueryString("code");
+      let code='123'
       let _ = this
       if (code) {
         console.log('得到code'+code)

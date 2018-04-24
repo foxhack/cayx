@@ -149,7 +149,7 @@ router.beforeEach((to, from, next) => {
   }
 
   if (to.meta.title) {
-    document.title = to.meta.title
+    //document.title = to.meta.title
     store.commit('saveToTitle', to.meta.title)
   }
   let userID = window.localStorage.getItem('userID')

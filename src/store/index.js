@@ -10,7 +10,7 @@ export default new Vuex.Store({
     products     : PRODUCTS,
     productsRate : null,
     banks        : BANKS,
-    bindBank     : null,
+    bindedCards  : null,
     title        : ''
   },
   getters   : {
@@ -29,7 +29,7 @@ export default new Vuex.Store({
   },
   mutations : {
     saveToTitle(s, title){
-      s.title=title
+      s.title = title
     },
     saveToPath(s, toPath){
       s.toPath = toPath

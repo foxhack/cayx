@@ -1,25 +1,70 @@
 <template>
   <div id="user-setting" v-if="isRegister">
     <section v-if="userInfo.mobile!==undefined">
-      <mt-cell title="姓名" is-link @click.native="popupVisible=true">{{userInfo.name}}</mt-cell>
-      <mt-cell title="身份证号" is-link>{{userInfo.cardNo}}</mt-cell>
-      <mt-cell title="手机号" is-link>{{userInfo.mobile}}</mt-cell>
-      <mt-cell title="email" is-link>{{userInfo.email}}</mt-cell>
-      <mt-cell title="联系地址" is-link>{{userInfo.address}}</mt-cell>
+      <name-input
+          :editable="allowMod"
+          :initVal="userInfo.name"
+          v-on:update="setNewUserInfo"
+          v-on:allowSubmit="setAllowSubmit">
+      </name-input>
+      <idno-input
+          :editable="allowMod"
+          :initVal="userInfo.cardNo"
+          v-on:update="setNewUserInfo"
+          v-on:allowSubmit="setAllowSubmit">
+      </idno-input>
+      <telephone-input
+          :editable="true"
+          :initVal="userInfo.mobile"
+          v-on:update="setNewUserInfo"
+          v-on:allowSubmit="setAllowSubmit">
+      </telephone-input>
+      <identify-code v-if="allowSubmit.mobile"
+                     :mobile="post.mobile"
+                     :isValid="allowSubmit.mobile"
+                     v-on:update="setNewUserInfo"
+                     v-on:allowSubmit="setAllowSubmit">
+      </identify-code>
+      <email-input
+          :editable="true"
+          :initVal="userInfo.email"
+          v-on:update="setNewUserInfo"
+          v-on:allowSubmit="setAllowSubmit">
+      </email-input>
+      <address-input
+          :editable="true"
+          :initVal="userInfo.address"
+          v-on:update="setNewUserInfo"
+          v-on:allowSubmit="setAllowSubmit">
+      </address-input>
     </section>
-    <mt-popup v-model="popupVisible" position="top" style="width: 100%">
-      <mt-field label="姓名" placeholder="请输入姓名"></mt-field>
-    </mt-popup>
+    <input type="button" class="primary-btn" :disabled="forbidSubmit" value="提交修改" @click="submit" style="margin-bottom: 10px">
+    <input type="button" class="primary-btn plain" :disabled="false" value="放弃修改" @click="abort">
+
   </div>
 </template>
 <script>
-  import { Popup } from 'mint-ui'
+  import NameInput from '@/components/user/nameInput'
+  import IdnoInput from '@/components/user/idnoInput'
+  import TelephoneInput from '@/components/user/telephoneInput'
+  import IdentifyCode from '@/components/user/identifyCode'
+  import EmailInput from '@/components/user/emailInput'
+  import AddressInput from '@/components/user/addressInput'
 
   export default{
+    components : { NameInput, IdnoInput, TelephoneInput, IdentifyCode, EmailInput, AddressInput },
     name       : 'UserSetting',
     data(){
       return {
-        popupVisible : false
+        allowSubmit : {},
+        post        : {
+          userID  : window.localStorage.getItem('userID'),
+          name    : null,
+          cardNo  : null,
+          mobile  : null,
+          email   : null,
+          address : null
+        }
       }
     },
     computed   : {
@@ -28,9 +73,33 @@
       },
       userInfo(){
         return this.$store.state.user && this.$store.state.user.userInfo
+      },
+      allowMod(){
+//        return false
+        return !(this.$store.state.user && this.$store.state.user.userStatus.isBindCard)
+      },
+      forbidSubmit(){
+        if (Object.keys(this.allowSubmit).length==0) return true
+        return (Object.values(this.allowSubmit).some(e => {return e===false}))
       }
+
     },
-    components : { 'mt-popup' : Popup }
+    methods    : {
+      setNewUserInfo(newData){
+        this.post[newData.key] = newData.val
+      },
+      setAllowSubmit(field){
+        this.$set(this.allowSubmit, field.key, field.val)
+      },
+      abort(){
+        this.$router.go(-1)
+      },
+      submit(){
+        for (let k in this.post) {
+          if (this.post[k]) console.log('提交修改'+this.post[k])
+        }
+      }
+    }
   }
 
 </script>
