@@ -49,6 +49,7 @@ export function getQueryString(name) {
   return null
 }
 //options = {
+//  showProgress:'submit'||'fetch'
 //  showSuccessMsg  : true,
 //  showErrorMsg    : true,
 //  showFailMsg     : true,
@@ -56,6 +57,8 @@ export function getQueryString(name) {
 //}
 export function fetchData(promise, options) {
   if (options==undefined) options = {}
+  if (options.showProgress=='submit') Indicator.open('数据提交中,请勿重复提交......')
+
   options.showSuccessMsg = options.showSuccessMsg || false
   options.showErrorMsg = options.showErrorMsg || true
   options.showFailMsg = options.showFailMsg || true
@@ -69,7 +72,7 @@ export function fetchData(promise, options) {
             type      : 'success'
           })
         }
-        if (options.callback && typeof options.callback.success==='function') options.callback.success(result.data)
+        if (options.callback && typeof options.callback.success==='function') options.callback.success(result.data, result.msg)
       } else {
         if (options.showErrorMsg) {
           Message({
@@ -79,14 +82,14 @@ export function fetchData(promise, options) {
             type      : 'error'
           })
         }
-        if (options.callback && typeof options.callback.error==='function') options.callback.error(result.data)
+        if (options.callback && typeof options.callback.error==='function') options.callback.error(result.data, result.msg)
       }
     })
     .fail(error => {
       if (options.showFailMsg) {
         Message({
           showClose : true,
-          message   : '服务器出错了',
+          message   : '服务器好像没有反应哦',
           duration  : 0,
           type      : 'error'
         })
@@ -95,17 +98,28 @@ export function fetchData(promise, options) {
       if (options.callback && typeof options.callback.fail==='function') options.callback.fail(error)
     })
     .always(() => {
+      if (options.showProgress=='submit') Indicator.close()
       if (options.callback && typeof options.callback.always==='function') options.callback.always()
     })
+}
+
+export function fMoney(s) {
+  let n = 2
+  if(s===null || s===undefined) s=0
+  s = parseFloat((s+'').replace(/[^\d\.-]/g, '')).toFixed(n)+''
+  var l = s.split('.') [0].split('').reverse(),
+    r = s.split('.') [1]
+  var t = ''
+  for (var i = 0; i < l.length; i++) {
+    t += l[i]+((i+1)%3==0 && (i+1)!=l.length ? ',' : '')
+  }
+  return t.split('').reverse().join('')+'.'+r
 }
 
 function merge(a, b) {
   return Object.assign({}, a, b)
 }
 
-export function validate() {
-
-}
 
 
 

@@ -1,13 +1,14 @@
 <template>
   <div id="username">
-    <mt-cell v-if="!editable" title="姓名" @click.native="alert">{{initVal}}</mt-cell>
+    <mt-cell v-if="editable === false" :title="title ||'姓名'" @click.native="alert">{{value}}</mt-cell>
     <div v-else>
-      <mt-cell v-if="initVal && !displayInput" title="姓名" is-link @click.native="showMod">{{initVal}}</mt-cell>
-      <mt-field  v-if="displayInput || initVal===undefined"
-                label="姓名" placeholder="请输入姓名"
+      <mt-cell v-if="!displayInput" :title="title || '姓名'" is-link @click.native="showMod">{{value}}</mt-cell>
+      <mt-field v-if="displayInput"
+                :label="title || '姓名'"
+                :placeholder="placeholder || '请输入姓名'"
                 :state="state"
-                v-model.trim.lay="newData"
-                autofocus>
+                :value="value"
+                @input.native="check($event.target.value)">
       </mt-field>
     </div>
     <div v-if="state=='error'" class="error">{{errorMsg}}</div>
@@ -18,61 +19,60 @@
     name    : 'NameInput',
     data(){
       return {
-        newData      : null,
         displayInput : false,
         state        : '',
         errorMsg     : ''
       }
     },
-    props   : {
-      editable : Boolean,
-      initVal   : String
-    },
-    watch   : {
-      newData(){
-        this.check()
-      }
-    },
+    props   : [
+      'editable',
+      'title',
+      'placeholder',
+      'inputname',
+      'value',
+      'initcheck'
+    ],
     methods : {
       showMod(){
         this.displayInput = true
-        this.check()
-      },
-      check(){
-        console.log('调用检查方法')
-        this.$nextTick(() => {
-          if (!this.newData || this.newData.trim().length < 2) {
-            this.state = 'error'
-            this.errorMsg = '姓名不能为空，至少为两个字符'
-            this.allowSubmit(false)
-            return false
-          }
-          if (this.newData.trim() && this.newData.trim().indexOf(' ') > -1) {
-            this.state = 'error'
-            this.errorMsg = '姓名不能含有空格'
-            this.allowSubmit(false)
-            return false
-          }
-          if (this.newData.trim() && !/^[\u4E00-\u9FA5A-Za-z]+$/.test(this.newData)) {
-            this.state = 'error'
-            this.errorMsg = '姓名只能是中文或者英文'
-            this.allowSubmit(false)
-            return false
-          }
-          this.state = 'success'
-          this.allowSubmit(true)
-          this.update()
+        this.check(this.value)
+        this.$nextTick(()=>{
+          document.querySelector('#username input').focus()
         })
       },
-      allowSubmit(tag){
-        this.$emit('allowSubmit', { key : 'name', val : tag })
-      },
-      update(){
-        this.$emit('update', { key : 'name', val : this.newData })
+      check(val){
+        console.log('调用姓名检查方法')
+        if (!val || val.trim().length < 2) {
+          this.state = 'error'
+          this.errorMsg = '姓名不能为空，至少为两个字符'
+          this.setValid(false)
+          return
+        }
+        if (val.trim() && val.trim().indexOf(' ') > -1) {
+          this.state = 'error'
+          this.errorMsg = '姓名不能含有空格'
+          this.setValid(false)
+          return
+        }
+        if (val.trim() && !/^[\u4E00-\u9FA5A-Za-z]+$/.test(val)) {
+          this.state = 'error'
+          this.errorMsg = '姓名只能是中文或者英文'
+          this.setValid(false)
+          return
+        }
+        this.state = 'success'
+        this.setValid(true)
+        this.$emit('input', val)
       },
       alert(){
         this.$message('您已绑卡，不能修改此信息。');
+      },
+      setValid(isValid){
+        this.$emit('isValid',{'key':this.inputname, 'isValid':isValid})
       }
+    },
+    created(){
+      if(this.initcheck) this.check(this.value)
     }
   }
 </script>

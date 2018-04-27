@@ -9,7 +9,6 @@
 </template>
 <script>
   import{ getProductsRate } from '@/api/product'
-  import { fetchData } from '@/utils/common.js'
   import ProductItem from '@/components/products/item'
   export default {
     name       : 'ProductList',
@@ -27,6 +26,8 @@
 <style lang="stylus">
   @import "../../style/base"
   .product-list-wrapper
+    height calc(100vh - 2.8em)
+    overflow-y auto
     padding 0.2rem
     background #af2d2d
 

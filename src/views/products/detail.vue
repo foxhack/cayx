@@ -1,18 +1,20 @@
 <template>
-    <div class="product-detail-wrapper" v-if="product">
-      <div class="miss">图表</div>
-      <div>{{product.rate.rates7Day}}{{product.rate.incomePerUnit}}</div>
-      <div class="miss">产品介绍</div>
-      <div v-if="bindBank" class="footer-wrapper">
-        <router-link :to="{ name: 'transaction', params: { pid: product.pid, type:'out' }}" class="sell-btn">转出</router-link>
-        <router-link :to="{ name: 'transaction', params: { pid: product.pid, type:'in' }}" class="buy-btn">转入</router-link>
-      </div>
-      <template v-else>
-        <router-link :to="{ name: 'bank'}" class="primary-btn fix-bottom">立即购买</router-link>
-      </template>
+  <div class="product-detail-wrapper" v-if="product">
+    <div class="miss">图表</div>
+    <div>{{product.rate.rates7Day}}{{product.rate.incomePerUnit}}</div>
+    <div class="miss">产品介绍</div>
+    <div class="miss">产品介绍</div>
+    <div class="footer-wrapper">
+      <router-link v-if="isBindBank && product.type==1" :to="{ name: 'transaction', params: { pid: product.pid, type:'out' }}" class="sell-btn">
+        <template v-if="isBindBank">赎回</template>
+      </router-link>
+      <router-link :to="{ name: 'transaction', params: { pid: product.pid, type:'in' }}" class="buy-btn">
+        <template v-if="product.type==1">申购</template>
+        <template v-if="product.type==2">预约</template>
+      </router-link>
     </div>
-    <div v-else v-loading.body="true" element-loading-text="加载中">
-    </div>
+  </div>
+  <div v-else v-loading.body="true" element-loading-text="加载中"></div>
 </template>
 <script>
   import { getProductsRate } from '@/api/product'
@@ -20,19 +22,22 @@
   export default {
     name     : 'ProductDetail',
     computed : {
-      bindBank(){
+      isBindBank(){
         return this.$store.state.user && this.$store.state.user.userStatus.isBindCard
       },
       product(){
         return this.$store.getters.getProductById(this.$route.params.pid)
       }
+    },
+    created(){
+//      this.$store.commit('saveToPath', this.$route.fullPath)
     }
   }
 </script>
 <style lang="stylus" scoped>
   @import "../../style/base"
   .product-detail-wrapper
-    min-height 100vh
+    min-height calc(100vh - 2.8em)
     padding-bottom 2em
 
   .footer-wrapper
@@ -40,7 +45,9 @@
     display flex
     .sell-btn, .buy-btn
       @extend .primary-btn
+      flex 1
     .sell-btn
       color secondary-text-color
       background #fff
+      flex 1
 </style>

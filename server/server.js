@@ -37,8 +37,11 @@ app.post('/finance/sms/singlesend', function(req, res) {
 app.post('/finance/user/registmobile', function(req, res) {
   mock.user.userStatus.isRegisterCayx = true
   console.log('收到请求registmobile')
-  console.log('返回成功')
-  res.json({ code : 0, msg : '注册成功' })
+  mock.user.userStatus.isRegisterCayx=true
+  mock.user.userInfo.mobile=req.body.mobile
+  setTimeout(()=>{
+    res.json({ code : 0, msg : '注册成功' })
+  },3000)
 })
 
 app.post('/finance/user/binduseraccount', function(req, res) {
@@ -46,6 +49,7 @@ app.post('/finance/user/binduseraccount', function(req, res) {
   mock.user.userStatus.isRegisterCayx = true
   console.log('收到请求binduseraccount,userID'+userID)
   console.log('返回成功')
+  mock.user.userStatus.isRegisterCayx=true
   res.json({ code : 0, msg : '关联成功' })
 })
 
@@ -59,6 +63,70 @@ app.post('/finance/product/getproductrate', function(req, res) {
   } else {
     res.json({ code : 1, msg : '抱歉，无法获取产品收益率信息' })
   }
+})
+
+
+app.post('/finance/user/updateinfo', function(req, res) {
+  console.log('收到请求updateinfo')
+  let post = req.body
+  console.log('返回'+ post)
+  for(k in post){
+    mock.user.userInfo[k]=post[k]
+  }
+  setTimeout(()=>{
+    res.json({ code : 0, msg : '更新成功' })
+  },3000)
+})
+
+
+app.post('/finance/user/openaccount', function(req, res) {
+  console.log('收到请求openaccount')
+  let post = req.body
+  console.log('返回'+ post)
+  for(k in post){
+    mock.user.userInfo[k]=post[k]
+  }
+  mock.user.userStatus.isBindCard=true
+  setTimeout(()=>{
+    res.json({ code : 0, msg : '开户成功' })
+  },3000)
+})
+
+app.post('/finance/user/openaccount', function(req, res) {
+  console.log('收到请求openaccount')
+  let post = req.body
+  console.log('返回'+ post)
+  for(k in post){
+    mock.user.userInfo[k]=post[k]
+  }
+  mock.user.userStatus.isBindCard=true
+  setTimeout(()=>{
+    res.json({ code : 0, msg : '开户成功' })
+  },3000)
+})
+
+app.post('/finance/asset/assetquery', function(req, res) {
+  console.log('收到请求assetquery')
+  setTimeout(()=>{
+    res.json({ code : 0, msg : '获取资产成功',data:mock.asset })
+  },2000)
+})
+
+
+app.post('/finance/capital/recharge', function(req, res) {
+  console.log('收到请求recharge')
+  let amount=req.body.amount
+  setTimeout(()=>{
+    res.json({ code : 0, msg : '冲值成功',data: {amount:5000}})
+  },2000)
+})
+
+app.post('/finance/capital/takeout', function(req, res) {
+  console.log('收到请求recharge')
+  let amount=req.body.amount
+  setTimeout(()=>{
+    res.json({ code : 0, msg : '提现成功',data: {amount:200} })
+  },2000)
 })
 
 var server = app.listen(8081, function() {

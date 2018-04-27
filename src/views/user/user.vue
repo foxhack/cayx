@@ -1,36 +1,43 @@
 <template>
-  <div id="user-home" v-if="assets">
+  <div id="user-home" v-if="asset">
     <section class="account-wrapper">
       <div>资产总额(元)</div>
-      <div>{{assets.totalAssets|money}}</div>
+      <div>{{asset.totalAsset|money}}</div>
       <div>
-        <div>{{assets.latelyIncome|money}}<br><span>昨日收益(元)</span></div>
-        <div @click="showIncome=!showIncome">{{assets.totalIncome|money}}<br><span>累计收益(元)</span></div>
+        <div>{{asset.yesterdayIncome|money}}<br><span>昨日收益(元)</span></div>
+        <div @click="showIncome=!showIncome">{{asset.totalIncome|money}}<br><span>累计收益(元)</span></div>
       </div>
     </section>
-    <section v-if="showIncome">
-      <router-link :to="{name:'income-record',params:{type:1}}">
-        <mt-cell title="活期总收益" is-link>{{assets.currencyAssets.totalIncome|money}}</mt-cell>
-      </router-link>
-      <router-link :to="{name:'income-record',params:{type:2}}">
-        <mt-cell title="定期总收益" is-link>{{assets.periodicAssets.totalIncome|money}}</mt-cell>
-      </router-link>
+    <section v-if="showIncome && asset.detailAsset">
+      <div v-for="asset in asset.detailAsset">
+        <router-link :to="{name:'income-record',params:{pid:asset.productId}}">
+          <mt-cell :title="getProductNameById(asset.productId)" label="累计收益" is-link>{{asset.totalIncome|money}}</mt-cell>
+        </router-link>
+      </div>
     </section>
     <section>
-      <mt-cell title="账户余额" :label="assets.accountAmount|money" id="account">
+      <mt-cell title="账户余额" :label="asset.availableAsset|money" id="account">
         <router-link :to="{name: 'account',params:{type: 'out'}}"><span class="balance">提现</span></router-link>
         <router-link :to="{name: 'account',params:{type: 'in'}}"><span class="balance">充值</span></router-link>
       </mt-cell>
-      <router-link :to="{name:'transaction-record',params:{type:2}}">
-        <mt-cell title="活期资产(元)" is-link>{{assets.currencyAssets.possess|money}}</mt-cell>
-      </router-link>
-      <router-link :to="{name:'transaction-record',params:{type:3}}">
-        <mt-cell title="定期资产(元)" is-link>{{assets.periodicAssets.possess|money}}</mt-cell>
-      </router-link>
+      <div v-if="asset.detailAsset && asset.detailAsset.length>0">
+        <div v-for="asset in asset.detailAsset">
+          <router-link :to="{name:'transaction-record',params:{pid:asset.productId}}">
+            <mt-cell :title="getProductNameById(asset.productId)+'(元)'" is-link>{{asset.totalAsset|money}}</mt-cell>
+          </router-link>
+        </div>
+      </div>
+      <div v-else>
+        <router-link :to="{name:'productList'}">
+          <mt-cell title="无资产" is-link>购买直通车</mt-cell>
+        </router-link>
+      </div>
     </section>
     <section>
-      <router-link :to="{name:'bank', params:{id:1}}">
-        <mt-cell title="我的银行卡" is-link></mt-cell>
+      <router-link :to="{name:'bank'}">
+        <mt-cell title="我的银行卡" is-link :label="bindCard?bindCard.bankName:''">
+          <div v-if="isBindCard">已开户</div>
+        </mt-cell>
       </router-link>
     </section>
     <section v-if="!isRegister">
@@ -38,18 +45,25 @@
         <mt-cell title="注册" is-link></mt-cell>
       </router-link>
     </section>
-    <section v-if="isRegister">
+    <section>
       <router-link :to="{name:'userSetting'}">
         <mt-cell title="个人信息设置" is-link>已注册</mt-cell>
       </router-link>
     </section>
+    <section>
+      <mt-cell @click.native="showInstruction=true" title="用户手册" is-link></mt-cell>
+      <instruction
+          v-if="showInstruction"
+          title="用户手册" v-on:closeInstruction="showInstruction=false">
+      </instruction>
+    </section>
   </div>
   <div v-else v-loading.body="true" element-loading-text="加载中"></div>
-
 </template>
 <script>
-  import register from '@/components/user/register'
-
+  import { fetchData } from '@/utils/common.js'
+  import { getAsset } from '@/api/user.js'
+  import instruction from '@/views/user/instruction'
   const USER_ASSETS = {
     totalAssets    : 1000200.00,
     latelyIncome   : 10.00,
@@ -60,16 +74,31 @@
   }
 
   export default{
-    name : 'User',
+    name       : 'User',
     data(){
       return {
-        assets     : USER_ASSETS,
-        showIncome : false
+        showInstruction : false,
+        showIncome      : false
       }
     },
+    components : { instruction },
     computed   : {
       isRegister(){
         return this.$store.state.user && this.$store.state.user.userStatus.isRegisterCayx
+      },
+      isBindCard(){
+        return this.$store.state.user && this.$store.state.user.userStatus.isBindCard
+      },
+      bindCard(){
+        return this.$store.state.user && this.$store.state.user.userInfo && this.$store.state.user.userInfo.bindCard
+      },
+      asset(){
+        return this.$store.state.asset
+      }
+    },
+    methods    : {
+      getProductNameById(pid){
+        return this.$store.state.products.find(p => {return p.pid==pid}).name
       }
     },
     created(){
@@ -80,7 +109,8 @@
 <style lang="stylus" scoped>
   @import "../../style/base.styl"
   #user-home
-    min-height calc(100vh - 5em)
+    min-height calc(100vh - 2.8em)
+
   .account-wrapper
     padding 2em 0
     background-color secondary-text-color

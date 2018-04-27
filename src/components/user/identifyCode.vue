@@ -1,6 +1,11 @@
 <template>
   <div id="identify-code">
-    <mt-field label="验证码" type="number" placeholder="请输入收到验证码" v-model.trim.lay="newData">
+    <mt-field
+        :label="title ||'验证码'"
+        type="number"
+        :placeholder="placeholder || '请输入收到验证码'"
+        :value="value"
+        @input.native="check($event.target.value)">
       <span class="get-code-btn" :class="{active:isValid}" v-show="!count" @click="getIdentifyCode(5)">获取验证码</span>
       <span class="count-num" v-show="count">{{count}}&nbsp;秒后重新获取</span>
     </mt-field>
@@ -14,25 +19,19 @@
     name    : 'IdentifyCodeInput',
     data(){
       return {
-        newData  : null,
         state    : '',
         errorMsg : '',
         count    : 0,
       }
     },
-    props:['mobile','isValid'],
-    watch   : {
-      newData(){
-        this.check()
-      }
-    },
+    props   : ['mobile', 'isValid', 'value', 'title', 'placeholder', 'inputname', 'initcheck'],
     methods : {
       getIdentifyCode(countDown){
         let _ = this
         if (!this.isValid) return
         startCountDown(countDown)
         let postData = { userID : window.localStorage.getItem('userID'), mobile : this.mobile }
-        fetchData(getIdentifyCode(postData))
+        fetchData(getIdentifyCode(postData),{showSuccessMsg:true})
         function startCountDown(num) {
           _.count = num
           _countDown()
@@ -44,26 +43,25 @@
           }
         }
       },
-      check(){
-        this.$nextTick(() => {
-          let reg = /^\d{4}$/
-          if (!reg.test(this.newData)) {
-            this.state = 'error'
-            this.errorMsg = '请输入正确格式的验证码'
-            this.allowSubmit(false)
-            return false
-          }
-          this.state = 'success'
-          this.allowSubmit(true)
-          this.update()
-        })
+      check(val){
+        console.log('调用短信验证码检查方法')
+        let reg = /^\d{4}$/
+        if (!reg.test(val)) {
+          this.state = 'error'
+          this.errorMsg = '请输入正确格式的验证码'
+          this.setValid(false)
+          return false
+        }
+        this.state = 'success'
+        this.setValid(true)
+        this.$emit('input', val)
       },
-      allowSubmit(tag){
-        this.$emit('allowSubmit', { key : 'identifyCode', val : tag })
-      },
-      update(){
-        this.$emit('update', { key : 'identifyCode', val : this.newData })
+      setValid(isValid){
+        this.$emit('isValid', { 'key' : this.inputname, 'isValid' : isValid })
       }
+    },
+    created(){
+      if(this.initcheck) this.check(this.value)
     }
   }
 </script>

@@ -1,39 +1,46 @@
 <template>
-  <div id="transaction">
+  <div id="transaction" v-if="isBindCard">
     <div v-if="this.$route.params.type=='in'">
       <section>
-        <div class="title">转入途径</div>
-        <input type="radio" v-model="post.account" :value="bank.id" :id="bank.id">
-        <label :for="bank.id">
-          <mt-cell :title="bank.name" label="单笔限额X，每日限额X"></mt-cell>
-        </label>
-        <input type="radio" v-model="post.account" value="1000" :id="account.id">
-        <label :for="account.id">
-          <mt-cell title="账户余额" :label="'可用余额'+account.amount"></mt-cell>
-        </label>
-        <div class="other">
-          <router-link :to="{name:'newbank',params:{id: this.$route.params.id}}"><span>使用其他方式转入>></span></router-link>
-        </div>
+        <div class="title">{{transactionName}}途径</div>
+        <mt-cell
+            :title="bindCard.bankName"
+            :label="'尾号'+bindCard.bankCardNo+'  单笔限额X，每日限额X'"
+            @click.native="post.account=bindCard.bankCardNo"
+            class="bank"
+            :class="{'selected':post.account==bindCard.bankCardNo}">
+        </mt-cell>
+        <mt-cell
+            v-if="asset && asset.availableAsset>0"
+            title="账户余额"
+            @click.native="post.account='yue'"
+            class="bank"
+            :class="{'selected':post.account=='yue'}"
+            :label="'可用余额'+asset.availableAsset">
+        </mt-cell>
+        <!--<div class="other">-->
+        <!--<router-link :to="{name:'newbank',params:{id: this.$route.params.id}}"><span>使用其他方式转入>></span></router-link>-->
+        <!--</div>-->
       </section>
       <section>
-        <div class="title">转入金额</div>
+        <div class="title">{{transactionName}}金额</div>
         <mt-field type="number" placeholder="0.01元起购" v-model="post.amount">
-          <span v-show="post.account==account.id" class="all" @click="post.amount=account.amount">全部余额买入</span>
+          <span v-if="asset && asset.availableAsset>0" class="all" @click="post.amount=asset.availableAsset">全部余额买入</span>
         </mt-field>
-        <input type="button" class="primary-btn fix-bottom" value="确定买入" :disabled="buyConfirm" @click="dialogVisible=true">
+        <input type="button" class="primary-btn fix-bottom" :value="'确定'+transactionName" @click="dialogVisible=true">
       </section>
     </div>
     <div v-if="this.$route.params.type=='out'">
       <section>
-        <div class="title">转出金额</div>
-        <mt-field type="number" placeholder="最小转出金额0.01元" v-model="post.amount">
-          <span class="all" @click="post.amount=product.amount">全部转出</span>
+        <div class="title">{{transactionName}}金额</div>
+        <mt-field type="number" :placeholder="'最小'+transactionName+'金额0.01元'" v-model="post.amount">
+          <span class="all" @click="post.amount=product.amount">全部{{transactionName}}</span>
         </mt-field>
         <mt-cell>持有金额{{product.amount}}元</mt-cell>
-        <input type="button" class="primary-btn fix-bottom" value="确定转出" :disabled="sellConfirm" @click="submitData(afterSubmitHandler)">
+        <input type="button" class="primary-btn fix-bottom" :value="'确定'+transactionName"  @click="submitData(afterSubmitHandler)">
       </section>
       <section>
-        <div class="title">转出说明</div>
+        <div class="title">{{transactionName}}说明</div>
       </section>
     </div>
     <el-dialog :visible.sync="dialogVisible" :title="transactionName+'金额'" center :show-close="false" class="dialog-wrapper">
@@ -45,22 +52,22 @@
       </span>
     </el-dialog>
   </div>
+  <div v-else>
+    <bank></bank>
+  </div>
 </template>
 <script>
+  import Bank from '@/views/user/bank'
   import { submitHandler, getCodeByType } from '@/utils/common.js'
   const defaultBank = { id : 1, name : '工商银行', logo : '', default : false }
   export default{
     data(){
       return {
         post          : {
+          pid     : this.$route.params.pid,
           type    : this.$route.params.type,
           amount  : null,
-          account : defaultBank.id,
-        },
-        bank          : defaultBank,
-        account       : {
-          id     : 1000,
-          amount : 200
+          account : '',
         },
         product       : {
           amount : 100000
@@ -69,25 +76,28 @@
         dialogVisible : false
       }
     },
-    components:{
-    },
-    computed : {
+    components : { Bank },
+    computed   : {
+      isBindCard(){
+        return this.$store.state.user && this.$store.state.user.userStatus.isBindCard
+      },
+      bindCard(){
+        return this.$store.state.user && this.$store.state.user.userInfo && this.$store.state.user.userInfo.bindCard
+      },
       transactionName(){
-        return this.$route.params.type==='in' ? '转出' : '转入'
+        let pType = this.$store.getters.getProductById(this.$route.params.pid).type
+        if(pType==1) return this.$route.params.type==='in' ? '赎回' : '申购'
+        if(pType==2) return this.$route.params.type==='in' ? '退出' : '购买'
+
       },
-      buyConfirm(){
-        let post = this.post
-        return !(post.amount && post.account && post.account)
-      },
-      sellConfirm(){
-        let post = this.post
-        return !(post.amount && post.account)
+      asset(){
+        return this.$store.state.asset
       }
     },
-    methods  : {
+    methods    : {
       afterSubmitHandler(code){
         this.dialogVisible = false
-        if (code == getCodeByType('success')) this.$router.replace({ name : 'transaction-result', params : { tid : '123456789', amount : this.post.amount, id : this.$route.params.id, type:  this.$route.params.type} })
+        if (code==getCodeByType('success')) this.$router.replace({ name : 'transaction-result', params : { tid : '123456789', amount : this.post.amount, id : this.$route.params.id, type : this.$route.params.type } })
       },
       submitData : submitHandler
     }
@@ -97,14 +107,12 @@
   @import '../../style/base.styl'
   #transaction
     padding 1em 0
+    min-height calc(100vh - 2.8em)
 
-  input[type='radio']
-    display none
-
-  input[type='radio']:checked + label .mint-cell
+  .bank.selected
     position relative
 
-  input[type='radio']:checked + label .mint-cell:after
+  .bank.selected:after
     content ''
     position absolute
     top 50%

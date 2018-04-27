@@ -10,11 +10,11 @@ export default new Vuex.Store({
     products     : PRODUCTS,
     productsRate : null,
     banks        : BANKS,
-    bindedCards  : null,
-    title        : ''
+    title        : '',
+    asset        : null
   },
   getters   : {
-    productsWithRate : state => {
+    productsWithRate   : state => {
       if (state.productsRate===null) return null
       let productsWithRate = JSON.parse(JSON.stringify(state.products))
       productsWithRate.forEach(pwr => {
@@ -22,9 +22,12 @@ export default new Vuex.Store({
       })
       return productsWithRate
     },
-    getProductById   : (state, getters) => (pid) => {
+    getProductById     : (state, getters) => (pid) => {
       if (getters.productsWithRate===null) return null
       return getters.productsWithRate.find(pwr => pwr.pid==pid)
+    },
+    getProductNameById : state => (pid) => {
+      return state.products.find(p => {return p.pid==pid}).name
     }
   },
   mutations : {
@@ -36,6 +39,9 @@ export default new Vuex.Store({
     },
     setUser(s, user){
       s.user = user
+    },
+    setAsset(s, asset){
+      s.asset = asset
     },
     bindUserAccount(s){
       s.user.userStatus.isRegisterCayx = true

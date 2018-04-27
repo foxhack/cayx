@@ -35,7 +35,7 @@ neutral-border-color4 = #F2F6FC
 success-color = #13CE66
 error-color = #FF4949
 warning-color = #F7BA2A
-inof-color = #20A0FF
+info-color = #20A0FF
 
 black = #1F2D3D
 light-black = #324057
@@ -73,11 +73,18 @@ input[type="button"]:disabled
   background primary-text-color
   opacity 0.3
 
-.slide-left-enter
+.slide-left-enter, .slide-enter
   transform translateX(100%)
 
-.slide-left-enter-to
+.slide-left-enter-to, .slide-enter-to
   transition transform 0.3s
+  transform translateX(0)
+
+.slide-leave-to
+  transform translateX(100%)
+  transition transform 0.3s
+
+.slide-leave
   transform translateX(0)
 
 .slide-right-enter
@@ -137,8 +144,8 @@ section
   position fixed
   left 0
   right 0
-  bottom 10px
-  z-index 3000
+  bottom 0px
+  z-index 1000
 
 input[type="button"].nofix-button
   width calc(100% - 20px)

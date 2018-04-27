@@ -3,23 +3,48 @@ const USER = {
   'avatar'     : '',
   'userStatus' : { 'isRegisterCaej' : true, 'isRegisterCayx' : false, isBindCard : false },
   'userInfo'   : {
-    'name'    : '张珊',
-    'cardNo'  : '110110110110',
-    'mobile'  : '1888888888',
-    'email'   : '1888888888',
-    'address' : '南横东街八号'
+    'name'     : '张珊一一',
+    'cardNo'   : '110104198204150848',
+    'mobile'   : '13401026599',
+    'email'    : '18888',
+    'address'  : '南横东街八号',
+    'bindCard' : {
+      'bankCode'   : 'CEB',
+      'bankName'   : '光大银行',
+      'bankCardNo' : '0990'
+    }
+  }
+}
+let initUserInfo = {
+  'name'    : '',
+  'cardNo'  : '',
+  'mobile'  : '',
+  'email'   : '',
+  'address' : ''
+}
+let tempUserInfo = {
+  'name'     : '张珊一一',
+  'cardNo'   : '110104198204150848',
+  'mobile'   : '1888888888',
+  'email'    : '1888888888',
+  'address'  : '南横东街八号',
+  'bindCard' : {
+    'bankCode'   : 'CEB',
+    'bankName'   : '光大银行',
+    'bankCardNo' : '0990'
   }
 }
 
-const USER_BINDBANKS = [{ bid : 1, cid : '1234', default : true }, { bid : 2, cid : '1234', default : false }]
-
-const USER_ASSETS = {
-  totalAssets    : 1000200.00,
-  latelyIncome   : 10.00,
-  totalIncome    : 2000.00,
-  currencyAssets : { possess : 100.00, totalIncome : 100 },
-  periodicAssets : { possess : 20000.00, totalIncome : 1900 },
-  accountAmount  : 200
+const USER_ASSET = {
+  totalAsset      : 1000200.00,
+  availableAsset  : 200,
+  yesterdayIncome : 10.00,
+  totalIncome     : 2000.00,
+  detailAsset     : null
+  //  [
+  //  { productId : 'mf201801', totalAsset : '300', totalIncome : '100', yesterdayIncome : '20' }
+  //  { productId : 'bf201801', totalAsset : '3000', totalIncome : '1000', yesterdayIncome : '1000' }
+  //]
 }
 
 const PRODUCT_RATE = [
@@ -30,8 +55,7 @@ const PRODUCT_RATE = [
 module.exports = {
   user        : USER,
   productRate : PRODUCT_RATE,
-  bindBanks   : USER_BINDBANKS,
-  assets      : USER_ASSETS
+  asset       : USER_ASSET
 }
 
 

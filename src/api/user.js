@@ -45,4 +45,53 @@ function register(postData) {
   })
 }
 
-export{ getUserByCode, getUserByUserID, bindUserAccount, getIdentifyCode, register }
+function updateUserInfo(postData) {
+  return $.ajax({
+    type        : 'POST',
+    url         : backServerBaseUrl+'/finance/user/updateinfo',
+    data        : JSON.stringify(postData),
+    contentType : 'application/json'
+  })
+}
+
+function openAccount(postData) {
+  return $.ajax({
+    type        : 'POST',
+    url         : backServerBaseUrl+'/finance/user/openaccount',
+    data        : JSON.stringify(postData),
+    contentType : 'application/json'
+  })
+}
+
+function getAsset(postData) {
+  return $.ajax({
+    type        : 'POST',
+    url         : backServerBaseUrl+'/finance/asset/assetquery',
+    data        : JSON.stringify(postData),
+    contentType : 'application/json'
+  })
+}
+
+function operateAccount(postData, type) {
+  let url
+  if (type==='in') url = backServerBaseUrl+'/finance/capital/recharge'
+  if (type==='out') url = backServerBaseUrl+'/finance/capital/takeout'
+  return $.ajax({
+    type        : 'POST',
+    url         : url,
+    data        : JSON.stringify(postData),
+    contentType : 'application/json'
+  })
+}
+
+export{
+  getUserByCode,
+  getUserByUserID,
+  bindUserAccount,
+  getIdentifyCode,
+  register,
+  updateUserInfo,
+  openAccount,
+  getAsset,
+  operateAccount
+}

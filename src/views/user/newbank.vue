@@ -10,75 +10,134 @@
       <register></register>
     </section>
     <section v-show="currentProgress==2">
-      <mt-cell v-if="post.bankSelectedId" :title="post.bankSelectedName" is-link @click.native="showBankList=true"></mt-cell>
-      <mt-cell v-if="!post.bankSelectedId" title="请选择一个银行" is-link @click.native="showBankList=true"></mt-cell>
+      <mt-cell v-if="post.bankCode" :title="post.bankSelectedName" is-link @click.native="showBankList=true"></mt-cell>
+      <mt-cell v-if="!post.bankCode" title="请选择一个银行" is-link @click.native="showBankList=true"></mt-cell>
       <div v-show="showBankList" class="bank-list">
-        <mt-cell v-for="b in bankList" :key="b.id" class="bank" :class="{'selected':post.bankSelectedId==b.id}" @click.native="checkBank(b.id,b.name)" :title="b.name">
+        <mt-cell v-for="b in bankList" :key="b.id" class="bank" :class="{'selected':post.bankCode==b.id}" @click.native="checkBank(b.id,b.name)" :title="b.name">
           <div slot="icon" class="bank-icon" :style="{backgroundPosition: b.logoPos}"></div>
         </mt-cell>
       </div>
-      <div v-if="post.bankSelectedId && !showBankList">
+      <div v-if="post.bankCode">
         <div class="title">请输入银行卡信息</div>
-        <mt-cell v-if="userInfo && userInfo.name" title="持卡人姓名">{{userInfo.name}}</mt-cell>
-        <mt-field v-else label="持卡人姓名" placeholder="请输入真实的持卡人中文姓名" v-model="post.username"></mt-field>
-        <mt-field label="银行卡号" type="number" placeholder="请输入银行卡号" v-model="post.bankCardNo"></mt-field>
-        <mt-cell v-if="userInfo && userInfo.cardNo" title="身份证号">{{userInfo.cardNo}}</mt-cell>
-        <mt-field v-else label="身份证号" placeholder="请输入有效的证件号码" v-model="post.cardNo"></mt-field>
-        <mt-cell v-if="userInfo && userInfo.mobile && !changeMobile" title="手机号" label="银行预留手机号" @click.native="changeMobile=true">{{userInfo.mobile}}</mt-cell>
-        <mt-field v-if="!userInfo ||userInfo && !userInfo.mobile|| changeMobile" label="手机号" type="number" placeholder="请输入在银行预留的手机号" v-model="post.bankMobile"></mt-field>
-        <mt-field label="验证码" type="number" placeholder="请输入收到验证码" v-model="post.identifyCode">
-          <span class="get-code-btn" :class="{active:post.bankMobile}" v-show="!count" @click="getIdentifyCode(5)">获取验证码</span>
-          <span class="count-num" v-show="count">{{count}}&nbsp;秒后重新获取</span>
-        </mt-field>
+        <name-input
+            title="持卡人姓名"
+            placeholder="请输入真实的持卡人中文姓名"
+            inputname="name"
+            :initcheck="true"
+            v-model="post.name"
+            v-on:isValid="setValid">
+        </name-input>
+        <bankcard-input
+            inputname="bankCardNo"
+            :initcheck="true"
+            v-model="post.bankCardNo"
+            v-on:isValid="setValid">
+        </bankcard-input>
+        <idno-input
+            inputname="cardNo"
+            :initcheck="true"
+            v-model="post.cardNo"
+            v-on:isValid="setValid">
+        </idno-input>
+        <telephone-input
+            :editable="true"
+            inputname="bankSavedmobile"
+            :initcheck="true"
+            subtitle="银行预留手机号"
+            placeholder="请输入在银行预留的手机号"
+            v-model="post.bankSavedmobile"
+            v-on:isValid="setValid">
+        </telephone-input>
+        <identify-code
+            :mobile="post.bankSavedmobile"
+            inputname="identifyCode"
+            :isValid="allowSubmit.bankSavedmobile"
+            :initcheck="true"
+            v-model="post.identifyCode"
+            v-on:isValid="setValid">
+        </identify-code>
       </div>
+      <input type="button" class="primary-btn fix-bottom" @click="submitBankInfo" :disabled="forbidSubmit" value="提交">
     </section>
     <section v-show="currentProgress==3">
-      <mt-cell title="持卡人姓名">{{post.username}}</mt-cell>
+      <div class="title">请设置交易密码</div>
+      <set-password
+          inputname="password"
+          v-model="password"
+          v-on:isValid="setValid">
+      </set-password>
+      <input type="button" class="primary-btn fix-bottom" @click="upload" value="完成">
+      <div class="title">请上传身份证</div>
+      <mt-cell title="持卡人姓名">{{post.name}}</mt-cell>
       <mt-cell title="持卡人身份证号">{{post.cardNo}}</mt-cell>
       <div class="upload">正面</div>
       <div class="upload">背面</div>
-      <input type="button" class="primary-btn fix-bottom" @click="submitData(afterSubmitHandler)" :disabled="progressSubmit" value="提交">
     </section>
 
+    <el-dialog :visible=successDialog.showSuccess :title="successDialog.successTitle" center :show-close="false" class="dialog-wrapper">
+      <div>{{successDialog.successDescription}}</div>
+      <span slot="footer" class="dialog-footer">
+        <router-link :to="{path:successDialog.nextPath}"><el-button type="primary">{{successDialog.nextName}}</el-button></router-link>
+      </span>
+    </el-dialog>
   </div>
 </template>
 <script>
   import { BANKS } from '@/utils/config'
-  import { fetchData, submitHandler } from '@/utils/common.js'
-  import { getIdentifyCode } from '@/api/user'
+  import { fetchData} from '@/utils/common.js'
+  import { openAccount, getUserByUserID } from '@/api/user'
   import Register from '@/components/user/register'
+  import NameInput from '@/components/user/nameInput'
+  import BankcardInput from '@/components/user/bankcardInput'
+  import IdnoInput from '@/components/user/idnoInput'
+  import TelephoneInput from '@/components/user/telephoneInput'
+  import IdentifyCode from '@/components/user/identifyCode'
+  import SetPassword from '@/components/user/setPassword'
   export default{
     data(){
       return {
-        progress     : [
+        submitting    : false,
+        successDialog : {
+          showSuccess        : false,
+          successTitle       : '开户成功',
+          successDescription : '恭喜您已成功开户!',
+          nextPath           : '',
+          nextName           : ''
+        },
+        allowSubmit   : { init : true },
+        progress      : [
           { step : 1, title : '注册长安严选' },
           { step : 2, title : '填写卡信息' },
-          { step : 3, title : '上传证件' }
+          { step : 3, title : '设置交易密码' }
         ],
-        bankList     : BANKS,
-        showBankList : true,
-        post         : {
-          bankSelectedId   : null,
-          bankSelectedName : '',
-          username         : '',
+        bankList      : BANKS,
+        showBankList  : true,
+        post          : {
+          bankSelectedName : null,
+          bankCode         : null,
+          name             : null,
           userID           : window.localStorage.getItem('userID'),
           cardNo           : null,
           bankCardNo       : null,
-          bankMobile       : null,
+          bankSavedmobile  : null,
           identifyCode     : null,
         },
-        changeMobile : false,
-        count        : 0,
+        password      : null,
+        count         : 0,
       }
     },
     components : {
-      Register
+      Register,
+      NameInput,
+      BankcardInput,
+      IdnoInput,
+      TelephoneInput,
+      IdentifyCode,
+      SetPassword
     },
     watch      : {
       userInfo(val){
-        this.post.username = val.name
-        this.post.cardNo = val.cardNo
-        this.post.bankMobile = val.mobile
+        this.initData(val)//第一次直接进入组件初始化
       }
     },
     computed   : {
@@ -87,7 +146,7 @@
           return 1
         }
         else {
-          if (!this.post.identifyCode) {
+          if (this.$store.state.user && !this.$store.state.user.userStatus.isBindCard) {
             return 2
           }
           else {
@@ -101,50 +160,73 @@
       userInfo(){
         return this.$store.state.user && this.$store.state.user.userInfo
       },
-      progressSubmit(){
-        let post = this.post
-        return !(post.bankSelectedId && post.username && post.userID && post.bankNum && post.bankPhone && post.captcha2)
+      forbidSubmit(){
+        if (this.submitting) return true
+        if (Object.keys(this.allowSubmit).length===1) return true
+        return (Object.values(this.allowSubmit).some(e => {return e===false}))
       }
     },
     methods    : {
+      initData(val){
+        console.log('初始化userInfo')
+        this.post.name = val.name
+        this.post.cardNo = val.cardNo
+        this.post.bankSavedmobile = val.mobile
+      },
+      setValid(isValid){
+        this.$set(this.allowSubmit, isValid.key, isValid.isValid)
+      },
       checkBank(bid, bname){
-        this.post.bankSelectedId = bid
+        this.post.bankCode = bid
         this.post.bankSelectedName = bname
         this.showBankList = false
       },
-      getIdentifyCode(countDown){
-        if (!this.post.mobile) return
-        this.startCountDown(countDown)
-        let postData = { userID : this.post.userID, mobile : this.post.bankMobile }
-        fetchData(getIdentifyCode(postData))
-        function startCountDown(num) {
-          this.count = num
-          let _ = this
-          _countDown()
-          function _countDown() {
-            setTimeout(() => {
-              _.count--
-              if (_.count > 0) _countDown()
-            }, 1000)
+      submitBankInfo(){
+        this.submitting = true
+        let post = { userID : this.post.userID, bankCode : this.post.bankCode }
+        for (let k in this.post) {
+          if (this.allowSubmit[k]) post[k] = this.post[k]
+        }
+        console.log(post)
+        let _ = this
+        fetchData(openAccount(post), { showProgress : 'submit', showSuccessMsg : true, callback : { success : successCallback, always : alwaysCallback } })
+        function successCallback() {
+          fetchData(getUserByUserID(_.post.userID), { callback : { success : successCallback } })
+          function successCallback(data) {
+            _.$store.commit('setUser', data)
+            _.initData(data)
           }
         }
-      },
 
-      afterSubmitHandler(){
-        if (this.$route.path.indexOf('user') > -1) {
-          this.$router.replace({ name : 'bank' })
-        } else {
-          this.$router.replace({ name : 'productDetail', params : { id : 1 } })
+        function alwaysCallback() {
+          console.log('恢复注册按钮')
+          _.submitting = false
         }
       },
-      submitData : submitHandler
+      upload(){
+        this.successDialog.showSuccess = true
+        this.successDialog.nextPath = this.$store.state.toPath
+        this.successDialog.nextName = '继续操作'
+//        if (this.$store.state.toPath && this.$store.state.toPath.indexOf('product')) {
+//          this.successDialog.nextPath = this.$store.state.toPath
+//          this.successDialog.nextName = '继续购买产品'
+//        } else {
+//          this.successDialog.nextPath = '/user'
+//          this.successDialog.nextName = '返回用户中心'
+//        }
+
+      }
+    },
+    created(){
+      if (this.userInfo) this.initData(this.userInfo)
     }
   }
 </script>
 <style lang="stylus" scoped>
   @import "../../style/base"
   #new-bank
-    padding 1em 0
+    min-height calc(100vh + 5.4em)
+    padding 1em 0 4em 0
 
   .progress:after
     @extend .hr-line

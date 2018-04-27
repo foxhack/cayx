@@ -1,24 +1,34 @@
 <template>
   <div id="bank">
-    <section v-if="isBindCard && bankUsed.length>0">
+    <section v-if="isBindCard && bindCard">
       <div class="title">已绑定的银行卡</div>
-      <mt-cell><img slot="icon" src="../../assets/images/icbc.png" alt="" height="3em" width="100%"></mt-cell>
-      <!--<mt-cell :title="bankUsed.name" label="尾号0884" class="bank selected" @click.native="operateBank(2)"></mt-cell>-->
+      <mt-cell :title="bindCard.bankName" :label="'尾号'+bindCard.bankCardNo" class="bank selected"></mt-cell>
     </section>
-    <section>
+    <section v-else>
       <router-link class='add-bank' :to="{ name: 'newbank'}">添加新卡</router-link>
     </section>
   </div>
 </template>
 <script>
+  import SetPassword from '@/components/user/setPassword'
   export default{
+    data(){
+      return {
+        password : null
+      }
+    },
+    components : { SetPassword },
     computed   : {
       isBindCard(){
         return this.$store.state.user && this.$store.state.user.userStatus.isBindCard
       },
-      bindedCards(){
-        return  this.$store.state.user && this.$store.state.user.bindedCards
-//        return [{ bid : 1, cid : '1234', default : true }, { bid : 2, cid : '1234', default : false }]
+      bindCard(){
+        return this.$store.state.user && this.$store.state.user.userInfo && this.$store.state.user.userInfo.bindCard
+      }
+    },
+    method     : {
+      setValid(isValid){
+        this.$set(this.allowSubmit, isValid.key, isValid.isValid)
       }
     }
   }
@@ -37,4 +47,21 @@
     {third-level}
     border 2px dashed
     border-radius 0.2em
+
+  .bank
+    /*font-family font-family-bold*/
+  .bank.selected
+    position relative
+
+  .bank.selected:after
+    content ''
+    position absolute
+    top 50%
+    transform translateY(-50%)
+    right 1em
+    width 1.2em
+    height 1.2em
+    background-image url('../../assets/icon/card_selected.svg')
+    background-size contain
+
 </style>

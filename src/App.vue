@@ -1,12 +1,11 @@
 <template>
   <div id="app">
-    <transition :name="transitionName">
-      <div>
-        <navigation-bar :title="title" :showBack="showBack"  v-if="showBack"></navigation-bar>
-        <router-view></router-view>
-        <main-menu v-if="!showBack"></main-menu>
-      </div>
-    </transition>
+    <transition-group :name="transitionName">
+      <navigation-bar key="navigation" :title="title" :showBack="showBack" v-if="showBack"></navigation-bar>
+      <router-view key="comp"></router-view>
+      <main-menu key="menu" v-if="!showBack"></main-menu>
+    </transition-group>
+
   </div>
 </template>
 
@@ -28,7 +27,7 @@
         return !(this.$route.path=='/product' || this.$route.path=='/product/' || this.$route.path=='/user' || this.$route.path=='/user/')
       }
     },
-    components : { 'main-menu':Menu, NavigationBar },
+    components : { 'main-menu' : Menu, NavigationBar },
     watch      : {
       '$route' (to, from) {
         const toDepth = to.path.split('/').length
@@ -73,6 +72,12 @@
     }
   }
 
+  .mint-indicator-wrapper
+    z-index 3001
+
+  .mint-indicator-mask
+    z-index 3000
+
   .mint-field-core
     {third-level}
 
@@ -107,4 +112,8 @@
 
   .el-message
     min-width: 100%
+
+  #app
+    min-height 100vh
+
 </style>

@@ -1,11 +1,11 @@
 <template>
-  <div id="email-input">
-    <mt-cell v-if="editable === false" :title="title ||'email'" @click.native="alert">{{value}}</mt-cell>
+  <div id="bankcard-input">
+    <mt-cell v-if="editable === false" :title="title ||'银行卡卡号'" @click.native="alert">{{value}}</mt-cell>
     <div v-else>
-      <mt-cell v-if="!displayInput" :title="title || 'email'" is-link @click.native="showMod">{{value}}</mt-cell>
+      <mt-cell v-if="!displayInput" :title="title || '银行卡卡号'" is-link @click.native="showMod">{{value}}</mt-cell>
       <mt-field v-if="displayInput"
-                :label="title || 'email'"
-                :placeholder="placeholder || '请输入email'"
+                :label="title || '银行卡卡号'"
+                :placeholder="placeholder || '请输入银行卡卡号'"
                 :state="state"
                 :value="value"
                 @input.native="check($event.target.value)">
@@ -16,7 +16,7 @@
 </template>
 <script>
   export default{
-    name    : 'EmailInput',
+    name    : 'BankCardInput',
     data(){
       return {
         displayInput : false,
@@ -29,22 +29,23 @@
       'title',
       'placeholder',
       'inputname',
-      'value'
+      'value',
+      'initcheck'
     ],
     methods : {
       showMod(){
         this.displayInput = true
         this.check(this.value)
         this.$nextTick(()=>{
-          document.querySelector('#email-input input').focus()
+          document.querySelector('#bankcard-input input').focus()
         })
       },
       check(val){
-        console.log('调用email检查方法')
-        let reg = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/
+        console.log('调用银行卡卡号检查方法')
+        let reg = /^(\d{16}|\d{19})$/
         if (!reg.test(val)) {
           this.state = 'error'
-          this.errorMsg = '请输入合法的email'
+          this.errorMsg = '请输入正确的银行卡卡号'
           this.setValid(false)
           return
         }
@@ -58,6 +59,9 @@
       setValid(isValid){
         this.$emit('isValid',{'key':this.inputname, 'isValid':isValid})
       }
+    },
+    created(){
+      if(this.initcheck) this.check(this.value)
     }
   }
 </script>

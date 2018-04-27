@@ -1,6 +1,6 @@
 <template>
-  <div id="menu">
-    <div class="main-menu fix-bottom" style="bottom:-1px">
+  <div id="menu" class="fix-bottom" style="bottom:-4px">
+    <div class="main-menu">
       <router-link to="/product" class="main-btn">
         <el-button type="default" size="large" :class="{active:path=='/product'}">长安聚宝盆</el-button>
       </router-link>
