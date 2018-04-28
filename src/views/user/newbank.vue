@@ -61,11 +61,7 @@
     </section>
     <section v-show="currentProgress==3">
       <div class="title">请设置交易密码</div>
-      <set-password
-          inputname="password"
-          v-model="password"
-          v-on:isValid="setValid">
-      </set-password>
+      <new-password></new-password>
       <input type="button" class="primary-btn fix-bottom" @click="upload" value="完成">
       <div class="title">请上传身份证</div>
       <mt-cell title="持卡人姓名">{{post.name}}</mt-cell>
@@ -73,7 +69,6 @@
       <div class="upload">正面</div>
       <div class="upload">背面</div>
     </section>
-
     <el-dialog :visible=successDialog.showSuccess :title="successDialog.successTitle" center :show-close="false" class="dialog-wrapper">
       <div>{{successDialog.successDescription}}</div>
       <span slot="footer" class="dialog-footer">
@@ -84,7 +79,6 @@
 </template>
 <script>
   import { BANKS } from '@/utils/config'
-  import { fetchData} from '@/utils/common.js'
   import { openAccount, getUserByUserID } from '@/api/user'
   import Register from '@/components/user/register'
   import NameInput from '@/components/user/nameInput'
@@ -92,7 +86,7 @@
   import IdnoInput from '@/components/user/idnoInput'
   import TelephoneInput from '@/components/user/telephoneInput'
   import IdentifyCode from '@/components/user/identifyCode'
-  import SetPassword from '@/components/user/setPassword'
+  import NewPassword from '@/components/user/newPassword'
   export default{
     data(){
       return {
@@ -122,7 +116,6 @@
           bankSavedmobile  : null,
           identifyCode     : null,
         },
-        password      : null,
         count         : 0,
       }
     },
@@ -133,7 +126,7 @@
       IdnoInput,
       TelephoneInput,
       IdentifyCode,
-      SetPassword
+      NewPassword
     },
     watch      : {
       userInfo(val){
@@ -189,9 +182,9 @@
         }
         console.log(post)
         let _ = this
-        fetchData(openAccount(post), { showProgress : 'submit', showSuccessMsg : true, callback : { success : successCallback, always : alwaysCallback } })
+        this.$post(openAccount(post), { showProgress : 'submit', showSuccessMsg : true, callback : { success : successCallback, always : alwaysCallback } })
         function successCallback() {
-          fetchData(getUserByUserID(_.post.userID), { callback : { success : successCallback } })
+          _.$post(getUserByUserID(_.post.userID), { callback : { success : successCallback } })
           function successCallback(data) {
             _.$store.commit('setUser', data)
             _.initData(data)

@@ -14,7 +14,6 @@
 </template>
 <script>
   import { getIdentifyCode } from '@/api/user'
-  import { fetchData } from '@/utils/common.js'
   export default{
     name    : 'IdentifyCodeInput',
     data(){
@@ -31,7 +30,7 @@
         if (!this.isValid) return
         startCountDown(countDown)
         let postData = { userID : window.localStorage.getItem('userID'), mobile : this.mobile }
-        fetchData(getIdentifyCode(postData),{showSuccessMsg:true})
+        this.$post(getIdentifyCode(postData),{showSuccessMsg:true})
         function startCountDown(num) {
           _.count = num
           _countDown()

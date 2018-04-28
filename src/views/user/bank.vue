@@ -10,14 +10,12 @@
   </div>
 </template>
 <script>
-  import SetPassword from '@/components/user/setPassword'
   export default{
     data(){
       return {
         password : null
       }
     },
-    components : { SetPassword },
     computed   : {
       isBindCard(){
         return this.$store.state.user && this.$store.state.user.userStatus.isBindCard

@@ -65,7 +65,7 @@
   import Bank from '@/views/user/bank'
   import PasswordInput from '@/components/user/passwordInput'
   import { operateAccount, getAsset } from '@/api/user'
-  import { fMoney, fetchData } from '@/utils/common.js'
+  import { fMoney } from '@/utils/common.js'
   export default{
     data(){
       return {
@@ -113,11 +113,11 @@
         }
         console.log(post)
         let _ = this
-        fetchData(operateAccount(post, this.type), { showProgress : 'submit', callback : { success : successCallback, error : errorCallback, fail : failCallback, always : alwaysCallback } })
+        this.$post(operateAccount(post, this.type), { showProgress : 'submit', callback : { success : successCallback, error : errorCallback, fail : failCallback, always : alwaysCallback } })
         function successCallback(data, msg) {
           _.result.title = '恭喜您，操作成功！'
           _.result.information = msg
-          fetchData(getAsset({ userID : window.localStorage.getItem('userID') }), { callback : { success : successCallback } })
+          _.$post(getAsset({ userID : window.localStorage.getItem('userID') }), { callback : { success : successCallback } })
           function successCallback(data) {
             _.$store.commit('setAsset', data)
           }

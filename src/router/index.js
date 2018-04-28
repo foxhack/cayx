@@ -3,6 +3,8 @@ import Router from 'vue-router'
 import store from '../store'
 import Author from '@/views/user/author'
 import Register from '@/components/user/register'
+import PasswordSetting from '@/views/user/passwordSetting'
+import ResetPassword from '@/views/user/resetPassword'
 import Product from '@/views/products/list'
 import ProductDetail from '@/views/products/detail'
 import Transaction from '@/views/products/transaction'
@@ -16,7 +18,7 @@ import TransactionRecord from '@/views/user/transactionRecord'
 import IncomeRecord from '@/views/user/incomeRecord'
 import { getUserByUserID, getAsset } from '@/api/user'
 import { getProductsRate } from '@/api/product'
-import { fetchData } from '@/utils/common'
+import { post } from '@/utils/common'
 Vue.use(Router)
 
 const router = new Router({
@@ -74,8 +76,7 @@ const router = new Router({
         title : '产品交易',
         initData : 'asset'
       }
-    }
-    ,
+    },
     {
       path      : '/product/transaction-result/:pid/:type/:tid/:amount',
       name      : 'transaction-result',
@@ -85,8 +86,7 @@ const router = new Router({
         title : '交易结果',
         initData : 'asset'
       }
-    }
-    ,
+    },
     {
       path      : '/user/setting',
       name      : 'userSetting',
@@ -94,8 +94,7 @@ const router = new Router({
       meta      : {
         title : '个人设置'
       }
-    }
-    ,
+    },
     {
       path      : '/user/bank',
       name      : 'bank',
@@ -104,8 +103,23 @@ const router = new Router({
       meta      : {
         title : '银行卡'
       }
-    }
-    ,
+    },
+    {
+      path      : '/user/passwordsetting',
+      name      : 'passwordSetting',
+      component : PasswordSetting,
+      meta      : {
+        title : '交易密码管理'
+      }
+    },
+    {
+      path      : '/user/resetpassword',
+      name      : 'resetPassword',
+      component : ResetPassword,
+      meta      : {
+        title : '找回交易密码'
+      }
+    },
     {
       path      : '/user/newbank',
       name      : 'newbank',
@@ -200,7 +214,7 @@ router.beforeEach((to, from, next) => {
 function getUserInfo(userID) {
   //let user = store && !store.state.user
   //if (userID && user) {
-  fetchData(getUserByUserID(userID), { callback : { success : successCallback } })
+  post(getUserByUserID(userID), { callback : { success : successCallback } })
   function successCallback(data) {
     store.commit('setUser', data)
   }
@@ -211,14 +225,14 @@ function getUserInfo(userID) {
 function getProducts() {
   let pid = []
   store.state.products.forEach(p => {pid.push(p.pid)})
-  fetchData(getProductsRate(pid), { callback : { success : successCallback } })
+  post(getProductsRate(pid), { callback : { success : successCallback } })
   function successCallback(data) {
     store.commit('saveProductsRate', data)
   }
 }
 
 function getUserAsset(userID) {
-  fetchData(getAsset({ userID : userID }), { callback : { success : successCallback } })
+  post(getAsset({ userID : userID }), { callback : { success : successCallback } })
   function successCallback(data) {
     store.commit('setAsset', data)
   }

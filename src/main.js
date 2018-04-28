@@ -2,6 +2,7 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import store from './store'
+import { post } from './utils/common'
 //import VeeValidate from 'vee-validate'
 
 //import UI Components
@@ -20,7 +21,7 @@ Vue.component(Button.name, Button)
 Vue.component(Checkbox.name, Checkbox)
 Vue.prototype.$message = Message
 Vue.use(Loading.directive)
-
+Vue.prototype.$post = post
 new Vue({
   el         : '#app',
   store,

@@ -55,7 +55,9 @@ export function getQueryString(name) {
 //  showFailMsg     : true,
 //  callback : {success:function,error:function,fail:function,always:function},
 //}
-export function fetchData(promise, options) {
+
+
+export function post(promise, options) {
   if (options==undefined) options = {}
   if (options.showProgress=='submit') Indicator.open('数据提交中,请勿重复提交......')
 

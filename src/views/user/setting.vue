@@ -48,7 +48,6 @@
 </template>
 <script>
   import { updateUserInfo, getUserByUserID } from '@/api/user'
-  import { fetchData } from '@/utils/common.js'
   import NameInput from '@/components/user/nameInput'
   import IdnoInput from '@/components/user/idnoInput'
   import TelephoneInput from '@/components/user/telephoneInput'
@@ -64,7 +63,6 @@
         submitting  : false,
         allowSubmit : { init : true },
         post        : {
-          userID       : window.localStorage.getItem('userID'),
           name         : null,
           cardNo       : null,
           identifyCode : null,
@@ -119,9 +117,9 @@
         }
         console.log(post)
         let _ = this
-        fetchData(updateUserInfo(post), { showProgress : 'submit', showSuccessMsg : true, callback : { success : successCallback, always : alwaysCallback } })
+        this.$post(updateUserInfo(post), { showProgress : 'submit', showSuccessMsg : true, callback : { success : successCallback, always : alwaysCallback } })
         function successCallback() {
-          fetchData(getUserByUserID(_.post.userID), { callback : { success : successCallback } })
+          _.$post(getUserByUserID(_.post.userID), { callback : { success : successCallback } })
           function successCallback(data) {
             _.$store.commit('setUser', data)
             _.initData(data)

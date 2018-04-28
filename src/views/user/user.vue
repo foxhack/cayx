@@ -45,9 +45,15 @@
         <mt-cell title="注册" is-link></mt-cell>
       </router-link>
     </section>
-    <section>
+    <section v-else>
       <router-link :to="{name:'userSetting'}">
         <mt-cell title="个人信息设置" is-link>已注册</mt-cell>
+      </router-link>
+    </section>
+    <section v-if="isRegister">
+      <router-link :to="{name:'passwordSetting'}">
+        <mt-cell title="管理交易密码" is-link :label="isSetPassword?'已设置':'未设置'">
+        </mt-cell>
       </router-link>
     </section>
     <section>
@@ -61,17 +67,7 @@
   <div v-else v-loading.body="true" element-loading-text="加载中"></div>
 </template>
 <script>
-  import { fetchData } from '@/utils/common.js'
-  import { getAsset } from '@/api/user.js'
   import instruction from '@/views/user/instruction'
-  const USER_ASSETS = {
-    totalAssets    : 1000200.00,
-    latelyIncome   : 10.00,
-    totalIncome    : 2000.00,
-    currencyAssets : { possess : 100.00, totalIncome : 100 },
-    periodicAssets : { possess : 20000.00, totalIncome : 1900 },
-    accountAmount  : 200
-  }
 
   export default{
     name       : 'User',
@@ -88,6 +84,9 @@
       },
       isBindCard(){
         return this.$store.state.user && this.$store.state.user.userStatus.isBindCard
+      },
+      isSetPassword(){
+        return this.$store.state.user && this.$store.state.user.userStatus.isSetPassword
       },
       bindCard(){
         return this.$store.state.user && this.$store.state.user.userInfo && this.$store.state.user.userInfo.bindCard

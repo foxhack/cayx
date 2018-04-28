@@ -18,7 +18,6 @@
 </template>
 <script>
   import { getProductsRate } from '@/api/product'
-  import { fetchData } from '@/utils/common.js'
   export default {
     name     : 'ProductDetail',
     computed : {

@@ -1,7 +1,7 @@
 const USER = {
   'userID'     : '123456789',
   'avatar'     : '',
-  'userStatus' : { 'isRegisterCaej' : true, 'isRegisterCayx' : false, isBindCard : false },
+  'userStatus' : { 'isRegisterCaej' : true, 'isRegisterCayx' : false, isBindCard : false, isSetPassword : true },
   'userInfo'   : {
     'name'     : '张珊一一',
     'cardNo'   : '110104198204150848',

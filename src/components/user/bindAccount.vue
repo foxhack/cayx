@@ -18,8 +18,6 @@
 </template>
 <script>
   import { bindUserAccount } from '@/api/user'
-  import { fetchData } from '@/utils/common.js'
-
   export default{
     name     : 'BindAccount',
     data(){
@@ -41,7 +39,7 @@
     methods  : {
       bindUserAccount(){
         let _ = this
-        fetchData(bindUserAccount(_.$store.state.user.userID), {
+        this.$post(bindUserAccount(_.$store.state.user.userID), {
           showSuccessMsg : false,
           callback       : { success : successCallback }
         })

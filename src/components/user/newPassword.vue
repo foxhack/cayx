@@ -1,27 +1,29 @@
 <template>
-  <div id="set-password">
+  <section v-if="isRegister && !isSetPassword">
+    <div class="title">设置新交易密码</div>
     <mt-field
-        type="number"
-        :label="title || '交易密码'"
-        :placeholder="placeholder || '请输入6位数字的交易密码'"
+        type="password"
+        label="交易密码"
+        placeholder="请输入6位数字的交易密码"
         :state="state1"
-        :value="value"
         @input.native="check1($event.target.value)">
     </mt-field>
     <mt-field
         :disabled="state1!=='success'"
-        type="number"
+        type="password"
         label="重复密码"
         :state="state2"
         placeholder="请再次输入密码"
         v-model="repeat" @input.native="check2($event.target.value)">
     </mt-field>
-    <div v-if="state=='error'" class="error">{{errorMsg}}</div>
-  </div>
+    <div class="error">{{errorMsg}}&nbsp;</div>
+    <input type="button" class="primary-btn" style="margin-top:10px" :disabled="state!=='success'" value="确定设置">
+  </section>
 </template>
 <script>
+
   export default{
-    name     : 'EmailInput',
+    name       : 'NewPassword',
     data(){
       return {
         password : '',
@@ -31,27 +33,23 @@
         errorMsg : '',
       }
     },
-    props    : [
-      'title',
-      'placeholder',
-      'inputname',
-      'value'
-    ],
-    computed : {
+    computed   : {
+      isRegister(){
+        return this.$store.state.user && this.$store.state.user.userStatus.isRegisterCayx
+      },
+      isSetPassword(){
+        return this.$store.state.user && this.$store.state.user.userStatus.isSetPassword
+      },
       state(){
         if (this.state1=='success' && this.state2=='success') {
-          this.setValid(true)
-          this.$emit('input', this.password)
           return 'success'
         }
         if (this.state1=='error' || this.state2=='error') {
-          this.setValid(false)
           return 'error'
         }
       }
     },
-
-    methods : {
+    methods    : {
       check1(val){
         this.password = val
         console.log('调用密码1检查方法')
@@ -66,6 +64,7 @@
         } else {
           this.state1 = 'success'
           this.state2 = 'success'
+          this.errorMsg = ''
         }
       },
       check2(val){
@@ -77,10 +76,8 @@
           this.errorMsg = '两次输入的密码不相等'
         } else {
           this.state2 = 'success'
+          this.errorMsg = ''
         }
-      },
-      setValid(isValid){
-        this.$emit('isValid', { 'key' : this.inputname, 'isValid' : isValid })
       }
     }
   }
@@ -93,5 +90,8 @@
     padding-right 10px
     font-size 0.8em
     line-height 3em
-</style>
 
+  #set-password .mint-field-core
+    -webkit-text-security disc
+    text-security disc
+</style>

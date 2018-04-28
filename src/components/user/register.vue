@@ -35,7 +35,6 @@
 </template>
 <script>
   import { bindUserAccount, register, getUserByUserID } from '@/api/user'
-  import { fetchData } from '@/utils/common.js'
   import BindAccount from '@/components/user/bindAccount'
   import TelephoneInput from '@/components/user/telephoneInput'
   import IdentifyCode from '@/components/user/identifyCode'
@@ -96,9 +95,9 @@
         }
         console.log(post)
         let _ = this
-        fetchData(register(post), { showProgress : 'submit', callback : { success : successCallback, always : alwaysCallback } })
+        this.$post(register(post), { showProgress : 'submit', callback : { success : successCallback, always : alwaysCallback } })
         function successCallback() {
-          fetchData(getUserByUserID(post.userID), { callback : { success : successCallback } })
+          _.$post(getUserByUserID(post.userID), { callback : { success : successCallback } })
           function successCallback(data) {
             if (_.currentPath=='/user/register') {
               _.showSuccessDialog({
