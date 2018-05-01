@@ -25,7 +25,9 @@ app.post('/finance/user/getuserbycode', function(req, res) {
 app.post('/finance/user/getuserbyid', function(req, res) {
   console.log('收到请求getuserbyid')
   console.log('返回'+mock.user)
-  res.json({ code : 0, msg : '获取用户信息成功', data : mock.user })
+  setTimeout(()=>{
+    res.json({ code : 0, msg : '获取用户信息成功', data : mock.user })
+  },1000)
 })
 
 app.post('/finance/sms/singlesend', function(req, res) {
@@ -58,13 +60,15 @@ app.post('/finance/product/getproductrate', function(req, res) {
   let pid = req.body.pid
   let rate = mock.productRate.filter(r => {return pid.indexOf(r.pid)!== -1})
   console.log('返回'+rate)
-  if (rate) {
-    res.json({ code : 0, msg : '获取产品收益率成功', data : rate })
-  } else {
-    res.json({ code : 1, msg : '抱歉，无法获取产品收益率信息' })
-  }
-})
+  setTimeout(()=>{
+    if (rate) {
+      res.json({ code : 0, msg : '获取产品收益率成功', data : rate })
+    } else {
+      res.json({ code : 1, msg : '抱歉，无法获取产品收益率信息' })
+    }
+  },2000)
 
+})
 
 app.post('/finance/user/updateinfo', function(req, res) {
   console.log('收到请求updateinfo')
@@ -77,7 +81,6 @@ app.post('/finance/user/updateinfo', function(req, res) {
     res.json({ code : 0, msg : '更新成功' })
   },3000)
 })
-
 
 app.post('/finance/user/openaccount', function(req, res) {
   console.log('收到请求openaccount')
@@ -109,6 +112,7 @@ app.post('/finance/asset/assetquery', function(req, res) {
   console.log('收到请求assetquery')
   setTimeout(()=>{
     res.json({ code : 0, msg : '获取资产成功',data:mock.asset })
+    console.log(mock.asset.totalAsset)
   },2000)
 })
 
@@ -122,7 +126,7 @@ app.post('/finance/capital/recharge', function(req, res) {
 })
 
 app.post('/finance/capital/takeout', function(req, res) {
-  console.log('收到请求recharge')
+  console.log('收到请求takeout')
   let amount=req.body.amount
   setTimeout(()=>{
     res.json({ code : 0, msg : '提现成功',data: {amount:200} })

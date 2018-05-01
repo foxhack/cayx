@@ -1,7 +1,7 @@
 const USER = {
   'userID'     : '123456789',
   'avatar'     : '',
-  'userStatus' : { 'isRegisterCaej' : true, 'isRegisterCayx' : false, isBindCard : false, isSetPassword : true },
+  'userStatus' : { 'isRegisterCaej' : true, 'isRegisterCayx' : true, isBindCard : false, isSetPassword : false },
   'userInfo'   : {
     'name'     : '张珊一一',
     'cardNo'   : '110104198204150848',
@@ -41,10 +41,6 @@ const USER_ASSET = {
   yesterdayIncome : 10.00,
   totalIncome     : 2000.00,
   detailAsset     : null
-  //  [
-  //  { productId : 'mf201801', totalAsset : '300', totalIncome : '100', yesterdayIncome : '20' }
-  //  { productId : 'bf201801', totalAsset : '3000', totalIncome : '1000', yesterdayIncome : '1000' }
-  //]
 }
 
 const PRODUCT_RATE = [

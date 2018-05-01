@@ -13,12 +13,12 @@
     },
     created(){
 //      let code = getQueryString("code");
-      let code='123'
+      let code = '123'
       let _ = this
       if (code) {
         console.log('得到code'+code)
         _.loading = true
-        _.post(getUserByCode(code), { callback : { success : successCallback, always : alwaysCallback } })
+        _.$post(getUserByCode(code), { callback : { success : successCallback, always : alwaysCallback } })
         function successCallback(data) {
           window.localStorage.setItem('userID', data.userID)
           _.$store.commit('setUser', data)

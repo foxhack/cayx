@@ -16,16 +16,18 @@
     name       : 'App',
     data(){
       return {
-        transitionName : ''
+        transitionName : '',
+        showBack:false
       }
     },
     computed   : {
       title(){
         return this.$store.state.title
       },
-      showBack(){
-        return !(this.$route.path=='/product' || this.$route.path=='/product/' || this.$route.path=='/user' || this.$route.path=='/user/')
-      }
+//      showBack(){
+//        console.log(!(this.$route.path=='/product' || this.$route.path=='/product/' || this.$route.path=='/user' || this.$route.path=='/user/'))
+//        return !(this.$route.path=='/product' || this.$route.path=='/product/' || this.$route.path=='/user' || this.$route.path=='/user/')
+//      }
     },
     components : { 'main-menu' : Menu, NavigationBar },
     watch      : {
@@ -33,6 +35,7 @@
         const toDepth = to.path.split('/').length
         const fromDepth = from.path.split('/').length
         this.transitionName = toDepth < fromDepth ? 'slide-right' : 'slide-left'
+        this.showBack=!(this.$route.path=='/product' || this.$route.path=='/product/' || this.$route.path=='/user' || this.$route.path=='/user/')
       }
     },
     created(){
@@ -103,6 +106,9 @@
   .el-dialog__header:after
     @extend .hr-line
     border-color neutral-border-color2
+
+  #account-operate .el-dialog__body
+    padding 0 !important
 
   .el-loading-mask
     height 100vh !important

@@ -1,6 +1,7 @@
 export function fMoney(s) {
-  if (typeof s!=='number') s = 0
   let n = 2
+  if (s===null || s===undefined) s = 0
+  s = s/100
   s = parseFloat((s+'').replace(/[^\d\.-]/g, '')).toFixed(n)+''
   var l = s.split('.') [0].split('').reverse(),
     r = s.split('.') [1]

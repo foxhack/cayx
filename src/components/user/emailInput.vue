@@ -15,6 +15,7 @@
   </div>
 </template>
 <script>
+  import {VALIDATE} from '@/utils/config'
   export default{
     name    : 'EmailInput',
     data(){
@@ -41,8 +42,7 @@
       },
       check(val){
         console.log('调用email检查方法')
-        let reg = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/
-        if (!reg.test(val)) {
+        if (!VALIDATE.email.test(val)) {
           this.state = 'error'
           this.errorMsg = '请输入合法的email'
           this.setValid(false)

@@ -1,14 +1,15 @@
 <template>
   <div id="user-setting" v-if="isRegister">
-    <section v-if="userInfo.mobile!==undefined">
+    <!--<section v-if="userInfo.mobile!==undefined">-->
+    <section>
       <name-input
-          :editable="allowMod"
+          :editable="!isBindCard"
           inputname="name"
           v-model="post.name"
           v-on:isValid="setValid">
       </name-input>
       <idno-input
-          :editable="allowMod"
+          :editable="!isBindCard"
           inputname="cardNo"
           v-model="post.cardNo"
           v-on:isValid="setValid">
@@ -54,6 +55,7 @@
   import IdentifyCode from '@/components/user/identifyCode'
   import EmailInput from '@/components/user/emailInput'
   import AddressInput from '@/components/user/addressInput'
+  import { mixin }from '@/utils/mixin'
 
   export default{
     components : { NameInput, IdnoInput, TelephoneInput, IdentifyCode, EmailInput, AddressInput },
@@ -72,16 +74,8 @@
         }
       }
     },
+    mixins     : [mixin],
     computed   : {
-      isRegister(){
-        return this.$store.state.user && this.$store.state.user.userStatus.isRegisterCayx
-      },
-      userInfo(){
-        return this.$store.state.user && this.$store.state.user.userInfo
-      },
-      allowMod(){
-        return !(this.$store.state.user && this.$store.state.user.userStatus.isBindCard)
-      },
       forbidSubmit(){
         console.log('触发计算属性')
         if (this.submitting) return true
@@ -89,20 +83,7 @@
         return (Object.values(this.allowSubmit).some(e => {return e===false}))
       }
     },
-    watch      : {
-      userInfo(val){
-        this.initData(val)//第一次直接进入组件初始化
-      }
-    },
     methods    : {
-      initData(val){
-        console.log('初始化userInfo')
-        this.post.name = val.name
-        this.post.cardNo = val.cardNo
-        this.post.mobile = val.mobile
-        this.post.email = val.email
-        this.post.address = val.address
-      },
       setValid(isValid){
         this.$set(this.allowSubmit, isValid.key, isValid.isValid)
       },
@@ -111,7 +92,7 @@
       },
       updateUser(){
         this.submitting = true
-        let post = { userID : this.post.userID }
+        let post = { userID : window.localStorage.getItem('userID') }
         for (let k in this.post) {
           if (this.allowSubmit[k]) post[k] = this.post[k]
         }
@@ -119,10 +100,10 @@
         let _ = this
         this.$post(updateUserInfo(post), { showProgress : 'submit', showSuccessMsg : true, callback : { success : successCallback, always : alwaysCallback } })
         function successCallback() {
-          _.$post(getUserByUserID(_.post.userID), { callback : { success : successCallback } })
+          _.$post(getUserByUserID(window.localStorage.getItem('userID')), { callback : { success : successCallback } })
           function successCallback(data) {
             _.$store.commit('setUser', data)
-            _.initData(data)
+            _.post = { ..._.userInfo }
           }
         }
 
@@ -132,8 +113,8 @@
         }
       }
     },
-    created(){
-      if (this.userInfo) this.initData(this.userInfo)
+    mounted(){
+      this.post = { ...this.userInfo }
     }
   }
 

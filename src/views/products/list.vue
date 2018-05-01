@@ -10,14 +10,12 @@
 <script>
   import{ getProductsRate } from '@/api/product'
   import ProductItem from '@/components/products/item'
+  import { mixin }from '@/utils/mixin'
+
   export default {
     name       : 'ProductList',
     components : { ProductItem },
-    computed:{
-      productList(){
-        return this.$store.getters.productsWithRate
-      }
-    },
+    mixins     : [mixin],
     created(){
       console.log('组件productlist')
     }

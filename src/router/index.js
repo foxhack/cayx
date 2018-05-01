@@ -18,7 +18,8 @@ import TransactionRecord from '@/views/user/transactionRecord'
 import IncomeRecord from '@/views/user/incomeRecord'
 import { getUserByUserID, getAsset } from '@/api/user'
 import { getProductsRate } from '@/api/product'
-import { post } from '@/utils/common'
+import { initAppData } from '@/utils/common'
+
 Vue.use(Router)
 
 const router = new Router({
@@ -54,7 +55,7 @@ const router = new Router({
       name      : 'user',
       component : User,
       meta      : {
-        title : '用户中心',
+        title    : '用户中心',
         initData : 'asset'
       }
     }
@@ -73,7 +74,7 @@ const router = new Router({
       name      : 'transaction',
       component : Transaction,
       meta      : {
-        title : '产品交易',
+        title    : '产品交易',
         initData : 'asset'
       }
     },
@@ -83,7 +84,7 @@ const router = new Router({
       component : TransactionResult,
       props     : true,
       meta      : {
-        title : '交易结果',
+        title    : '交易结果',
         initData : 'asset'
       }
     },
@@ -144,7 +145,7 @@ const router = new Router({
       name      : 'transaction-record',
       component : TransactionRecord,
       meta      : {
-        title : '交易记录',
+        title    : '交易记录',
         initData : 'asset'
       }
     }
@@ -161,81 +162,55 @@ const router = new Router({
 })
 
 router.beforeEach((to, from, next) => {
-  if (to.meta.mustFrom && from!==to.meta.mustFrom) {
-    next(to.meta.mustFrom)
-  }
-  if (to.path=='/user/newbank') store.commit('saveToPath', from.fullPath)
-
   if (to.meta.title) {
     //document.title = to.meta.title
     store.commit('saveToTitle', to.meta.title)
   }
+
+  if (to.meta.mustFrom && from!==to.meta.mustFrom) {
+    next(to.meta.mustFrom)
+  }
+
   let userID = window.localStorage.getItem('userID')
   if (userID || to.path=='/author') {
     console.log('已授权:'+userID)
-    next()
   } else {
     window.localStorage.setItem('toPath', to.fullPath)
     console.log('去授权页面')
     next('/author')
   }
-  if (to.path.indexOf('/user') > -1 || to.path.indexOf('/product') > -1) {
-    if (store && !store.state.user) {
-      console.log('通过userID获取userID信息')
-      getUserInfo(userID)
-    } else {
-      next()
-    }
-  } else {
-    next()
+
+  if (to.path=='/user/newbank') {
+    store.commit('saveToPath', from.fullPath)
   }
-  if (to.path.indexOf('/product') > -1) {
-    if (store && !store.getters.productsWithRate) {
-      console.log('获取产品信息')
-      getProducts()
-    } else {
-      next()
-    }
-  } else {
-    next()
+
+  let promises = []
+  let callbacks = []
+  if (!store.state.user) {
+    promises.push(getUserByUserID(userID))
+    callbacks.push(function(data) {
+      store.commit('setUser', data)
+    })
   }
-  if (to.meta.initData && to.meta.initData==='asset') {
-    if (store && !store.state.asset) {
-      console.log('获取用户资产信息')
-      getUserAsset(userID)
-    } else {
-      next()
-    }
+  if (!store.state.asset) {
+    promises.push(getAsset({ userID : userID }))
+    callbacks.push(function(data) {
+      store.commit('setAsset', data)
+    })
+  }
+  if (to.path.indexOf('/product') > -1 && !store.getters.productsWithRate) {
+    let pid = []
+    store.state.products.forEach(p => {pid.push(p.pid)})
+    promises.push(getProductsRate(pid))
+    callbacks.push(function(data) {
+      store.commit('saveProductsRate', data)
+    })
+  }
+  if (promises.length > 0) {
+    initAppData(promises, callbacks, next)
   } else {
     next()
   }
 })
-
-function getUserInfo(userID) {
-  //let user = store && !store.state.user
-  //if (userID && user) {
-  post(getUserByUserID(userID), { callback : { success : successCallback } })
-  function successCallback(data) {
-    store.commit('setUser', data)
-  }
-
-  //}
-}
-
-function getProducts() {
-  let pid = []
-  store.state.products.forEach(p => {pid.push(p.pid)})
-  post(getProductsRate(pid), { callback : { success : successCallback } })
-  function successCallback(data) {
-    store.commit('saveProductsRate', data)
-  }
-}
-
-function getUserAsset(userID) {
-  post(getAsset({ userID : userID }), { callback : { success : successCallback } })
-  function successCallback(data) {
-    store.commit('setAsset', data)
-  }
-}
 
 export default router

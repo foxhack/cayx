@@ -15,6 +15,7 @@
   </div>
 </template>
 <script>
+  import {VALIDATE} from '@/utils/config'
   export default{
     name    : 'TelephoneInput',
     data(){
@@ -43,8 +44,7 @@
       },
       check(val){
         console.log('调用手机号检查方法')
-        let reg = /^1[0-9]{10}$/
-        if (!reg.test(val)) {
+        if (!VALIDATE.mobile.test(val)) {
           this.state = 'error'
           this.errorMsg = '请输入正确的手机号'
           this.setValid(false)

@@ -15,6 +15,7 @@
   </div>
 </template>
 <script>
+  import {VALIDATE} from '@/utils/config'
   export default{
     name    : 'NameInput',
     data(){
@@ -42,21 +43,9 @@
       },
       check(val){
         console.log('调用姓名检查方法')
-        if (!val || val.trim().length < 2) {
+        if (val.trim() && !VALIDATE.name.test(val)) {
           this.state = 'error'
-          this.errorMsg = '姓名不能为空，至少为两个字符'
-          this.setValid(false)
-          return
-        }
-        if (val.trim() && val.trim().indexOf(' ') > -1) {
-          this.state = 'error'
-          this.errorMsg = '姓名不能含有空格'
-          this.setValid(false)
-          return
-        }
-        if (val.trim() && !/^[\u4E00-\u9FA5A-Za-z]+$/.test(val)) {
-          this.state = 'error'
-          this.errorMsg = '姓名只能是中文或者英文'
+          this.errorMsg = '姓名只能是2至4位中文或者英文，不含空格'
           this.setValid(false)
           return
         }

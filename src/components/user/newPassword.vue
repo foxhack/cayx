@@ -1,6 +1,6 @@
 <template>
-  <section v-if="isRegister && !isSetPassword">
-    <div class="title">设置新交易密码</div>
+  <section v-if="(isRegister && !isSetPassword) || setNew">
+    <div class="title">设置交易密码</div>
     <mt-field
         type="password"
         label="交易密码"
@@ -17,23 +17,36 @@
         v-model="repeat" @input.native="check2($event.target.value)">
     </mt-field>
     <div class="error">{{errorMsg}}&nbsp;</div>
-    <input type="button" class="primary-btn" style="margin-top:10px" :disabled="state!=='success'" value="确定设置">
+    <input type="button" class="primary-btn" @click="setPassword"  :disabled="state!=='success'" value="确定设置">
+    <el-dialog :visible=resultDialog.show :title="resultDialog.title" center :show-close="false" class="dialog-wrapper">
+      <div>{{resultDialog.msg}}</div>
+      <span slot="footer" class="dialog-footer">
+        <el-button v-if="resultClose" type="primary" @click.natvie="$emit('close')">关闭</el-button>
+        <router-link v-else :to="{name:'user'}"><el-button type="primary">返回用户中心</el-button></router-link>
+      </span>
+    </el-dialog>
   </section>
 </template>
 <script>
 
   export default{
-    name       : 'NewPassword',
+    name     : 'NewPassword',
     data(){
       return {
-        password : '',
-        repeat   : '',
-        state1   : '',
-        state2   : '',
-        errorMsg : '',
+        password     : '',
+        repeat       : '',
+        state1       : '',
+        state2       : '',
+        errorMsg     : '',
+        resultDialog : {
+          show  : false,
+          title : '',
+          msg   : ''
+        }
       }
     },
-    computed   : {
+    props    : ['resultClose','setNew'],
+    computed : {
       isRegister(){
         return this.$store.state.user && this.$store.state.user.userStatus.isRegisterCayx
       },
@@ -49,7 +62,7 @@
         }
       }
     },
-    methods    : {
+    methods  : {
       check1(val){
         this.password = val
         console.log('调用密码1检查方法')
@@ -77,6 +90,15 @@
         } else {
           this.state2 = 'success'
           this.errorMsg = ''
+        }
+      },
+      setPassword(){
+        let _ = this
+        _.resultDialog = {
+          show  : true,
+          title : '设置结果',
+          msg   : '密码设置成功！'
+
         }
       }
     }

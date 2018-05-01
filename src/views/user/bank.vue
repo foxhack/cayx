@@ -10,20 +10,15 @@
   </div>
 </template>
 <script>
+  import { mixin }from '@/utils/mixin'
+
   export default{
     data(){
       return {
         password : null
       }
     },
-    computed   : {
-      isBindCard(){
-        return this.$store.state.user && this.$store.state.user.userStatus.isBindCard
-      },
-      bindCard(){
-        return this.$store.state.user && this.$store.state.user.userInfo && this.$store.state.user.userInfo.bindCard
-      }
-    },
+    mixins    : [mixin],
     method     : {
       setValid(isValid){
         this.$set(this.allowSubmit, isValid.key, isValid.isValid)

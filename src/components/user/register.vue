@@ -22,7 +22,7 @@
           v-if="showInstruction"
           title="用户协议" v-on:closeInstruction="showInstruction=false">
       </instruction>
-      <input type="button" class="primary-btn fix-bottom" :disabled="forbidSubmit" value="注册" @click="register">
+      <input type="button" class="primary-btn" :disabled="forbidSubmit" value="注册" @click="register">
     </section>
     <el-dialog :visible=successDialog.showSuccess :title="successDialog.successTitle" center :show-close="false" class="dialog-wrapper">
       <div>{{successDialog.successDescription}}</div>

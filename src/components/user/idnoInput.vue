@@ -14,6 +14,7 @@
   </div>
 </template>
 <script>
+  import {VALIDATE} from '@/utils/config'
   export default{
     name    : 'IdonInput',
     data(){
@@ -41,8 +42,7 @@
       },
       check(val){
         console.log('调用身份证检查方法')
-        let reg = /^[1-9]\d{5}(18|19|20)\d{2}((0[1-9])|(1[0-2]))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/
-        if (!reg.test(val)) {
+        if (!VALIDATE.cardNo.test(val)) {
           this.state = 'error'
           this.errorMsg = '请输入正确的身份证号码'
           this.setValid(false)

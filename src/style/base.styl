@@ -67,7 +67,6 @@ input
 
 input[type="button"]
   border none
-  border-radius 0
 
 input[type="button"]:disabled
   background primary-text-color
@@ -165,6 +164,9 @@ input[type="button"].nofix-button
   color #fff
   line-height 2.2em
   font-size 1.2em
+  width calc(100% - 20px)
+  margin 10px
+  border-radius 4px
 
 .primary-btn.plain
   @extend .center

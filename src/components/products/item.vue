@@ -1,5 +1,4 @@
 <template>
-  <!--<transition name="slide-left">-->
   <div class="p-item-wrapper">
     <router-link :to="{ name: 'productDetail', params: { pid: productItem.pid }}">
       <div class="head">
@@ -14,7 +13,6 @@
       </div>
     </router-link>
   </div>
-  <!--</transition>-->
 </template>
 <script>
   export default {

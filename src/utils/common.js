@@ -56,14 +56,19 @@ export function getQueryString(name) {
 //  callback : {success:function,error:function,fail:function,always:function},
 //}
 
-
 export function post(promise, options) {
   if (options==undefined) options = {}
-  if (options.showProgress=='submit') Indicator.open('数据提交中,请勿重复提交......')
+  if (options.showProgress) {
+    console.log('打开loading窗口')
+    setTimeout(() => {
+      Indicator.open(options.showProgress || '数据提交中,请勿重复提交......')
+    }, 0)
+  }
 
   options.showSuccessMsg = options.showSuccessMsg || false
   options.showErrorMsg = options.showErrorMsg || true
   options.showFailMsg = options.showFailMsg || true
+
   promise
     .done(result => {
       if (result.code==getCodeByType('success')) {
@@ -100,22 +105,35 @@ export function post(promise, options) {
       if (options.callback && typeof options.callback.fail==='function') options.callback.fail(error)
     })
     .always(() => {
-      if (options.showProgress=='submit') Indicator.close()
+      if (options.showProgress) {
+        Indicator.close()
+        console.log('关闭loading窗口')
+      }
       if (options.callback && typeof options.callback.always==='function') options.callback.always()
     })
 }
 
-export function fMoney(s) {
-  let n = 2
-  if(s===null || s===undefined) s=0
-  s = parseFloat((s+'').replace(/[^\d\.-]/g, '')).toFixed(n)+''
-  var l = s.split('.') [0].split('').reverse(),
-    r = s.split('.') [1]
-  var t = ''
-  for (var i = 0; i < l.length; i++) {
-    t += l[i]+((i+1)%3==0 && (i+1)!=l.length ? ',' : '')
-  }
-  return t.split('').reverse().join('')+'.'+r
+export function initAppData(promises, callbacks, next) {
+    Indicator.open('数据获取中，请稍候......')
+  Promise.all(promises)
+         .then(result => {
+           result.forEach((r, k) => {
+             if (r.code==getCodeByType('success')) {
+               if (callbacks[k] && typeof callbacks[k]==='function') callbacks[k](r.data)
+             } else {
+               Message({
+                 showClose : true,
+                 message   : r.msg,
+                 duration  : 0,
+                 type      : 'error'
+               })
+             }
+           })
+           if (result.every(r => {return r.code==getCodeByType('success') })) next()
+         })
+         .finally(() => {
+           Indicator.close()
+         })
 }
 
 function merge(a, b) {

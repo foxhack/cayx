@@ -33,6 +33,16 @@ const PRODUCTS = [
     description : 'lorem2'
   }
 ]
-export { CODE, BANKS, PRODUCTS }
+
+//定义表单验证条件
+const VALIDATE = {
+  name         : /^([a-zA-Z0-9\u4e00-\u9fa5\·]{2,4})$/,
+  cardNo       : /^[1-9]\d{5}(18|19|20)\d{2}((0[1-9])|(1[0-2]))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/,
+  mobile       : /^1[0-9]{10}$/,
+  identifyCode : /^\d{4}$/,
+  email        : /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/,
+  password     : /^\d{6}$/
+}
+export { CODE, BANKS, PRODUCTS, VALIDATE }
 
 

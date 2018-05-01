@@ -1,6 +1,6 @@
 <template>
   <div id="update-password" v-if="isRegister && isSetPassword">
-    <section>
+    <section v-if="!showNew">
       <div class="title">修改交易密码</div>
       <mt-field
           type="password"
@@ -10,11 +10,9 @@
           v-model="oldPassword" @input.native="check($event.target.value)">
       </mt-field>
       <div class="error">{{errorMsg}}&nbsp;</div>
-      <input type="button" class="primary-btn" style="margin-top:10px" :disabled="state!=='success'" value="确定">
+      <input type="button" class="primary-btn" :disabled="state!=='success'" value="确定" @click="sendOldPassword">
     </section>
-    <template v-if="showNew">
-      <new-password></new-password>
-    </template>
+    <new-password v-if="showNew" :setNew="true"></new-password>
   </div>
 </template>
 <script>
@@ -26,7 +24,7 @@
         oldPassword : '',
         state       : '',
         errorMsg    : '',
-        showNew     : true
+        showNew     : false
       }
     },
     components : { NewPassword },
@@ -49,6 +47,10 @@
           this.state = 'success'
           this.errorMsg = ''
         }
+      },
+      sendOldPassword(){
+        let _ = this
+        _.showNew = true
       }
     }
   }

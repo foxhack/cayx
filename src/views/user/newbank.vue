@@ -60,7 +60,6 @@
       <input type="button" class="primary-btn fix-bottom" @click="submitBankInfo" :disabled="forbidSubmit" value="提交">
     </section>
     <section v-show="currentProgress==3">
-      <div class="title">请设置交易密码</div>
       <new-password></new-password>
       <input type="button" class="primary-btn fix-bottom" @click="upload" value="完成">
       <div class="title">请上传身份证</div>
@@ -87,6 +86,8 @@
   import TelephoneInput from '@/components/user/telephoneInput'
   import IdentifyCode from '@/components/user/identifyCode'
   import NewPassword from '@/components/user/newPassword'
+  import { mixin }from '@/utils/mixin'
+
   export default{
     data(){
       return {
@@ -110,7 +111,6 @@
           bankSelectedName : null,
           bankCode         : null,
           name             : null,
-          userID           : window.localStorage.getItem('userID'),
           cardNo           : null,
           bankCardNo       : null,
           bankSavedmobile  : null,
@@ -128,11 +128,7 @@
       IdentifyCode,
       NewPassword
     },
-    watch      : {
-      userInfo(val){
-        this.initData(val)//第一次直接进入组件初始化
-      }
-    },
+    mixins     : [mixin],
     computed   : {
       currentProgress(){
         if (!this.$store.state.user || this.$store.state.user && !this.$store.state.user.userStatus.isRegisterCayx) {
@@ -149,9 +145,6 @@
       },
       getBankName(){
         return this.post.bankSelectedId && this.bankList.filter(b => {return b.id==this.post.bankSelectedId})[0].name
-      },
-      userInfo(){
-        return this.$store.state.user && this.$store.state.user.userInfo
       },
       forbidSubmit(){
         if (this.submitting) return true
@@ -176,18 +169,17 @@
       },
       submitBankInfo(){
         this.submitting = true
-        let post = { userID : this.post.userID, bankCode : this.post.bankCode }
+        let post = { userID : window.localStorage.getItem('userID'), bankCode : this.post.bankCode }
         for (let k in this.post) {
           if (this.allowSubmit[k]) post[k] = this.post[k]
         }
         console.log(post)
         let _ = this
         this.$post(openAccount(post), { showProgress : 'submit', showSuccessMsg : true, callback : { success : successCallback, always : alwaysCallback } })
-        function successCallback() {
-          _.$post(getUserByUserID(_.post.userID), { callback : { success : successCallback } })
+        function successCallback(data) {
+          _.$post(getUserByUserID(window.localStorage.getItem('userID')), { callback : { success : successCallback } })
           function successCallback(data) {
             _.$store.commit('setUser', data)
-            _.initData(data)
           }
         }
 
@@ -200,18 +192,10 @@
         this.successDialog.showSuccess = true
         this.successDialog.nextPath = this.$store.state.toPath
         this.successDialog.nextName = '继续操作'
-//        if (this.$store.state.toPath && this.$store.state.toPath.indexOf('product')) {
-//          this.successDialog.nextPath = this.$store.state.toPath
-//          this.successDialog.nextName = '继续购买产品'
-//        } else {
-//          this.successDialog.nextPath = '/user'
-//          this.successDialog.nextName = '返回用户中心'
-//        }
-
       }
     },
     created(){
-      if (this.userInfo) this.initData(this.userInfo)
+      this.initData(this.userInfo)
     }
   }
 </script>

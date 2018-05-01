@@ -24,6 +24,7 @@
           <mt-field v-if="maxOut>0" :placeholder="'本次最大提现金额'+maxOut+'元'" type="number" v-model="post.amount">
             <span @click="post.amount=maxOut">全部提现</span>
           </mt-field>
+          <input type="button" class="primary-btn fix-bottom" @click="dialogVisible=true" :disabled="!post.amount" value="确认提现">
         </section>
         <section v-if="tag==1">
           <div style="margin-left:10px; height: 200px;">
@@ -34,19 +35,24 @@
             </el-steps>
           </div>
         </section>
-        <input type="button" class="primary-btn fix-bottom" @click="dialogVisible=true" :disabled="!post.amount" value="确认提现">
       </template>
       <div v-if="dialogVisible">
-        <el-dialog :visible="dialogVisible" width="100%" title="请输入交易密码" center :show-close="false">
+        <el-dialog :visible="!showResetPassword" width="100%" title="请输入交易密码" center :show-close="false">
+            <div style="" @click="showResetPassword=true">忘记密码</div>
           <div style="font-size: large;text-align:center; padding: 1em">{{dialogTitle}}</div>
           <div style="font-size: xx-large;text-align:center">
             {{this.toCent|money}}元
           </div>
           <span slot="footer" class="dialog-footer">
-      <password-input v-on:getPassword="getPassword"></password-input>
-        <el-button @click="dialogVisible = false" style="width: 40%">取 消</el-button>
-        <el-button type="primary" @click="changeAccount" :disabled="password===null || (password && !password.isValid) || submitting==true" style="width: 40%">确 定</el-button>
-      </span>
+            <password-input v-on:getPassword="getPassword"></password-input>
+            <el-button @click="dialogVisible = false" style="width: 40%">取 消</el-button>
+            <el-button type="primary" @click="changeAccount" :disabled="password===null || (password && !password.isValid) || submitting==true" style="width: 40%">确 定</el-button>
+          </span>
+        </el-dialog>
+        <el-dialog id='resetP' :visible="showResetPassword" width="100%" title="找回交易密码"  :show-close="true" v-on:close="showResetPassword=false">
+          <span slot="footer" class="dialog-footer">
+            <reset-password :resultClose="true" v-on:close="showResetPassword=false"></reset-password>
+          </span>
         </el-dialog>
       </div>
     </div>
@@ -64,36 +70,39 @@
 <script>
   import Bank from '@/views/user/bank'
   import PasswordInput from '@/components/user/passwordInput'
+  import ResetPassword from '@/views/user/resetPassword'
   import { operateAccount, getAsset } from '@/api/user'
   import { fMoney } from '@/utils/common.js'
+  import { mixin }from '@/utils/mixin'
+
   export default{
     data(){
       return {
-        type          : this.$route.params.type,
-        post          : {
+        type              : this.$route.params.type,
+        post              : {
           userID : window.localStorage.getItem('userID'),
           amount : null
         },
-        password      : null,
-        tag           : 0,
-        dialogVisible : false,
-        result        : { show : false, title : '', information : '' },
-        submitting    : false
+        password          : null,
+        tag               : 0,
+        dialogVisible     : false,
+        result            : { show : false, title : '', information : '' },
+        submitting        : false,
+        showResetPassword : false
       }
     },
     components : {
       Bank,
-      PasswordInput
+      PasswordInput,
+      ResetPassword
     },
+    mixins    : [mixin],
     computed   : {
       toCent(){
         return parseFloat(this.post.amount)*100
       },
       maxOut(){
         return (this.$store.state.asset.availableAsset/100).toFixed(2)
-      },
-      isBindCard(){
-        return this.$store.state.user && this.$store.state.user.userStatus.isBindCard
       },
       dialogTitle(){
         if (this.type=='in') return '确定要存入'

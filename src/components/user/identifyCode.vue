@@ -13,6 +13,7 @@
   </div>
 </template>
 <script>
+  import {VALIDATE} from '@/utils/config'
   import { getIdentifyCode } from '@/api/user'
   export default{
     name    : 'IdentifyCodeInput',
@@ -44,8 +45,7 @@
       },
       check(val){
         console.log('调用短信验证码检查方法')
-        let reg = /^\d{4}$/
-        if (!reg.test(val)) {
+        if (!VALIDATE.identifyCode.test(val)) {
           this.state = 'error'
           this.errorMsg = '请输入正确格式的验证码'
           this.setValid(false)

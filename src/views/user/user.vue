@@ -52,7 +52,7 @@
     </section>
     <section v-if="isRegister">
       <router-link :to="{name:'passwordSetting'}">
-        <mt-cell title="管理交易密码" is-link :label="isSetPassword?'已设置':'未设置'">
+        <mt-cell title="交易密码" is-link :label="isSetPassword?'已设置':'未设置'">
         </mt-cell>
       </router-link>
     </section>
@@ -68,7 +68,7 @@
 </template>
 <script>
   import instruction from '@/views/user/instruction'
-
+  import { mixin }from '@/utils/mixin'
   export default{
     name       : 'User',
     data(){
@@ -77,24 +77,8 @@
         showIncome      : false
       }
     },
+    mixins    : [mixin],
     components : { instruction },
-    computed   : {
-      isRegister(){
-        return this.$store.state.user && this.$store.state.user.userStatus.isRegisterCayx
-      },
-      isBindCard(){
-        return this.$store.state.user && this.$store.state.user.userStatus.isBindCard
-      },
-      isSetPassword(){
-        return this.$store.state.user && this.$store.state.user.userStatus.isSetPassword
-      },
-      bindCard(){
-        return this.$store.state.user && this.$store.state.user.userInfo && this.$store.state.user.userInfo.bindCard
-      },
-      asset(){
-        return this.$store.state.asset
-      }
-    },
     methods    : {
       getProductNameById(pid){
         return this.$store.state.products.find(p => {return p.pid==pid}).name
