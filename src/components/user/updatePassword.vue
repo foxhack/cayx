@@ -1,7 +1,7 @@
 <template>
-  <div id="update-password" v-if="isRegister && isSetPassword">
+  <div id="update-password">
     <section v-if="!showNew">
-      <div class="title">修改交易密码</div>
+      <div class="title">第一步：请输入原交易密码</div>
       <mt-field
           type="password"
           label="原交易密码"
@@ -12,11 +12,12 @@
       <div class="error">{{errorMsg}}&nbsp;</div>
       <input type="button" class="primary-btn" :disabled="state!=='success'" value="确定" @click="sendOldPassword">
     </section>
-    <new-password v-if="showNew" :setNew="true"></new-password>
+    <new-password v-if="showNew" title="第二步：请设置新交易密码" v-on:close="$emit('close')"></new-password>
   </div>
 </template>
 <script>
   import NewPassword from '@/components/user/newPassword'
+  import { mixin }from '@/utils/mixin'
   export default{
     name       : 'UpdatePassword',
     data(){
@@ -24,18 +25,12 @@
         oldPassword : '',
         state       : '',
         errorMsg    : '',
-        showNew     : false
+        showNew     : false,
+        active      : 1
       }
     },
-    components : { NewPassword },
-    computed   : {
-      isRegister(){
-        return this.$store.state.user && this.$store.state.user.userStatus.isRegisterCayx
-      },
-      isSetPassword(){
-        return this.$store.state.user && this.$store.state.user.userStatus.isSetPassword
-      }
-    },
+    components : { NewPassword},
+    mixins     : [mixin],
     methods    : {
       check(val){
         console.log('调用密码检查方法')
@@ -51,6 +46,7 @@
       sendOldPassword(){
         let _ = this
         _.showNew = true
+        _.active = 2
       }
     }
   }

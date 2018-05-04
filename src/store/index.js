@@ -46,6 +46,9 @@ export default new Vuex.Store({
     bindUserAccount(s){
       s.user.userStatus.isRegisterCayx = true
     },
+    setUserPassword(s){
+      s.user.userStatus.isSetPassword = true
+    },
     saveProductsRate(s, r){
       s.productsRate = r
     }

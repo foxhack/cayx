@@ -2,8 +2,8 @@
   <div id="telephone-input">
     <mt-cell v-if="editable === false" :title="title || '手机号'" @click.native="alert">{{value}}</mt-cell>
     <div v-else>
-      <mt-cell v-if="!displayInput" :title="title || '手机号'" :label="subtitle" is-link @click.native="showMod">{{value}}</mt-cell>
-      <mt-field v-if="displayInput"
+      <mt-cell v-if="!displayInput || reset" :title="title || '手机号'" :label="subtitle" is-link @click.native="showMod">{{value}}</mt-cell>
+      <mt-field v-if="displayInput && !reset"
                 type="number"
                 :label="title || '手机号'" :placeholder="placeholder || '请输入手机号'"
                 :state="state"
@@ -27,6 +27,7 @@
     },
     props   : [
       'editable',
+      'reset',
       'title',
       'subtitle',
       'placeholder',

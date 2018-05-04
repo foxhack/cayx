@@ -1,6 +1,6 @@
 <template>
   <div id="account-operate" style="min-height: calc(100vh - 2.8em)">
-    <div v-if="!result.show">
+    <div v-if="isBindCard">
       <template v-if="type=='in'">
         <section>
           <div class="title">支付方式</div>
@@ -11,7 +11,7 @@
           <div class="title">充值金额（元）</div>
           <mt-field placeholder="请输入充值金额" :disabled="!isBindCard" type="number" v-model="post.amount"><span v-if="isBindCard" @click="post.amount=50000">单笔最大充值</span></mt-field>
         </section>
-        <input type="button" class="primary-btn fix-bottom" @click="dialogVisible=true" :disabled="!post.amount" value="立即充值">
+        <input type="button" class="primary-btn fix-bottom" @click="showT=true" :disabled="!post.amount" value="立即充值">
       </template>
       <template v-if="type=='out'">
         <section>
@@ -24,7 +24,7 @@
           <mt-field v-if="maxOut>0" :placeholder="'本次最大提现金额'+maxOut+'元'" type="number" v-model="post.amount">
             <span @click="post.amount=maxOut">全部提现</span>
           </mt-field>
-          <input type="button" class="primary-btn fix-bottom" @click="dialogVisible=true" :disabled="!post.amount" value="确认提现">
+          <input type="button" class="primary-btn fix-bottom" @click="showT=true" :disabled="!post.amount" value="确认提现">
         </section>
         <section v-if="tag==1">
           <div style="margin-left:10px; height: 200px;">
@@ -36,41 +36,23 @@
           </div>
         </section>
       </template>
-      <div v-if="dialogVisible">
-        <el-dialog :visible="!showResetPassword" width="100%" title="请输入交易密码" center :show-close="false">
-            <div style="" @click="showResetPassword=true">忘记密码</div>
-          <div style="font-size: large;text-align:center; padding: 1em">{{dialogTitle}}</div>
-          <div style="font-size: xx-large;text-align:center">
-            {{this.toCent|money}}元
-          </div>
-          <span slot="footer" class="dialog-footer">
-            <password-input v-on:getPassword="getPassword"></password-input>
-            <el-button @click="dialogVisible = false" style="width: 40%">取 消</el-button>
-            <el-button type="primary" @click="changeAccount" :disabled="password===null || (password && !password.isValid) || submitting==true" style="width: 40%">确 定</el-button>
-          </span>
-        </el-dialog>
-        <el-dialog id='resetP' :visible="showResetPassword" width="100%" title="找回交易密码"  :show-close="true" v-on:close="showResetPassword=false">
-          <span slot="footer" class="dialog-footer">
-            <reset-password :resultClose="true" v-on:close="showResetPassword=false"></reset-password>
-          </span>
-        </el-dialog>
-      </div>
+      <transaction-input v-if=showT :tInfo="{title: dialogTitle,amount: post.amount, submitting : submitting}"
+                         v-on:transactionSubmit="changeAccount"
+                         v-on:close="showT=false">
+      </transaction-input>
     </div>
-    <div v-else class="result">
-      <div class="content">
-        <div class="title">{{result.title}}</div>
-        <div class="information">{{result.information}}</div>
+    <bank v-else></bank>
+    <result v-if="result.show" :result="result">
+      <div slot="footer">
+        <input type="button" class="primary-btn" value="确定" @click="$router.push({path:'/user'})">
       </div>
-      <router-link :to="{path:'/user'}">
-        <input type="button" class="primary-btn" value="确定">
-      </router-link>
-    </div>
+    </result>
   </div>
 </template>
 <script>
   import Bank from '@/views/user/bank'
-  import PasswordInput from '@/components/user/passwordInput'
-  import ResetPassword from '@/views/user/resetPassword'
+  import Result from '@/components/user/result'
+  import TransactionInput from '@/components/user/transactionInput'
   import { operateAccount, getAsset } from '@/api/user'
   import { fMoney } from '@/utils/common.js'
   import { mixin }from '@/utils/mixin'
@@ -78,54 +60,65 @@
   export default{
     data(){
       return {
-        type              : this.$route.params.type,
-        post              : {
+        type       : this.$route.params.type,
+        post       : {
           userID : window.localStorage.getItem('userID'),
           amount : null
         },
-        password          : null,
-        tag               : 0,
-        dialogVisible     : false,
-        result            : { show : false, title : '', information : '' },
-        submitting        : false,
-        showResetPassword : false
+        showT      : false,
+        submitting : false,
+        tag        : 0,
+        result          : {
+          show    : false,
+          title   : '',
+          content : '',
+          reason  : ''
+        }
       }
     },
     components : {
       Bank,
-      PasswordInput,
-      ResetPassword
+      TransactionInput,
+      Result
     },
-    mixins    : [mixin],
+    mixins     : [mixin],
     computed   : {
-      toCent(){
-        return parseFloat(this.post.amount)*100
-      },
       maxOut(){
         return (this.$store.state.asset.availableAsset/100).toFixed(2)
+      },
+      toCent(){
+        return parseFloat(this.post.amount)*100
       },
       dialogTitle(){
         if (this.type=='in') return '确定要存入'
         if (this.type=='out') return '确定要提现'
-      }
+      },
+      operateType(){
+        if (this.type=='in') return '充值'
+        if (this.type=='out') return '提现'      }
     },
     methods    : {
-      getPassword(password){
-        this.password = password
-      },
-      changeAccount(){
+      changeAccount(password){
         this.submitting = true
         let post = {
           userID   : this.post.userID,
           amount   : this.toCent,
-          tradePwd : this.password.password
+          tradePwd : password
         }
         console.log(post)
         let _ = this
-        this.$post(operateAccount(post, this.type), { showProgress : 'submit', callback : { success : successCallback, error : errorCallback, fail : failCallback, always : alwaysCallback } })
+        this.$post(operateAccount(post, this.type),
+          {
+            showProgress : '数据提交中，请勿重复提交...',
+            callback     : {
+              success : successCallback,
+              error   : errorCallback,
+              fail    : failCallback,
+              always  : alwaysCallback
+            }
+          })
         function successCallback(data, msg) {
-          _.result.title = '恭喜您，操作成功！'
-          _.result.information = msg
+          _.result = { show : true, title : _.operateType+'结果', content : '恭喜您'+_.operateType+'成功' }
           _.$post(getAsset({ userID : window.localStorage.getItem('userID') }), { callback : { success : successCallback } })
           function successCallback(data) {
             _.$store.commit('setAsset', data)
@@ -143,9 +136,9 @@
         }
 
         function alwaysCallback() {
-          _.dialogVisible = false
-          _.result.show = true
+          _.showT = false
           _.submitting = false
+          _.result.show = true
         }
       }
     }
@@ -168,6 +161,15 @@
     height 1.2em
     background-image url('../../assets/icon/card_selected.svg')
     background-size contain
+
+  .set-password
+    color error-color
+    text-align right
+    padding-right 10px
+    font-size 0.8em
+    line-height 3em
+    position absolute
+    right 10px
 
   .result
     text-align center

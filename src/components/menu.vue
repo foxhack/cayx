@@ -26,7 +26,7 @@
 <style lang="stylus" scoped>
   @import '../style/base.styl'
   #menu
-   height 3em
+   height menuHeight
 
   .main-menu
     @extend .flex-row
@@ -34,7 +34,7 @@
   .main-btn, .main-btn button
     border-radius 0px
     @extend .center
-    height 3em
+    height menuHeight
     width 100%
     bottom 0px
     border-left none

@@ -1,5 +1,8 @@
 let mixin = {
   computed : {
+    isRegisterCaej(){
+      return this.$store.state.user.userStatus.isRegisterCaej
+    },
     isRegister(){
       return this.$store.state.user.userStatus.isRegisterCayx
     },
@@ -20,6 +23,9 @@ let mixin = {
     },
     productList(){
       return this.$store.getters.productsWithRate
+    },
+    currentPath(){
+      return this.$route.path
     }
   }
 }

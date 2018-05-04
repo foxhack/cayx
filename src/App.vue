@@ -5,7 +5,6 @@
       <router-view key="comp"></router-view>
       <main-menu key="menu" v-if="!showBack"></main-menu>
     </transition-group>
-
   </div>
 </template>
 
@@ -23,11 +22,7 @@
     computed   : {
       title(){
         return this.$store.state.title
-      },
-//      showBack(){
-//        console.log(!(this.$route.path=='/product' || this.$route.path=='/product/' || this.$route.path=='/user' || this.$route.path=='/user/'))
-//        return !(this.$route.path=='/product' || this.$route.path=='/product/' || this.$route.path=='/user' || this.$route.path=='/user/')
-//      }
+      }
     },
     components : { 'main-menu' : Menu, NavigationBar },
     watch      : {
@@ -40,7 +35,6 @@
     },
     created(){
       console.log('组件APP')
-
       document.querySelector('#logo').style.display = 'none'
     }
   }
@@ -107,7 +101,7 @@
     @extend .hr-line
     border-color neutral-border-color2
 
-  #account-operate .el-dialog__body
+  #transaction-input .el-dialog__body, #transaction-password-setting .el-dialog__body
     padding 0 !important
 
   .el-loading-mask
@@ -119,7 +113,14 @@
   .el-message
     min-width: 100%
 
+  .el-notification.right
+    right 10px
+
+  .el-notification, .el-message-box
+    width 90%
+
   #app
     min-height 100vh
+    padding-bottom menuHeight
 
 </style>

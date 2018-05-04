@@ -7,7 +7,7 @@ import { post } from './utils/common'
 
 //import UI Components
 import { Cell, Field } from 'mint-ui'
-import { Dialog, Button, Message, Loading, Checkbox } from 'element-ui'
+import { Dialog, Button, Message, Checkbox } from 'element-ui'
 
 Vue.config.productionTip = false
 
@@ -19,7 +19,7 @@ Vue.component(Dialog.name, Dialog)
 Vue.component(Button.name, Button)
 Vue.component(Checkbox.name, Checkbox)
 Vue.prototype.$message = Message
-Vue.use(Loading.directive)
+//Vue.use(Loading.directive)
 Vue.prototype.$post = post
 new Vue({
   el         : '#app',

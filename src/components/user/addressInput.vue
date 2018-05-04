@@ -2,8 +2,8 @@
   <div id="address-input">
     <mt-cell v-if="editable === false" :title="title ||'联系地址'" @click.native="alert">{{value}}</mt-cell>
     <div v-else>
-      <mt-cell v-if="!displayInput" :title="title || '联系地址'" is-link @click.native="showMod">{{value}}</mt-cell>
-      <mt-field v-if="displayInput"
+      <mt-cell v-if="!displayInput || reset" :title="title || '联系地址'" is-link @click.native="showMod">{{value}}</mt-cell>
+      <mt-field v-if="displayInput && !reset"
                 :label="title || '联系地址'"
                 :placeholder="placeholder || '请输入联系地址'"
                 :state="state"
@@ -26,6 +26,7 @@
     },
     props   : [
       'editable',
+      'reset',
       'title',
       'placeholder',
       'inputname',

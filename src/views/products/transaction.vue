@@ -86,8 +86,8 @@
       },
       transactionName(){
         let pType = this.$store.getters.getProductById(this.$route.params.pid).type
-        if(pType==1) return this.$route.params.type==='in' ? '赎回' : '申购'
-        if(pType==2) return this.$route.params.type==='in' ? '退出' : '购买'
+        if(pType==1) return this.$route.params.type==='in' ? '申购' : '赎回'
+        if(pType==2) return this.$route.params.type==='in' ? '购买' : '退出'
 
       },
       asset(){

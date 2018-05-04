@@ -20,7 +20,7 @@
 <style lang="stylus" scoped>
   @import '../style/base.styl'
   #nav
-    height 2.8em
+    height navHeight
     position relative
 
   .wrapper
@@ -28,7 +28,7 @@
     background-color white
     z-index 2000
     position fixed
-    height 2.8em
+    height navHeight
     top 0
     left 0
     right 0

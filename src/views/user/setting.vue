@@ -4,18 +4,21 @@
     <section>
       <name-input
           :editable="!isBindCard"
+          :reset="reset.name"
           inputname="name"
           v-model="post.name"
           v-on:isValid="setValid">
       </name-input>
       <idno-input
           :editable="!isBindCard"
+          :reset="reset.cardNo"
           inputname="cardNo"
           v-model="post.cardNo"
           v-on:isValid="setValid">
       </idno-input>
       <telephone-input
           :editable="true"
+          :reset="reset.mobile"
           inputname="mobile"
           v-model="post.mobile"
           v-on:isValid="setValid">
@@ -31,19 +34,21 @@
       </identify-code>
       <email-input
           :editable="true"
+          :reset="reset.email"
           inputname="email"
           v-model="post.email"
           v-on:isValid="setValid">
       </email-input>
       <address-input
           :editable="true"
+          :reset="reset.address"
           inputname="address"
           v-model="post.address"
           v-on:isValid="setValid">
       </address-input>
     </section>
     <input type="button" class="primary-btn" value="提交修改" :disabled="forbidSubmit" @click="updateUser" style="margin-bottom: 10px">
-    <input type="button" class="primary-btn plain" :disabled="false" value="放弃修改" @click="abort">
+    <input type="button" class="primary-btn plain" :disabled="false" value="放弃修改/返回" @click="abort">
 
   </div>
 </template>
@@ -62,6 +67,13 @@
     name       : 'UserSetting',
     data(){
       return {
+        reset       : {
+          name    : false,
+          cardNo  : false,
+          mobile  : false,
+          email   : false,
+          address : false
+        },
         submitting  : false,
         allowSubmit : { init : true },
         post        : {
@@ -88,7 +100,7 @@
         this.$set(this.allowSubmit, isValid.key, isValid.isValid)
       },
       abort(){
-        this.$router.go(-1)
+        this.$router.push({ path : '/user' })
       },
       updateUser(){
         this.submitting = true
@@ -98,7 +110,7 @@
         }
         console.log(post)
         let _ = this
-        this.$post(updateUserInfo(post), { showProgress : 'submit', showSuccessMsg : true, callback : { success : successCallback, always : alwaysCallback } })
+        this.$post(updateUserInfo(post), { showProgress : '数据提交中，请稍候...', showSuccessMsg : true, callback : { success : successCallback, always : alwaysCallback } })
         function successCallback() {
           _.$post(getUserByUserID(window.localStorage.getItem('userID')), { callback : { success : successCallback } })
           function successCallback(data) {
@@ -110,7 +122,13 @@
         function alwaysCallback() {
           console.log('恢复提交按钮')
           _.submitting = false
+          for (let k in _.reset) {_.reset[k] = true}
         }
+      }
+    },
+    watch      : {
+      '$route'(){
+
       }
     },
     mounted(){

@@ -72,6 +72,15 @@ function getAsset(postData) {
   })
 }
 
+function setPassword(postData) {
+  return $.ajax({
+    type        : 'POST',
+    url         : backServerBaseUrl+'/finance/asset/pwdservice',
+    data        : JSON.stringify(postData),
+    contentType : 'application/json'
+  })
+}
+
 function operateAccount(postData, type) {
   let url
   if (type==='in') url = backServerBaseUrl+'/finance/capital/recharge'
@@ -93,5 +102,6 @@ export{
   updateUserInfo,
   openAccount,
   getAsset,
+  setPassword,
   operateAccount
 }

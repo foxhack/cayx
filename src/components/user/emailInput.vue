@@ -2,8 +2,8 @@
   <div id="email-input">
     <mt-cell v-if="editable === false" :title="title ||'email'" @click.native="alert">{{value}}</mt-cell>
     <div v-else>
-      <mt-cell v-if="!displayInput" :title="title || 'email'" is-link @click.native="showMod">{{value}}</mt-cell>
-      <mt-field v-if="displayInput"
+      <mt-cell v-if="!displayInput || reset" :title="title || 'email'" is-link @click.native="showMod">{{value}}</mt-cell>
+      <mt-field v-if="displayInput && !reset"
                 :label="title || 'email'"
                 :placeholder="placeholder || '请输入email'"
                 :state="state"
@@ -15,7 +15,7 @@
   </div>
 </template>
 <script>
-  import {VALIDATE} from '@/utils/config'
+  import { VALIDATE } from '@/utils/config'
   export default{
     name    : 'EmailInput',
     data(){
@@ -27,6 +27,7 @@
     },
     props   : [
       'editable',
+      'reset',
       'title',
       'placeholder',
       'inputname',
@@ -36,7 +37,7 @@
       showMod(){
         this.displayInput = true
         this.check(this.value)
-        this.$nextTick(()=>{
+        this.$nextTick(() => {
           document.querySelector('#email-input input').focus()
         })
       },
@@ -56,7 +57,7 @@
         this.$message('您已绑卡，不能修改此信息。');
       },
       setValid(isValid){
-        this.$emit('isValid',{'key':this.inputname, 'isValid':isValid})
+        this.$emit('isValid', { 'key' : this.inputname, 'isValid' : isValid })
       }
     }
   }

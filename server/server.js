@@ -117,6 +117,15 @@ app.post('/finance/asset/assetquery', function(req, res) {
 })
 
 
+app.post('/finance/asset/pwdservice', function(req, res) {
+  console.log('收到请求pwdservice')
+  mock.user.userStatus.isSetPassword=true
+  setTimeout(()=>{
+    res.json({ code : 0, msg : '密码设置成功'})
+  },1000)
+})
+
+
 app.post('/finance/capital/recharge', function(req, res) {
   console.log('收到请求recharge')
   let amount=req.body.amount

@@ -5,20 +5,23 @@
       <mt-cell :title="bindCard.bankName" :label="'尾号'+bindCard.bankCardNo" class="bank selected"></mt-cell>
     </section>
     <section v-else>
-      <router-link class='add-bank' :to="{ name: 'newbank'}">添加新卡</router-link>
+      <div class='add-bank' v-show="!showNewBank" @click="showNewBank=true">添加新卡</div>
+      <new-bank v-if="showNewBank"></new-bank>
     </section>
   </div>
 </template>
 <script>
+  import NewBank from '@/views/user/newbank'
   import { mixin }from '@/utils/mixin'
 
   export default{
     data(){
       return {
-        password : null
+        showNewBank : false
       }
     },
-    mixins    : [mixin],
+    mixins     : [mixin],
+    components : { NewBank },
     method     : {
       setValid(isValid){
         this.$set(this.allowSubmit, isValid.key, isValid.isValid)

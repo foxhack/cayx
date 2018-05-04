@@ -1,32 +1,34 @@
 <template>
-  <div id="set-password">
-    <section v-if="!isRegister">
-      <register></register>
-    </section>
-    <new-password></new-password>
-    <update-password></update-password>
-    <router-link :to="{name:'resetPassword'}">
-      <mt-cell v-if="isRegister && isSetPassword" title="找回密码" is-link></mt-cell>
-    </router-link>
+  <div id="set-password" v-if="isRegister">
+    <new-password v-show="isRegister && !isSetPassword"></new-password>
+    <template v-if="isRegister && isSetPassword">
+      <section>
+        <mt-cell v-show="view==''" title="修改密码" is-link @click.native="view='update'"></mt-cell>
+        <update-password v-if="view=='update'" v-on:close="view=''"></update-password>
+      </section>
+      <section>
+        <mt-cell title="找回密码" v-show="view==''" is-link @click.native="view='reset'"></mt-cell>
+        <reset-password v-if="view=='reset'" v-on:close="view=''"></reset-password>
+      </section>
+    </template>
   </div>
 </template>
 
 <script>
-  import Register from '@/components/user/register'
   import NewPassword from '@/components/user/newPassword'
   import UpdatePassword from '@/components/user/updatePassword'
+  import ResetPassword from '@/components/user/resetPassword'
+  import { mixin }from '@/utils/mixin'
+
   export default{
     name       : 'PasswordSetting',
-    components : { Register, NewPassword, UpdatePassword },
-    computed   : {
-      isRegister(){
-        return this.$store.state.user && this.$store.state.user.userStatus.isRegisterCayx
-      },
-      isSetPassword(){
-        return this.$store.state.user && this.$store.state.user.userStatus.isSetPassword
+    data(){
+      return {
+        view : ''
       }
-    }
+    },
+    components : { NewPassword, UpdatePassword, ResetPassword },
+    mixins     : [mixin]
   }
 </script>
-
 

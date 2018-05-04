@@ -1,5 +1,5 @@
 <template>
-  <div id="user-home" v-if="asset">
+  <div id="user-home">
     <section class="account-wrapper">
       <div>资产总额(元)</div>
       <div>{{asset.totalAsset|money}}</div>
@@ -51,7 +51,7 @@
       </router-link>
     </section>
     <section v-if="isRegister">
-      <router-link :to="{name:'passwordSetting'}">
+      <router-link :to="{name:'passwordSetting',params:{type:1}}">
         <mt-cell title="交易密码" is-link :label="isSetPassword?'已设置':'未设置'">
         </mt-cell>
       </router-link>
@@ -64,7 +64,6 @@
       </instruction>
     </section>
   </div>
-  <div v-else v-loading.body="true" element-loading-text="加载中"></div>
 </template>
 <script>
   import instruction from '@/views/user/instruction'
@@ -91,9 +90,6 @@
 </script>
 <style lang="stylus" scoped>
   @import "../../style/base.styl"
-  #user-home
-    min-height calc(100vh - 2.8em)
-
   .account-wrapper
     padding 2em 0
     background-color secondary-text-color

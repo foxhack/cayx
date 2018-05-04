@@ -1,5 +1,5 @@
 <template>
-  <div class="product-detail-wrapper" v-if="product">
+  <div class="product-detail-wrapper">
     <div class="miss">图表</div>
     <div>{{product.rate.rates7Day}}{{product.rate.incomePerUnit}}</div>
     <div class="miss">产品介绍</div>
@@ -14,10 +14,8 @@
       </router-link>
     </div>
   </div>
-  <div v-else v-loading.body="true" element-loading-text="加载中"></div>
 </template>
 <script>
-  import { getProductsRate } from '@/api/product'
   import { mixin }from '@/utils/mixin'
   export default {
     name     : 'ProductDetail',
@@ -34,9 +32,6 @@
 </script>
 <style lang="stylus" scoped>
   @import "../../style/base"
-  .product-detail-wrapper
-    min-height calc(100vh - 2.8em)
-    padding-bottom 2em
 
   .footer-wrapper
     @extend .fix-bottom

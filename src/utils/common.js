@@ -1,5 +1,5 @@
 import { authorDomain, wxAppId } from '@/api/config'
-import { Message } from 'element-ui'
+import { Message, Notification } from 'element-ui'
 import { Indicator } from 'mint-ui'
 import { CODE } from '@/utils/config'
 
@@ -61,7 +61,7 @@ export function post(promise, options) {
   if (options.showProgress) {
     console.log('打开loading窗口')
     setTimeout(() => {
-      Indicator.open(options.showProgress || '数据提交中,请勿重复提交......')
+      Indicator.open(options.showProgress || '请稍候......')
     }, 0)
   }
 
@@ -73,23 +73,23 @@ export function post(promise, options) {
     .done(result => {
       if (result.code==getCodeByType('success')) {
         if (options.showSuccessMsg) {
-          Message({
+          Notification({
             showClose : true,
             message   : result.msg,
-            type      : 'success'
+            type      : 'success',
           })
         }
         if (options.callback && typeof options.callback.success==='function') options.callback.success(result.data, result.msg)
       } else {
         if (options.showErrorMsg) {
-          Message({
+          Notification({
             showClose : true,
             message   : result.msg,
             duration  : 0,
             type      : 'error'
           })
         }
-        if (options.callback && typeof options.callback.error==='function') options.callback.error(result.data, result.msg)
+        if (options.callback && typeof options.callback.error==='function') options.callback.error({ err : { code : result.code, msg : result.msg } }, result.data)
       }
     })
     .fail(error => {
@@ -114,7 +114,7 @@ export function post(promise, options) {
 }
 
 export function initAppData(promises, callbacks, next) {
-    Indicator.open('数据获取中，请稍候......')
+  Indicator.open('数据获取中，请稍候......')
   Promise.all(promises)
          .then(result => {
            result.forEach((r, k) => {
@@ -130,6 +130,15 @@ export function initAppData(promises, callbacks, next) {
              }
            })
            if (result.every(r => {return r.code==getCodeByType('success') })) next()
+         })
+         .catch((error) => {
+           Message({
+             showClose : true,
+             message   : '服务器好像没有反应哦',
+             duration  : 0,
+             type      : 'error'
+           })
+           console.error(error)
          })
          .finally(() => {
            Indicator.close()

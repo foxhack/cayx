@@ -1,6 +1,6 @@
 <template>
-  <section v-if="(isRegister && !isSetPassword) || setNew">
-    <div class="title">设置交易密码</div>
+  <section>
+    <div class="title">{{title || '设置交易密码'}}</div>
     <mt-field
         type="password"
         label="交易密码"
@@ -17,42 +17,40 @@
         v-model="repeat" @input.native="check2($event.target.value)">
     </mt-field>
     <div class="error">{{errorMsg}}&nbsp;</div>
-    <input type="button" class="primary-btn" @click="setPassword"  :disabled="state!=='success'" value="确定设置">
-    <el-dialog :visible=resultDialog.show :title="resultDialog.title" center :show-close="false" class="dialog-wrapper">
-      <div>{{resultDialog.msg}}</div>
-      <span slot="footer" class="dialog-footer">
-        <el-button v-if="resultClose" type="primary" @click.natvie="$emit('close')">关闭</el-button>
-        <router-link v-else :to="{name:'user'}"><el-button type="primary">返回用户中心</el-button></router-link>
-      </span>
-    </el-dialog>
+    <input type="button" class="primary-btn" @click="setPassword" :disabled="state!=='success'" value="确定设置">
+    <result v-if="result.show" :result="result">
+      <div slot="footer">
+        <input type="button" class="primary-btn" value="确定" @click="confirm">
+      </div>
+    </result>
   </section>
 </template>
 <script>
-
+  import { mixin }from '@/utils/mixin'
+  import Result from '@/components/user/result'
+  import { setPassword } from '@/api/user'
   export default{
-    name     : 'NewPassword',
+    name       : 'NewPassword',
     data(){
       return {
-        password     : '',
-        repeat       : '',
-        state1       : '',
-        state2       : '',
-        errorMsg     : '',
-        resultDialog : {
-          show  : false,
-          title : '',
-          msg   : ''
-        }
+        password : '',
+        repeat   : '',
+        state1   : '',
+        state2   : '',
+        errorMsg : '',
+        result   : {
+          show    : false,
+          title   : '',
+          content : '',
+          reason  : ''
+        },
+        next     : null
       }
     },
-    props    : ['resultClose','setNew'],
-    computed : {
-      isRegister(){
-        return this.$store.state.user && this.$store.state.user.userStatus.isRegisterCayx
-      },
-      isSetPassword(){
-        return this.$store.state.user && this.$store.state.user.userStatus.isSetPassword
-      },
+    components : { Result },
+    props      : ['title'],
+    mixins     : [mixin],
+    computed   : {
       state(){
         if (this.state1=='success' && this.state2=='success') {
           return 'success'
@@ -62,7 +60,7 @@
         }
       }
     },
-    methods  : {
+    methods    : {
       check1(val){
         this.password = val
         console.log('调用密码1检查方法')
@@ -93,14 +91,39 @@
         }
       },
       setPassword(){
+        let post = { userID : window.localStorage.getItem('userID'), tradepwd : this.password }
+        this.$post(setPassword(post),
+          {
+            showProgress   : '请稍候...',
+            callback       : { success : successCallback }
+          })
         let _ = this
-        _.resultDialog = {
-          show  : true,
-          title : '设置结果',
-          msg   : '密码设置成功！'
 
-        }
+        function successCallback() {
+            _.result = {
+              show    : true,
+              title   : '设置结果',
+              content : '密码设置成功！'
+            }
+          }
+      },
+      confirm(){
+        if(!this.$store.state.user.userStatus.isSetPassword) this.$store.commit('setUserPassword')
+        this.$emit('close')
+//        this.$router.push({path:'/user'})
       }
+//      goNext(){
+//        this.$store.state.user.userStatus.isSetPassword = true
+//        if (this.currentPath=='/user/passwordsetting') {
+//          //通过个人中心设置的,即通过组件引入的
+//          console.log('trigger close event')
+//          this.$emit('close')
+//          this.result.show = false
+//        } else {
+//          //通过路由引入的
+//          this.result.show = false
+//        }
+//      }
     }
   }
 </script>

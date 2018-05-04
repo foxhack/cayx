@@ -1,10 +1,9 @@
 <template>
   <div class="product-list-wrapper">
-    <div v-if="productList">
+    <div>
       <product-item v-for="productItem in productList" :key="productItem.pid" :productItem="productItem"></product-item>
       <p class="more">更多产品&nbsp;&nbsp;敬请期待</p>
     </div>
-    <div v-else v-loading.body="true" element-loading-text="加载中"></div>
   </div>
 </template>
 <script>
@@ -24,7 +23,6 @@
 <style lang="stylus">
   @import "../../style/base"
   .product-list-wrapper
-    height calc(100vh - 2.8em)
     overflow-y auto
     padding 0.2rem
     background #af2d2d

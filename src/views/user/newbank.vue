@@ -60,20 +60,18 @@
       <input type="button" class="primary-btn fix-bottom" @click="submitBankInfo" :disabled="forbidSubmit" value="提交">
     </section>
     <section v-show="currentProgress==3">
-      <new-password></new-password>
-      <input type="button" class="primary-btn fix-bottom" @click="upload" value="完成">
-      <div class="title">请上传身份证</div>
+      <input type="button" class="primary-btn fix-bottom" @click="complete" value="完成">
+      <div class="title">请上传身份证(可选)</div>
       <mt-cell title="持卡人姓名">{{post.name}}</mt-cell>
       <mt-cell title="持卡人身份证号">{{post.cardNo}}</mt-cell>
       <div class="upload">正面</div>
       <div class="upload">背面</div>
     </section>
-    <el-dialog :visible=successDialog.showSuccess :title="successDialog.successTitle" center :show-close="false" class="dialog-wrapper">
-      <div>{{successDialog.successDescription}}</div>
-      <span slot="footer" class="dialog-footer">
-        <router-link :to="{path:successDialog.nextPath}"><el-button type="primary">{{successDialog.nextName}}</el-button></router-link>
-      </span>
-    </el-dialog>
+    <result v-if="result.show" :result="result">
+      <div slot="footer">
+        <input type="button" class="primary-btn" value="确定" @click="goNext">
+      </div>
+    </result>
   </div>
 </template>
 <script>
@@ -85,29 +83,31 @@
   import IdnoInput from '@/components/user/idnoInput'
   import TelephoneInput from '@/components/user/telephoneInput'
   import IdentifyCode from '@/components/user/identifyCode'
-  import NewPassword from '@/components/user/newPassword'
+  import Result from '@/components/user/result'
   import { mixin }from '@/utils/mixin'
 
   export default{
     data(){
       return {
-        submitting    : false,
-        successDialog : {
+        fromPath        : null,
+        submitAccountInfo:false,
+        submitting      : false,
+        successDialog   : {
           showSuccess        : false,
           successTitle       : '开户成功',
           successDescription : '恭喜您已成功开户!',
           nextPath           : '',
           nextName           : ''
         },
-        allowSubmit   : { init : true },
-        progress      : [
+        allowSubmit     : { init : true },
+        progress        : [
           { step : 1, title : '注册长安严选' },
           { step : 2, title : '填写卡信息' },
-          { step : 3, title : '设置交易密码' }
+          { step : 3, title : '上传身份证' }
         ],
-        bankList      : BANKS,
-        showBankList  : true,
-        post          : {
+        bankList        : BANKS,
+        showBankList    : true,
+        post            : {
           bankSelectedName : null,
           bankCode         : null,
           name             : null,
@@ -116,7 +116,12 @@
           bankSavedmobile  : null,
           identifyCode     : null,
         },
-        count         : 0,
+        result          : {
+          show    : false,
+          title   : '',
+          content : '',
+          reason  : ''
+        }
       }
     },
     components : {
@@ -126,16 +131,16 @@
       IdnoInput,
       TelephoneInput,
       IdentifyCode,
-      NewPassword
+      Result
     },
     mixins     : [mixin],
     computed   : {
       currentProgress(){
-        if (!this.$store.state.user || this.$store.state.user && !this.$store.state.user.userStatus.isRegisterCayx) {
+        if (!this.isRegister) {
           return 1
         }
         else {
-          if (this.$store.state.user && !this.$store.state.user.userStatus.isBindCard) {
+          if (!this.submitAccountInfo) {
             return 2
           }
           else {
@@ -175,27 +180,37 @@
         }
         console.log(post)
         let _ = this
-        this.$post(openAccount(post), { showProgress : 'submit', showSuccessMsg : true, callback : { success : successCallback, always : alwaysCallback } })
-        function successCallback(data) {
-          _.$post(getUserByUserID(window.localStorage.getItem('userID')), { callback : { success : successCallback } })
-          function successCallback(data) {
-            _.$store.commit('setUser', data)
-          }
+        this.$post(openAccount(post), { showProgress : '数据提交中，请勿重复提交...', showSuccessMsg : true, callback : { success : successCallback, always : alwaysCallback } })
+        function successCallback() {
+          _.submitAccountInfo=true
         }
 
         function alwaysCallback() {
-          console.log('恢复注册按钮')
           _.submitting = false
         }
       },
       upload(){
-        this.successDialog.showSuccess = true
-        this.successDialog.nextPath = this.$store.state.toPath
-        this.successDialog.nextName = '继续操作'
+      },
+      complete(){
+        this.result = { show : true, title : '开户结果', content : '恭喜您，开户成功' }
+      },
+      goNext(){
+        let _=this
+        this.$post(getUserByUserID(window.localStorage.getItem('userID')), {showProgress:'请稍候...', callback : { success : successCallback } })
+        function successCallback(data) {
+          _.$store.commit('setUser', data)
+        }
       }
     },
     created(){
       this.initData(this.userInfo)
+    },
+    beforeRouteEnter (to, from, next) {
+      //目前为提供组件输出的形式，只有做为路由的形式存在，所以这段代码一定会执行
+      console.log('newbank组件来自'+from.fullPath)
+      next(vm => {
+        vm.fromPath = from.fullPath
+      })
     }
   }
 </script>

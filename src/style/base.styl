@@ -57,6 +57,9 @@ first-level = opacity 1
 second-level = opacity 0.75
 third-level = opacity 0.5
 
+menuHeight = 3em
+navHeight = 2.8em
+
 input
   appearance none
   border-radius 0
@@ -92,6 +95,7 @@ input[type="button"]:disabled
 .slide-right-enter-to
   transition transform 0.3s
   transform translateX(0)
+
 .flex
   display flex
 
@@ -121,8 +125,8 @@ input[type="button"]:disabled
 
 @media (-webkit-min-device-pixel-ratio: 2)
   .hr-line
-      transform-origin 0 0
-      transform scaleY(0.5)
+    transform-origin 0 0
+    transform scaleY(0.5)
 
 section:not(:last-child)
   margin-bottom 1em

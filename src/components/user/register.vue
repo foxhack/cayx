@@ -1,6 +1,6 @@
 <template>
   <div id="register" style="min-height:100vh">
-    <bind-account v-on:bindSuccess="showSuccessDialog"></bind-account>
+    <bind-account v-if="isRegisterCaej && !isRegister" v-on:bindSuccess="bindSuccess"></bind-account>
     <section v-if="!isRegister">
       <div class="title">注册长安严选</div>
       <telephone-input
@@ -24,24 +24,25 @@
       </instruction>
       <input type="button" class="primary-btn" :disabled="forbidSubmit" value="注册" @click="register">
     </section>
-    <el-dialog :visible=successDialog.showSuccess :title="successDialog.successTitle" center :show-close="false" class="dialog-wrapper">
-      <div>{{successDialog.successDescription}}</div>
-      <span slot="footer" class="dialog-footer">
-        <router-link :to="{path:'/product'}"><el-button type="primary">去逛商品</el-button></router-link>
-        <router-link :to="{path:'/user/setting'}"><el-button type="primary">完善信息</el-button></router-link>
-      </span>
-    </el-dialog>
+    <result v-if="result.show" :result="result">
+      <div slot="footer">
+        <router-link :to="{path:'/product'}"><input type="button" class="primary-btn" value="去逛商品"></router-link>
+        <input type="button" class="primary-btn plain" @click="$router.replace({path:'/user/setting'})" value="去完善信息">
+      </div>
+    </result>
   </div>
 </template>
 <script>
-  import { bindUserAccount, register, getUserByUserID } from '@/api/user'
+  import { register, getUserByUserID } from '@/api/user'
   import BindAccount from '@/components/user/bindAccount'
   import TelephoneInput from '@/components/user/telephoneInput'
   import IdentifyCode from '@/components/user/identifyCode'
   import Instruction from '@/views/user/instruction'
+  import Result from '@/components/user/result'
+  import { mixin }from '@/utils/mixin'
 
   export default{
-    components : { BindAccount, TelephoneInput, IdentifyCode, Instruction },
+    components : { BindAccount, TelephoneInput, IdentifyCode, Instruction, Result },
     name       : 'Register',
     data(){
       return {
@@ -54,23 +55,16 @@
           identifyCode : null
         },
         agree           : false,
-        successDialog   : {
-          showSuccess        : false,
-          successTitle       : '',
-          successDescription : '',
+        result          : {
+          show    : false,
+          title   : '',
+          content : '',
+          reason  : ''
         }
       }
     },
+    mixins     : [mixin],
     computed   : {
-      currentPath(){
-        return this.$route.path
-      },
-      isRegister(){
-        return this.$store.state.user && this.$store.state.user.userStatus.isRegisterCayx
-      },
-      showBind(){
-        return this.$store.state.user && this.$store.state.user.userStatus.isRegisterCaej && !this.$store.state.user.userStatus.isRegisterCayx
-      },
       forbidSubmit(){
         console.log('重新计算是否要禁用提交按钮')
         if (this.submitting) return true
@@ -80,12 +74,11 @@
       }
     },
     methods    : {
+      bindSuccess(result){
+        this.result = result
+      },
       setValid(isValid){
         this.$set(this.allowSubmit, isValid.key, isValid.isValid)
-      },
-      showSuccessDialog(options){
-        console.log('调用弹出窗口方法')
-        this.successDialog = options
       },
       register(){
         this.submitting = true
@@ -95,17 +88,17 @@
         }
         console.log(post)
         let _ = this
-        this.$post(register(post), { showProgress : 'submit', callback : { success : successCallback, always : alwaysCallback } })
+        this.$post(register(post), {
+          showProgress   : '数据提交中，请勿重复提交...',
+          showSuccessMsg : _.currentPath!=='/user/register',//作为组件使用的
+          callback       : { success : successCallback, always : alwaysCallback }
+        })
         function successCallback() {
           _.$post(getUserByUserID(post.userID), { callback : { success : successCallback } })
           function successCallback(data) {
             if (_.currentPath=='/user/register') {
-              _.showSuccessDialog({
-                showSuccess        : true,
-                successTitle       : '注册成功',
-                successDescription : '恭喜您，注册成功'
-              })
-            }
+              _.result = { show : true, title : '注册结果', content : '恭喜您，注册成功' }
+            }//作为路由使用的
             _.$store.commit('setUser', data)
           }
         }
@@ -117,7 +110,13 @@
       }
     },
     created(){
-      console.log('组件register')
+      console.log('组件register::::'+this.currentPath)
+      if(this.isRegister) this.result = { show : true, title : '注册结果', content : '恭喜您，注册成功' }
+
+    },
+    beforeRouteEnter (to, from, next) {
+      console.log('register component from:'+from.fullPath)
+      next()
     }
   }
 </script>

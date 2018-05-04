@@ -1,10 +1,11 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import store from '../store'
+import App from '@/App'
 import Author from '@/views/user/author'
 import Register from '@/components/user/register'
 import PasswordSetting from '@/views/user/passwordSetting'
-import ResetPassword from '@/views/user/resetPassword'
+//import ResetPassword from '@/views/user/resetPassword'
 import Product from '@/views/products/list'
 import ProductDetail from '@/views/products/detail'
 import Transaction from '@/views/products/transaction'
@@ -25,6 +26,15 @@ Vue.use(Router)
 const router = new Router({
   mode   : 'history',
   routes : [
+    {
+      path      : '/',
+      name      : '',
+      component : Product,
+      //alias     : '/product',
+      meta      : {
+        title : ''
+      }
+    },
     {
       path      : '/author',
       name      : 'author',
@@ -48,18 +58,16 @@ const router = new Router({
       meta      : {
         title : '产品中心'
       }
-    }
-    ,
+    },
     {
       path      : '/user',
       name      : 'user',
       component : User,
       meta      : {
         title    : '用户中心',
-        initData : 'asset'
+        savePath : true
       }
-    }
-    ,
+    },
     {
       path      : '/product/:pid',
       name      : 'productDetail',
@@ -75,19 +83,19 @@ const router = new Router({
       component : Transaction,
       meta      : {
         title    : '产品交易',
-        initData : 'asset'
+        savePath : true
       }
     },
-    {
-      path      : '/product/transaction-result/:pid/:type/:tid/:amount',
-      name      : 'transaction-result',
-      component : TransactionResult,
-      props     : true,
-      meta      : {
-        title    : '交易结果',
-        initData : 'asset'
-      }
-    },
+    //{
+    //  path      : '/product/transaction-result/:pid/:type/:tid/:amount',
+    //  name      : 'transaction-result',
+    //  component : TransactionResult,
+    //  props     : true,
+    //  meta      : {
+    //    title    : '交易结果',
+    //    initData : 'asset'
+    //  }
+    //},
     {
       path      : '/user/setting',
       name      : 'userSetting',
@@ -102,32 +110,17 @@ const router = new Router({
       component : Bank,
       props     : true,
       meta      : {
-        title : '银行卡'
+        title    : '银行卡',
       }
     },
     {
       path      : '/user/passwordsetting',
       name      : 'passwordSetting',
       component : PasswordSetting,
+      props     : true,
       meta      : {
-        title : '交易密码管理'
-      }
-    },
-    {
-      path      : '/user/resetpassword',
-      name      : 'resetPassword',
-      component : ResetPassword,
-      meta      : {
-        title : '找回交易密码'
-      }
-    },
-    {
-      path      : '/user/newbank',
-      name      : 'newbank',
-      component : NewBank,
-      meta      : {
-        title : '新银行卡'
-        //mustFrom : '/user/bank'
+        title : '交易密码管理',
+        savePath : true
       }
     },
     {
@@ -136,8 +129,7 @@ const router = new Router({
       component : Account,
       meta      : {
         title    : '账户操作',
-        initData : 'asset'
-        //mustFrom : '/user'
+        savePath : true
       }
     },
     {
@@ -145,8 +137,7 @@ const router = new Router({
       name      : 'transaction-record',
       component : TransactionRecord,
       meta      : {
-        title    : '交易记录',
-        initData : 'asset'
+        title : '交易记录'
       }
     }
     ,
@@ -167,9 +158,13 @@ router.beforeEach((to, from, next) => {
     store.commit('saveToTitle', to.meta.title)
   }
 
-  if (to.meta.mustFrom && from!==to.meta.mustFrom) {
-    next(to.meta.mustFrom)
-  }
+  //if (to.meta.mustFrom && from!==to.meta.mustFrom) {
+  //  next(to.meta.mustFrom)
+  //}
+
+  //if (to.meta.savePath) {
+  //  store.commit('saveToPath', to.fullPath)
+  //}
 
   let userID = window.localStorage.getItem('userID')
   if (userID || to.path=='/author') {
@@ -180,9 +175,9 @@ router.beforeEach((to, from, next) => {
     next('/author')
   }
 
-  if (to.path=='/user/newbank') {
-    store.commit('saveToPath', from.fullPath)
-  }
+  //if (to.path=='/user/newbank') {
+  //  store.commit('saveToPath', from.fullPath)
+  //}
 
   let promises = []
   let callbacks = []
