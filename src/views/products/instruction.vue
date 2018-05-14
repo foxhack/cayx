@@ -2,8 +2,8 @@
   <transition name="slide">
   <div id="instruction-wrapper">
     <div class="top">
-      <div class="go-back" @click="close">
-        <返回
+      <div class="go-back arrow-left" @click="close">
+        &nbsp;&nbsp;返回
       </div>
       <div class="">{{title}}</div>
     </div>

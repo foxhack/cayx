@@ -1,38 +1,78 @@
 <template>
-  <div>
-    <section v-if="showTransaction==2">
-      <div class="title">活期资产交易记录</div>
-      <mt-cell v-for="n in 10" :title="'2018-1-'+n" :key="n" :label="randomInOut[n-1]">{{randomAmount[n-1] | money}}</mt-cell>
-    </section>
-    <section v-if="showTransaction==3">
-      <div class="title">定期资产交易记录</div>
-      <mt-cell v-for="n in 10" :title="'2018-1-'+n" :key="n" :label="randomInOut[n-1]">{{randomAmount[n-1] | money}}</mt-cell>
-    </section>
+  <div class="page-with-top">
+    <mt-loadmore :top-method="loadTop"
+                 @top-status-change="handleTopChange"
+                 ref="loadmore">
+      <div slot="top" class="mint-loadmore-top">
+        <span v-show="topStatus !== 'loading'" :class="{ 'rotate': topStatus === 'drop' }">↓</span>
+        <span v-show="topStatus === 'loading'">
+          <mt-spinner type="fading-circle" color="#F45500"></mt-spinner>
+        </span>
+      </div>
+      <div v-infinite-scroll="generateMock"
+           infinite-scroll-disabled="loadMore"
+           infinite-scroll-distance="10">
+        <mt-cell v-for="r,index in random"
+                 :title="r.date"
+                 :key="index" :label="r.type">
+          {{r.amount|money}}|{{index}}
+        </mt-cell>
+        <mt-spinner type="fading-circle" color="#F45500" v-show="loadMore"></mt-spinner>
+      </div>
+    </mt-loadmore>
   </div>
 </template>
 <script>
+  import { Spinner, Loadmore } from 'mint-ui';
   export default{
     data(){
-      return{
-        showTransaction: this.$route.params.type,
-        randomInOut:[],
-        randomAmount: []
+      return {
+        loadMore     : false,
+        topStatus    : '',
+        pid          : this.$route.params.pid,
+        random       : []
       }
     },
-    computed:{
+    components : {
+      'mt-spinner'  : Spinner,
+      'mt-loadmore' : Loadmore
     },
-    methods:{
-      generateMock(){
-        let randomInOut=[], randomAmount=[]
-        for(let n=0; n<10; n++){
-          randomInOut.push(Math.random(0,1)>0.5?'买入':'卖出')
-          randomAmount.push(Math.random(0,1)*10000)
+    methods    : {
+      loadTop(){
+        let random = []
+        for (let n = 0; n < 3; n++) {
+          random.push({
+            date   : '2018-2-'+(n+1),
+            type   : (Math.random(0, 1) > 0.5 ? '买入' : '卖出'),
+            amount : (Math.random(0, 1)*10000)
+          })
         }
-        this.randomInOut=randomInOut
-        this.randomAmount=randomAmount
+        setTimeout(() => {
+          this.random = random.concat(this.random)
+          this.$refs.loadmore.onTopLoaded()
+        }, 2500)
+      },
+      handleTopChange(status) {
+        this.topStatus = status;
+        console.log(status)
+      },
+      generateMock(){
+        this.loadMore=true
+        let random = []
+        for (let n = 0; n < 20; n++) {
+          random.push({
+            date   : '2018-1-'+(n+1),
+            type   : (Math.random(0, 1) > 0.5 ? '买入' : '卖出'),
+            amount : (Math.random(0, 1)*10000)
+          })
+        }
+        setTimeout(() => {
+          this.random = this.random.concat(random)
+          this.loadMore=false
+        }, 2500)
       }
     },
-    watch   : {
+    watch      : {
       '$route' : 'generateMock'
     },
     created(){
@@ -42,6 +82,6 @@
 
 </script>
 <style lang="stylus" scoped>
-  @import '../../style/base.styl'
-
+  span.rotate
+    transform rotate(180deg)
 </style>

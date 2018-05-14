@@ -1,7 +1,7 @@
 <template>
   <div id="reset-password">
     <section v-if="!showNew">
-      <div class="title">第一步：请输入注册时的手机号</div>
+        <div class="cell">第一步：请输入注册时的手机号</div>
       <telephone-input
           :editable="false"
           inputname="mobile"
@@ -24,7 +24,6 @@
   import TelephoneInput from '@/components/user/telephoneInput'
   import IdentifyCode from '@/components/user/identifyCode'
   import NewPassword from '@/components/user/newPassword'
-  import { mixin }from '@/utils/mixin'
 
   export default{
     name       : 'ResetPassword',
@@ -39,7 +38,6 @@
       }
     },
     components : { TelephoneInput, IdentifyCode, NewPassword },
-    mixins     : [mixin],
     computed   : {
       forbidSubmit(){
         console.log('触发计算属性')

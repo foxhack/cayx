@@ -1,10 +1,10 @@
 <template>
-  <div id="register" style="min-height:100vh">
+  <div id="register" class="page-with-top">
     <bind-account v-if="isRegisterCaej && !isRegister" v-on:bindSuccess="bindSuccess"></bind-account>
     <section v-if="!isRegister">
-      <div class="title">注册长安严选</div>
       <telephone-input
           :editable="true"
+          :displayInput="true"
           inputname="mobile"
           v-model="post.mobile"
           v-on:isValid="setValid">
@@ -33,13 +33,12 @@
   </div>
 </template>
 <script>
-  import { register, getUserByUserID } from '@/api/user'
+  import { api } from '@/api/api'
   import BindAccount from '@/components/user/bindAccount'
   import TelephoneInput from '@/components/user/telephoneInput'
   import IdentifyCode from '@/components/user/identifyCode'
   import Instruction from '@/views/user/instruction'
   import Result from '@/components/user/result'
-  import { mixin }from '@/utils/mixin'
 
   export default{
     components : { BindAccount, TelephoneInput, IdentifyCode, Instruction, Result },
@@ -63,7 +62,6 @@
         }
       }
     },
-    mixins     : [mixin],
     computed   : {
       forbidSubmit(){
         console.log('重新计算是否要禁用提交按钮')
@@ -88,13 +86,13 @@
         }
         console.log(post)
         let _ = this
-        this.$post(register(post), {
+        this.$post(api('register',post), {
           showProgress   : '数据提交中，请勿重复提交...',
           showSuccessMsg : _.currentPath!=='/user/register',//作为组件使用的
           callback       : { success : successCallback, always : alwaysCallback }
         })
         function successCallback() {
-          _.$post(getUserByUserID(post.userID), { callback : { success : successCallback } })
+          _.$post(api('getUserByUserID',{userID:post.userID}), { callback : { success : successCallback } })
           function successCallback(data) {
             if (_.currentPath=='/user/register') {
               _.result = { show : true, title : '注册结果', content : '恭喜您，注册成功' }

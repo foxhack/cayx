@@ -1,10 +1,10 @@
 <template>
   <div id="app">
-    <transition-group :name="transitionName">
-      <navigation-bar key="navigation" :title="title" :showBack="showBack" v-if="showBack"></navigation-bar>
+    <navigation-bar key="navigation" :title="title" :showBack="showBack" v-if="showBack"></navigation-bar>
+    <transition :name="transitionName">
       <router-view key="comp"></router-view>
-      <main-menu key="menu" v-if="!showBack"></main-menu>
-    </transition-group>
+    </transition>
+    <main-menu key="menu" v-if="!showBack"></main-menu>
   </div>
 </template>
 
@@ -16,7 +16,7 @@
     data(){
       return {
         transitionName : '',
-        showBack:false
+        showBack       : false
       }
     },
     computed   : {
@@ -30,7 +30,7 @@
         const toDepth = to.path.split('/').length
         const fromDepth = from.path.split('/').length
         this.transitionName = toDepth < fromDepth ? 'slide-right' : 'slide-left'
-        this.showBack=!(this.$route.path=='/product' || this.$route.path=='/product/' || this.$route.path=='/user' || this.$route.path=='/user/')
+        this.showBack = !(this.$route.path=='/product' || this.$route.path=='/product/' || this.$route.path=='/user' || this.$route.path=='/user/')
       }
     },
     created(){
@@ -45,7 +45,7 @@
   body
     background #f5f5f5
     min-height 100vh
-    font-family font-family-regular
+    font-family pingfang-regular
     color primary-text-color
     line-height 1.6
     overflow-x hidden
@@ -53,13 +53,13 @@
 
   @media screen and (max-width: 321px) {
     body {
-      font-size: 15px
+      font-size: 16px
     }
   }
 
   @media screen and (min-width: 321px) and (max-width: 400px) {
     body {
-      font-size: 16px;
+      font-size: 17px;
     }
   }
 
@@ -68,6 +68,187 @@
       font-size: 18px
     }
   }
+
+  input
+    appearance none
+    border-radius 0
+    border 0
+    outline 0
+    font-size inherit
+    width 100%
+
+  input[type="button"]
+    border none
+
+  input[type="button"]:disabled
+    background primary-text-color
+    opacity 0.3
+
+  .icon
+    width 1em
+    height 1em
+    vertical-align -0.15em
+    fill currentColor
+    overflow hidden
+
+  .slide-left-enter, .slide-enter
+    transform translateX(100%)
+
+  .slide-left-enter-to, .slide-enter-to
+    transition transform 0.3s
+    transform translateX(0)
+
+  .slide-leave-to
+    transform translateX(100%)
+    transition transform 0.3s
+
+  .slide-leave
+    transform translateX(0)
+
+  .slide-right-enter
+    transform translateX(-100%)
+
+  .slide-right-enter-to
+    transition transform 0.3s
+    transform translateX(0)
+
+  .flex
+    display flex
+
+  .flex-row, .flex-col
+    @extend .flex
+
+  .flex-row
+    flex-direction row
+
+  .flex-col
+    flex-direction column
+
+  .center
+    display flex
+    justify-content center
+    align-items center
+
+  .arrow-right::after
+    border solid 2px
+    border-bottom-width 0
+    border-left-width 0
+    content: " "
+    top 50%
+    right 2px
+    position absolute
+    width 8px
+    height 8px
+    transform: translateY(-50%) rotate(45deg)
+
+  .arrow-left::before
+    border solid 2px
+    border-top-width 0
+    border-right-width 0
+    content: " "
+    top 50%
+    left 2px
+    position absolute
+    width 8px
+    height 8px
+    transform: translateY(-50%) rotate(45deg)
+
+  .hr-line::before
+    content ''
+    position absolute
+    left 0
+    right 0
+    top 0
+    border-top 1px solid gray
+
+  .hr-line::after
+    content ''
+    position absolute
+    left 0
+    right 0
+    bottom 0
+    border-top 1px solid gray
+
+  @media (-webkit-min-device-pixel-ratio: 2)
+    .hr-line::after, .hr-line::before
+      transform-origin 0 0
+      transform scaleY(0.5)
+
+  .top-line::before
+    @extend .hr-line::before
+
+  .bottom-line::after
+    @extend .hr-line::after
+
+  /*section:not(:last-child)*/
+  /*margin-bottom 1em*/
+
+  section
+    margin-bottom 1em
+
+  section
+    .title, .tip
+      padding 0 10px
+      font-size 0.8em
+      font-family font-family-light
+      {third-level}
+
+    .tip
+      {second-level}
+      color: secondary-text-color
+      text-align right
+
+  .fix-bottom
+    position fixed
+    left 0
+    right 0
+    top calc(100vh - 2.64em - 20px)
+    z-index 1000
+
+  input[type="button"].nofix-button
+    width calc(100% - 20px)
+    margin 10px auto
+    border-radius 10px
+
+  .miss
+    @extend .center
+    background #BBB
+    color #fff
+    line-height 5em
+    font-size 3em
+
+  .primary-btn
+    @extend .center
+    background secondary-text-color
+    color #fff
+    line-height 2.2em
+    font-size 1.2em
+    width calc(100% - 20px)
+    margin 10px
+    border-radius 4px
+
+  .primary-btn.plain
+    @extend .center
+    background white
+    color secondary-text-color
+    border 1px solid
+    line-height 2.2em
+    font-size 1.2em
+
+  .cell
+    @extend .flex-row
+    color secondary-text-color
+    background-color white
+    justify-content space-between
+    align-items center
+    line-height 3em
+    padding 0 0.2rem
+    margin-bottom 10px
+    position relative
+
+  .cell::after
+    @extend .bottom-line::after
+    border-top-color secondary-text-color
 
   .mint-indicator-wrapper
     z-index 3001
@@ -90,16 +271,20 @@
     font-size medium
     box-shadow 0 2px 10px rgba(0, 0, 0, 0.2)
 
-  .dialog-wrapper > div
+  #bind-account .dialog-wrapper > div
     width 90%
     border-radius 0.5em
 
+  #bind-account .el-dialog__header
+    border-top-left-radius 0.5em
+    border-top-right-radius 0.5em
+
   .el-dialog__header
     position relative
+    background-color secondary-text-color
 
-  .el-dialog__header:after
-    @extend .hr-line
-    border-color neutral-border-color2
+  .el-dialog__title
+    color white
 
   #transaction-input .el-dialog__body, #transaction-password-setting .el-dialog__body
     padding 0 !important
@@ -119,8 +304,80 @@
   .el-notification, .el-message-box
     width 90%
 
-  #app
+  /*#app*/
+  /*min-height 100vh*/
+  /*padding-bottom menuHeight*/
+
+  .page-with-top-bottom
+    min-height 100vh
+    padding-top navHeight
+    padding-bottom 4em
+
+  .page-with-top
+    min-height 100vh
+    padding-top navHeight
+
+  .page-with-menu
     min-height 100vh
     padding-bottom menuHeight
 
+  #user-home .mint-cell-label
+    margin-left calc(1.3em + 10px)
+
+  .error
+    position absolute
+    z-index 2002
+    right 10px
+    bottom -20px
+    background-color error-color
+    color white
+    text-align right
+    padding 4px 10px
+    border-radius 4px
+    font-size 0.8em
+
+  .error:after
+    position absolute
+    content ''
+    border 6px solid transparent
+    border-bottom 6px solid error-color
+    top -11px
+    right 3px
+
+  .bank.selected
+    position relative
+
+  .bank.selected:before
+    content ''
+    position absolute
+    top 50%
+    transform translateY(-50%)
+    right 1em
+    width 1.2em
+    height 1.2em
+    border-radius 50%
+    background-color secondary-text-color
+
+  .bank.selected:after
+    content ''
+    position absolute
+    top calc(50% - 0.1em)
+    transform translateY(-50%) scale(0.5) rotate(45deg)
+    right 1.2em
+    width 0.8em
+    height 1.2em
+    border-right 2px solid white
+    border-bottom 2px solid white
+
+  .mint-spinner-fading-circle
+    margin 10px auto
+
+  .money-input
+    .mint-cell-title
+      width auto
+    .mint-cell-text
+      font-size 2em
+      color secondary-text-color
+    input
+      color secondary-text-color
 </style>

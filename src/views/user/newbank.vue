@@ -1,8 +1,8 @@
 <template>
   <div id="new-bank">
-    <section class="progress">
-      <div class="step" :class="{active:p.step<=currentProgress}" v-for="p in progress">
-        <div class="img" :class="{active:p.step<=currentProgress}">{{p.step}}</div>
+    <section class="progress hr-line flex-row">
+      <div class="step flex-col" :class="{active:p.step<=currentProgress}" v-for="p in progress">
+        <div class="img center" :class="{active:p.step<=currentProgress}">{{p.step}}</div>
         <div>{{p.title}}</div>
       </div>
     </section>
@@ -10,7 +10,7 @@
       <register></register>
     </section>
     <section v-show="currentProgress==2">
-      <mt-cell v-if="post.bankCode" :title="post.bankSelectedName" is-link @click.native="showBankList=true"></mt-cell>
+      <mt-cell v-if="post.bankCode" :title="post.bankSelectedName" label="已选择" is-link @click.native="showBankList=true"></mt-cell>
       <mt-cell v-if="!post.bankCode" title="请选择一个银行" is-link @click.native="showBankList=true"></mt-cell>
       <div v-show="showBankList" class="bank-list">
         <mt-cell v-for="b in bankList" :key="b.id" class="bank" :class="{'selected':post.bankCode==b.id}" @click.native="checkBank(b.id,b.name)" :title="b.name">
@@ -18,7 +18,7 @@
         </mt-cell>
       </div>
       <div v-if="post.bankCode">
-        <div class="title">请输入银行卡信息</div>
+        <div class="title" style="margin-top:1em">请输入银行卡信息</div>
         <name-input
             title="持卡人姓名"
             placeholder="请输入真实的持卡人中文姓名"
@@ -62,10 +62,11 @@
     <section v-show="currentProgress==3">
       <input type="button" class="primary-btn fix-bottom" @click="complete" value="完成">
       <div class="title">请上传身份证(可选)</div>
-      <mt-cell title="持卡人姓名">{{post.name}}</mt-cell>
-      <mt-cell title="持卡人身份证号">{{post.cardNo}}</mt-cell>
-      <div class="upload">正面</div>
-      <div class="upload">背面</div>
+      <mt-cell title="持卡人姓名">{{post.name|name}}</mt-cell>
+      <mt-cell title="持卡人身份证号">{{post.cardNo|cardNo}}</mt-cell>
+      <div class="upload center" @click="showUpload=true">正面</div>
+      <div v-if="showUpload"><input type="file"></div>
+      <div class="upload center">背面</div>
     </section>
     <result v-if="result.show" :result="result">
       <div slot="footer">
@@ -76,7 +77,7 @@
 </template>
 <script>
   import { BANKS } from '@/utils/config'
-  import { openAccount, getUserByUserID } from '@/api/user'
+  import { api } from '@/api/api'
   import Register from '@/components/user/register'
   import NameInput from '@/components/user/nameInput'
   import BankcardInput from '@/components/user/bankcardInput'
@@ -84,30 +85,30 @@
   import TelephoneInput from '@/components/user/telephoneInput'
   import IdentifyCode from '@/components/user/identifyCode'
   import Result from '@/components/user/result'
-  import { mixin }from '@/utils/mixin'
 
   export default{
     data(){
       return {
-        fromPath        : null,
-        submitAccountInfo:false,
-        submitting      : false,
-        successDialog   : {
+        showUpload: false,
+        fromPath          : null,
+        submitAccountInfo : false,
+        submitting        : false,
+        successDialog     : {
           showSuccess        : false,
           successTitle       : '开户成功',
           successDescription : '恭喜您已成功开户!',
           nextPath           : '',
           nextName           : ''
         },
-        allowSubmit     : { init : true },
-        progress        : [
+        allowSubmit       : { init : true },
+        progress          : [
           { step : 1, title : '注册长安严选' },
           { step : 2, title : '填写卡信息' },
           { step : 3, title : '上传身份证' }
         ],
-        bankList        : BANKS,
-        showBankList    : true,
-        post            : {
+        bankList          : BANKS,
+        showBankList      : true,
+        post              : {
           bankSelectedName : null,
           bankCode         : null,
           name             : null,
@@ -116,7 +117,7 @@
           bankSavedmobile  : null,
           identifyCode     : null,
         },
-        result          : {
+        result            : {
           show    : false,
           title   : '',
           content : '',
@@ -133,7 +134,6 @@
       IdentifyCode,
       Result
     },
-    mixins     : [mixin],
     computed   : {
       currentProgress(){
         if (!this.isRegister) {
@@ -180,9 +180,9 @@
         }
         console.log(post)
         let _ = this
-        this.$post(openAccount(post), { showProgress : '数据提交中，请勿重复提交...', showSuccessMsg : true, callback : { success : successCallback, always : alwaysCallback } })
+        this.$post(api('openAccount', post), { showProgress : '数据提交中，请勿重复提交...', showSuccessMsg : true, callback : { success : successCallback, always : alwaysCallback } })
         function successCallback() {
-          _.submitAccountInfo=true
+          _.submitAccountInfo = true
         }
 
         function alwaysCallback() {
@@ -195,8 +195,8 @@
         this.result = { show : true, title : '开户结果', content : '恭喜您，开户成功' }
       },
       goNext(){
-        let _=this
-        this.$post(getUserByUserID(window.localStorage.getItem('userID')), {showProgress:'请稍候...', callback : { success : successCallback } })
+        let _ = this
+        this.$post(api('getUserByUserID', { userID : window.localStorage.getItem('userID') }), { showProgress : '请稍候...', callback : { success : successCallback } })
         function successCallback(data) {
           _.$store.commit('setUser', data)
         }
@@ -204,6 +204,19 @@
     },
     created(){
       this.initData(this.userInfo)
+//      console.log('获取wxconfig')
+//      this.$post(api('getWxConfig', { url : 'http://caejfinance.s1.natapp.cc'+this.currentPath }), { callback : { success : successCallback } })
+//      function successCallback(data) {
+//        console.log(data)
+//        wx.config({
+//          debug     : true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+//          appId     : data.appID, // 必填，公众号的唯一标识
+//          timestamp : data.timestamp, // 必填，生成签名的时间戳
+//          nonceStr  : data.nonceStr, // 必填，生成签名的随机串
+//          signature : data.signature,// 必填，签名
+//          jsApiList : ['chooseImage'] // 必填，需要使用的JS接口列表
+//        })
+//      }
     },
     beforeRouteEnter (to, from, next) {
       //目前为提供组件输出的形式，只有做为路由的形式存在，所以这段代码一定会执行
@@ -216,26 +229,18 @@
 </script>
 <style lang="stylus" scoped>
   @import "../../style/base"
-  #new-bank
-    min-height calc(100vh + 5.4em)
-    padding 1em 0 4em 0
-
-  .progress:after
-    @extend .hr-line
-    color primary-text-color
 
   .progress
+    color primary-text-color
     position relative
     background #fff
     height 4em
-    @extend .flex-row
     justify-content space-around
     align-items center
     .step.active
       color secondary-text-color
       {first-level}
     .step
-      @extend .flex-col
       align-items center
       {third-level}
       color primary-text-color
@@ -247,41 +252,11 @@
         border-radius 50%
         color #fff
         margin-bottom: 0.2em
-        @extend .center
-      /*background-size contain*/
       .img.active
         background-color secondary-text-color
 
-  /*.step:nth-child(1) .img*/
-  /*background-image url('../../assets/icon/bankcard.svg')*/
-  /*.step:nth-child(2) .img*/
-  /*background-image url('../../assets/icon/userinfo.svg')*/
-  /*.step:nth-child(3) .img*/
-  /*background-image url('../../assets/icon/cardinfo.svg')*/
-
-  /*.step.active:nth-child(1) .img*/
-  /*background-image url('../../assets/icon/bankcard_active.svg')*/
-  /*.step.active:nth-child(2) .img*/
-  /*background-image url('../../assets/icon/userinfo_active.svg')*/
-  /*.step.active:nth-child(3) .img*/
-  /*background-image url('../../assets/icon/cardinfo_active.svg')*/
-
   .bank
     font-family font-family-bold
-
-  .bank.selected
-    position relative
-
-  .bank.selected:after
-    content ''
-    position absolute
-    top 50%
-    transform translateY(-50%)
-    right 1em
-    width 1.2em
-    height 1.2em
-    background-image url('../../assets/icon/card_selected.svg')
-    background-size contain
 
   .back
     color secondary-text-color
@@ -324,7 +299,6 @@
     {third-level}
 
   .upload
-    @extend .center
     width 90%
     margin 10px auto
     line-height 4em

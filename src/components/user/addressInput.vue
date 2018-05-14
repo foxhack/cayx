@@ -2,8 +2,8 @@
   <div id="address-input">
     <mt-cell v-if="editable === false" :title="title ||'联系地址'" @click.native="alert">{{value}}</mt-cell>
     <div v-else>
-      <mt-cell v-if="!displayInput || reset" :title="title || '联系地址'" is-link @click.native="showMod">{{value}}</mt-cell>
-      <mt-field v-if="displayInput && !reset"
+      <mt-cell v-if="!displayInput" :title="title || '联系地址'" is-link @click.native="$emit('showInput',inputname)">{{value}}</mt-cell>
+      <mt-field v-if="displayInput"
                 :label="title || '联系地址'"
                 :placeholder="placeholder || '请输入联系地址'"
                 :state="state"
@@ -19,27 +19,29 @@
     name    : 'AddressInput',
     data(){
       return {
-        displayInput : false,
         state        : '',
         errorMsg     : ''
       }
     },
     props   : [
       'editable',
-      'reset',
+      'displayInput',
       'title',
       'placeholder',
       'inputname',
       'value'
     ],
+    watch:{
+      displayInput(val){
+        if(val){
+          this.check(this.value)
+          this.$nextTick(()=>{
+            document.querySelector('#address-input input').focus()
+          })
+        }
+      }
+    },
     methods : {
-      showMod(){
-        this.displayInput = true
-        this.check(this.value)
-        this.$nextTick(()=>{
-          document.querySelector('#address-input input').focus()
-        })
-      },
       check(val){
         console.log('调用联系地址检查方法')
         this.state = 'success'

@@ -1,9 +1,9 @@
 <template>
   <div id="username">
-    <mt-cell v-if="editable === false" :title="title ||'姓名'" @click.native="alert">{{value}}</mt-cell>
+    <mt-cell v-if="editable === false" :title="title ||'姓名'" @click.native="alert">{{value | name}}</mt-cell>
     <div v-else>
-      <mt-cell v-if="!displayInput || reset" :title="title || '姓名'" is-link @click.native="showMod">{{value}}</mt-cell>
-      <mt-field v-if="displayInput && !reset"
+      <mt-cell v-if="!displayInput" :title="title || '姓名'" is-link @click.native="$emit('showInput',inputname)">{{value | name}}</mt-cell>
+      <mt-field v-if="displayInput"
                 :label="title || '姓名'"
                 :placeholder="placeholder || '请输入姓名'"
                 :state="state"
@@ -20,28 +20,30 @@
     name    : 'NameInput',
     data(){
       return {
-        displayInput : false,
         state        : '',
         errorMsg     : ''
       }
     },
     props   : [
       'editable',
-      'reset',
+      'displayInput',
       'title',
       'placeholder',
       'inputname',
       'value',
       'initcheck'
     ],
+    watch:{
+      displayInput(val){
+        if(val){
+          this.check(this.value)
+          this.$nextTick(()=>{
+            document.querySelector('#username input').focus()
+          })
+        }
+      }
+    },
     methods : {
-      showMod(){
-        this.displayInput = true
-        this.check(this.value)
-        this.$nextTick(()=>{
-          document.querySelector('#username input').focus()
-        })
-      },
       check(val){
         console.log('调用姓名检查方法')
         if (val.trim() && !VALIDATE.name.test(val)) {
@@ -68,10 +70,6 @@
 </script>
 <style lang="stylus" scoped>
   @import "../../style/base"
-  .error
-    color error-color
-    text-align right
-    padding-right 10px
-    font-size 0.8em
-    line-height 3em
+    #username
+      position relative
 </style>

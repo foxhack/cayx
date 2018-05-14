@@ -1,34 +1,30 @@
 <template>
   <transition name="slide">
     <div id="instruction-wrapper">
-      <div class="top">
-        <div class="go-back" @click="close">
-          <返回
+      <div class="top center hr-line">
+        <div class="go-back arrow-left" @click="close">
+          &nbsp;&nbsp;返回
         </div>
         <div class="">{{title}}</div>
       </div>
       <div class="content">
         说明页组件
-        <password-input v-on:getPassword="getPassword"></password-input>
+        <image-upload-input></image-upload-input>
       </div>
     </div>
   </transition>
 </template>
 <script>
-  import PasswordInput from '@/components/user/passwordInput'
+  import ImageUploadInput from '@/components/user/imageUploadInput'
   export default{
     data(){
       return {
-        password : null
       }
     },
     name       : 'Instruction',
     props      : ['title'],
-    components : { PasswordInput },
+    components : { ImageUploadInput },
     methods    : {
-      getPassword(password){
-        this.password = password
-      },
       close(){
         this.$emit('closeInstruction')
       }
@@ -48,17 +44,14 @@
     padding-top calc(2.8em + 10px)
 
     .top
-      @extend .center
       position fixed
       z-index 2001
       left 0
       top 0
       right 0
       height 2.8em
-      background-color #fff
-
-    .top:after
-      @extend .hr-line
+      background-color secondary-text-color
+      color white
 
     .go-back
       position absolute

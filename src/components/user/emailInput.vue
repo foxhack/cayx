@@ -1,17 +1,17 @@
 <template>
   <div id="email-input">
-    <mt-cell v-if="editable === false" :title="title ||'email'" @click.native="alert">{{value}}</mt-cell>
+    <mt-cell v-if="editable === false" :title="title ||'email'" @click.native="alert">{{value | email}}</mt-cell>
     <div v-else>
-      <mt-cell v-if="!displayInput || reset" :title="title || 'email'" is-link @click.native="showMod">{{value}}</mt-cell>
-      <mt-field v-if="displayInput && !reset"
+      <mt-cell v-if="!displayInput" :title="title || 'email'" is-link @click.native="$emit('showInput',inputname)">{{value | email}}</mt-cell>
+      <mt-field v-if="displayInput"
                 :label="title || 'email'"
                 :placeholder="placeholder || '请输入email'"
                 :state="state"
                 :value="value"
                 @input.native="check($event.target.value)">
       </mt-field>
+      <div v-if="state=='error'" class="error">{{errorMsg}}</div>
     </div>
-    <div v-if="state=='error'" class="error">{{errorMsg}}</div>
   </div>
 </template>
 <script>
@@ -20,27 +20,29 @@
     name    : 'EmailInput',
     data(){
       return {
-        displayInput : false,
         state        : '',
         errorMsg     : ''
       }
     },
     props   : [
       'editable',
-      'reset',
+      'displayInput',
       'title',
       'placeholder',
       'inputname',
       'value'
     ],
+    watch:{
+      displayInput(val){
+        if(val){
+          this.check(this.value)
+          this.$nextTick(()=>{
+            document.querySelector('#email-input input').focus()
+          })
+        }
+      }
+    },
     methods : {
-      showMod(){
-        this.displayInput = true
-        this.check(this.value)
-        this.$nextTick(() => {
-          document.querySelector('#email-input input').focus()
-        })
-      },
       check(val){
         console.log('调用email检查方法')
         if (!VALIDATE.email.test(val)) {
@@ -64,11 +66,9 @@
 </script>
 <style lang="stylus" scoped>
   @import "../../style/base"
-  .error
-    color error-color
-    text-align right
-    padding-right 10px
-    font-size 0.8em
-    line-height 3em
+  #email-input
+    position relative
+
+
 </style>
 

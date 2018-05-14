@@ -3,18 +3,49 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <script src="/static/setRem.js"></script>
-  <script src="/static/zepto.min.js"></script>
-  <script src="/static/deferred.js"></script>
-  <script src="/static/callbacks.js"></script>
+  <link rel="stylesheet" href="/static/common.css">
+  <script>
+    (function (doc, win) {
+      var docEl = doc.documentElement,
+        resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize',
+        recalc = function () {
+          var clientWidth = docEl.clientWidth<docEl.clientHeight?docEl.clientWidth:docEl.clientHeight
+          if (!clientWidth) return;
+          if(clientWidth>=750){
+            docEl.style.fontSize = '100px';
+          }else{
+            docEl.style.fontSize = 100 * (clientWidth / 750) + 'px';
+          }
+        };
+      recalc()//第一次执行，在DOMContentLoaded之前
+      if (!doc.addEventListener) return;
+      win.addEventListener(resizeEvt, recalc, false);
+      doc.addEventListener('DOMContentLoaded', recalc, false);
+    })(document, window);
+
+  </script>
   <style>
-    html{line-height:1.15;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%}article,aside,footer,header,nav,section{display:block}hr{box-sizing:content-box;height:0;overflow:visible}pre{font-family:monospace,monospace;font-size:1em}a{background-color:transparent;-webkit-text-decoration-skip:objects}img{border-style:none}button,input,optgroup,select,textarea{margin:0}button,select{text-transform:none}[type=reset],[type=submit],button,html [type=button]{-webkit-appearance:button}[type=button]::-moz-focus-inner,[type=reset]::-moz-focus-inner,[type=submit]::-moz-focus-inner,button::-moz-focus-inner{border-style:none;padding:0}[type=button]:-moz-focusring,[type=reset]:-moz-focusring,[type=submit]:-moz-focusring,button:-moz-focusring{outline:1px dotted ButtonText}blockquote,body,dd,dl,dt,fieldset,figure,h1,h2,h3,h4,h5,h6,hr,html,iframe,legend,li,ol,p,pre,textarea,ul{margin:0;padding:0}h1,h2,h3,h4,h5,h6{font-size:100%;font-weight:400}ul{list-style:none}button,input,select,textarea{margin:0}html{box-sizing:border-box}*,:after,:before{box-sizing:inherit;-webkit-tap-highlight-color:rgba(0,0,0,0)}audio,embed,img,object,video{height:auto;max-width:100%}iframe{border:0}table{border-collapse:collapse;border-spacing:0}td,th{padding:0;text-align:left}a,a:active,a:hover,a:link,a:visited{outline:0;text-decoration:none;color:inherit}
+    #logo {
+      height: 100vh;
+      color: gray;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    #logo div{
+      line-height: 2;
+    }
+
   </style>
   <title>长安严选</title>
-  <div id="logo">长安严选，放心的理财</div>
 </head>
 <body>
+<div id="logo"><div>长安严选</div><div>放心的理财</div></div>
 <div id="app"></div>
 <!-- built files will be auto injected -->
+<script src="/static/zepto.min.js"></script>
+<script src="/static/iconfont.js"></script>
+<script src="/static/chart.js"></script>
 </body>
 </html>

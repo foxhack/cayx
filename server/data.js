@@ -40,7 +40,8 @@ const USER_ASSET = {
   availableAsset  : 200,
   yesterdayIncome : 10.00,
   totalIncome     : 2000.00,
-  detailAsset     : null
+  detailAsset     : [{ productId : 'mf201801', totalAsset : 50000.00, totalIncome : 1000.20, yesterdayIncome : 1.56 },
+                     { productId : 'bf201801', totalAsset : 20000.00, totalIncome : 80.50, yesterdayIncome : 0 }]
 }
 
 const PRODUCT_RATE = [

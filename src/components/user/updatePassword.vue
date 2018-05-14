@@ -1,23 +1,25 @@
 <template>
   <div id="update-password">
     <section v-if="!showNew">
-      <div class="title">第一步：请输入原交易密码</div>
-      <mt-field
-          type="password"
-          label="原交易密码"
-          placeholder="请输入原交易密码"
-          :state="state"
-          v-model="oldPassword" @input.native="check($event.target.value)">
-      </mt-field>
-      <div class="error">{{errorMsg}}&nbsp;</div>
-      <input type="button" class="primary-btn" :disabled="state!=='success'" value="确定" @click="sendOldPassword">
+      <div class="cell">第一步：请输入原交易密码</div>
+      <div style="position: relative">
+        <mt-field
+            type="password"
+            label="原交易密码"
+            placeholder="请输入原交易密码"
+            :state="state"
+            v-model="oldPassword" @input.native="check($event.target.value)">
+        </mt-field>
+        <div v-if="state=='error'" class="error">{{errorMsg}}&nbsp;</div>
+      </div>
+      <input type="button" class="primary-btn" :disabled="state!=='success' || submitting" value="确定" @click="sendOldPassword">
     </section>
     <new-password v-if="showNew" title="第二步：请设置新交易密码" v-on:close="$emit('close')"></new-password>
   </div>
 </template>
 <script>
   import NewPassword from '@/components/user/newPassword'
-  import { mixin }from '@/utils/mixin'
+  import { api } from '@/api/api'
   export default{
     name       : 'UpdatePassword',
     data(){
@@ -26,11 +28,10 @@
         state       : '',
         errorMsg    : '',
         showNew     : false,
-        active      : 1
+        submitting  : false
       }
     },
-    components : { NewPassword},
-    mixins     : [mixin],
+    components : { NewPassword },
     methods    : {
       check(val){
         console.log('调用密码检查方法')
@@ -44,21 +45,28 @@
         }
       },
       sendOldPassword(){
+        this.submitting = true
+        let post = { userID : window.localStorage.getItem('userID'), tradepwd : this.oldPassword }
+        this.$post(api('validPassword', post),
+          {
+            showProgress : '请稍候...',
+            callback     : { success : successCallback, always : alwaysCallback }
+          })
         let _ = this
-        _.showNew = true
-        _.active = 2
+
+        function successCallback() {
+          _.showNew = true
+        }
+
+        function alwaysCallback() {
+          _.submitting = false
+        }
       }
     }
   }
 </script>
 <style lang="stylus" scoped>
   @import "../../style/base"
-  .error
-    color error-color
-    text-align right
-    padding-right 10px
-    font-size 0.8em
-    line-height 3em
 
   #set-password .mint-field-core
     -webkit-text-security disc

@@ -5,20 +5,17 @@ import App from '@/App'
 import Author from '@/views/user/author'
 import Register from '@/components/user/register'
 import PasswordSetting from '@/views/user/passwordSetting'
-//import ResetPassword from '@/views/user/resetPassword'
 import Product from '@/views/products/list'
 import ProductDetail from '@/views/products/detail'
 import Transaction from '@/views/products/transaction'
 import TransactionResult from '@/views/products/transactionResult'
 import UserSetting from '@/views/user/setting'
 import Bank from '@/views/user/bank'
-import NewBank from '@/views/user/newbank'
 import User from '@/views/user/user'
 import Account from '@/views/user/account'
 import TransactionRecord from '@/views/user/transactionRecord'
 import IncomeRecord from '@/views/user/incomeRecord'
-import { getUserByUserID, getAsset } from '@/api/user'
-import { getProductsRate } from '@/api/product'
+import { api } from '@/api/api'
 import { initAppData } from '@/utils/common'
 
 Vue.use(Router)
@@ -29,8 +26,8 @@ const router = new Router({
     {
       path      : '/',
       name      : '',
-      component : Product,
-      //alias     : '/product',
+      component : App,
+      redirect  : '/product',
       meta      : {
         title : ''
       }
@@ -86,16 +83,6 @@ const router = new Router({
         savePath : true
       }
     },
-    //{
-    //  path      : '/product/transaction-result/:pid/:type/:tid/:amount',
-    //  name      : 'transaction-result',
-    //  component : TransactionResult,
-    //  props     : true,
-    //  meta      : {
-    //    title    : '交易结果',
-    //    initData : 'asset'
-    //  }
-    //},
     {
       path      : '/user/setting',
       name      : 'userSetting',
@@ -110,7 +97,7 @@ const router = new Router({
       component : Bank,
       props     : true,
       meta      : {
-        title    : '银行卡',
+        title : '银行卡'
       }
     },
     {
@@ -119,7 +106,7 @@ const router = new Router({
       component : PasswordSetting,
       props     : true,
       meta      : {
-        title : '交易密码管理',
+        title    : '交易密码管理',
         savePath : true
       }
     },
@@ -149,7 +136,10 @@ const router = new Router({
         title : '收益记录'
       }
     }
-  ]
+  ],
+  scrollBehavior (to, from, savedPosition) {
+    return { x : 0, y : 0 }
+  }
 })
 
 router.beforeEach((to, from, next) => {
@@ -182,13 +172,13 @@ router.beforeEach((to, from, next) => {
   let promises = []
   let callbacks = []
   if (!store.state.user) {
-    promises.push(getUserByUserID(userID))
+    promises.push(api('getUserByUserID', { userID : userID }))
     callbacks.push(function(data) {
       store.commit('setUser', data)
     })
   }
   if (!store.state.asset) {
-    promises.push(getAsset({ userID : userID }))
+    promises.push(api('getAsset',{ userID : userID }))
     callbacks.push(function(data) {
       store.commit('setAsset', data)
     })
@@ -196,7 +186,7 @@ router.beforeEach((to, from, next) => {
   if (to.path.indexOf('/product') > -1 && !store.getters.productsWithRate) {
     let pid = []
     store.state.products.forEach(p => {pid.push(p.pid)})
-    promises.push(getProductsRate(pid))
+    promises.push(api('getProductsRate', { pid : pid }))
     callbacks.push(function(data) {
       store.commit('saveProductsRate', data)
     })

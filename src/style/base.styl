@@ -48,150 +48,22 @@ light-gray = #E5E9F2
 extra-light-gray = #EFF2F7
 dark-white = #F9FAFC
 white = #FFFFFF
-//
 
-primary-text-color = light-black
-secondary-text-color = #e60814
+
+primary-text-color = black
+secondary-text-color = #F45500
+
+primary-deep-color=#bea064
+primary-light-color=#e1c87d
 
 first-level = opacity 1
 second-level = opacity 0.75
 third-level = opacity 0.5
 
-menuHeight = 3em
+menuHeight = 3.4em
 navHeight = 2.8em
 
-input
-  appearance none
-  border-radius 0
-  border 0
-  outline 0
-  font-size inherit
-  width 100%
 
-input[type="button"]
-  border none
-
-input[type="button"]:disabled
-  background primary-text-color
-  opacity 0.3
-
-.slide-left-enter, .slide-enter
-  transform translateX(100%)
-
-.slide-left-enter-to, .slide-enter-to
-  transition transform 0.3s
-  transform translateX(0)
-
-.slide-leave-to
-  transform translateX(100%)
-  transition transform 0.3s
-
-.slide-leave
-  transform translateX(0)
-
-.slide-right-enter
-  transform translateX(-100%)
-
-.slide-right-enter-to
-  transition transform 0.3s
-  transform translateX(0)
-
-.flex
-  display flex
-
-.flex-row, .flex-col
-  @extend .flex
-
-.flex-row
-  flex-direction row
-
-.flex-col
-  flex-direction column
-
-.center
-  display flex
-  justify-content center
-  align-items center
-
-.hr-line
-  content ''
-  position absolute
-  left 0
-  right 0
-  bottom 0
-  border-top 1px solid
-  transform-origin 0 0
-  transform scaleY(0.5)
-
-@media (-webkit-min-device-pixel-ratio: 2)
-  .hr-line
-    transform-origin 0 0
-    transform scaleY(0.5)
-
-section:not(:last-child)
-  margin-bottom 1em
-
-section
-  .title, .tip
-    padding 0 10px
-    font-size 0.8em
-    font-family font-family-light
-    {third-level}
-
-  .tip
-    {second-level}
-    color: secondary-text-color
-    text-align right
-
-.fix-bottom
-  position fixed
-  left 0
-  right 0
-  bottom 0px
-  z-index 1000
-
-input[type="button"].nofix-button
-  width calc(100% - 20px)
-  margin 10px auto
-  border-radius 10px
-
-.miss
-  @extend .center
-  background #BBB
-  color #fff
-  line-height 5em
-  font-size 3em
-
-.primary-btn
-  @extend .center
-  background secondary-text-color
-  color #fff
-  line-height 2.2em
-  font-size 1.2em
-  width calc(100% - 20px)
-  margin 10px
-  border-radius 4px
-
-.primary-btn.plain
-  @extend .center
-  background white
-  color secondary-text-color
-  border 1px solid
-  line-height 2.2em
-  font-size 1.2em
-
-.cell
-  @extend .flex-row
-  justify-content space-between
-  align-items center
-  line-height 3em
-  padding 0 0.2rem
-  background #fff
-  position relative
-
-.cell:after
-  @extend .hr-line
-  color #d9d9d9
 
 
 

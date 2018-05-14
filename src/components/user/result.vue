@@ -1,7 +1,7 @@
 <template>
   <transition name="slide">
     <div id="result-wrapper">
-      <div class="top">
+      <div class="top center">
         <div class="">{{result.title}}</div>
       </div>
       <main class="content">
@@ -36,17 +36,14 @@
     padding-top calc(2.8em + 10px)
 
     .top
-      @extend .center
       position fixed
       z-index 2001
       left 0
       top 0
       right 0
       height 2.8em
-      background-color #fff
-
-    .top:after
-      @extend .hr-line
+      background-color secondary-text-color
+      color white
 
     .go-back
       position absolute

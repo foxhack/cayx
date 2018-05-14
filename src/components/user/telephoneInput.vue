@@ -1,9 +1,15 @@
 <template>
   <div id="telephone-input">
-    <mt-cell v-if="editable === false" :title="title || '手机号'" @click.native="alert">{{value}}</mt-cell>
+    <mt-cell v-if="editable === false" :title="title || '手机号'" @click.native="alert">{{value|mobile}}</mt-cell>
     <div v-else>
-      <mt-cell v-if="!displayInput || reset" :title="title || '手机号'" :label="subtitle" is-link @click.native="showMod">{{value}}</mt-cell>
-      <mt-field v-if="displayInput && !reset"
+      <mt-cell v-if="!displayInput"
+               :title="title || '手机号'"
+               :label="subtitle"
+               is-link
+               @click.native="$emit('showInput',inputname)">
+        {{value|mobile}}
+      </mt-cell>
+      <mt-field v-if="displayInput"
                 type="number"
                 :label="title || '手机号'" :placeholder="placeholder || '请输入手机号'"
                 :state="state"
@@ -15,19 +21,19 @@
   </div>
 </template>
 <script>
-  import {VALIDATE} from '@/utils/config'
+  import { VALIDATE } from '@/utils/config'
+  import { debounce } from '@/utils/common'
   export default{
     name    : 'TelephoneInput',
     data(){
       return {
-        displayInput : false,
-        state        : '',
-        errorMsg     : ''
+        state    : '',
+        errorMsg : ''
       }
     },
     props   : [
       'editable',
-      'reset',
+      'displayInput',
       'title',
       'subtitle',
       'placeholder',
@@ -35,25 +41,28 @@
       'value',
       'initcheck'
     ],
-    methods : {
-      showMod(){
-        this.displayInput = true
-        this.check(this.value)
-        this.$nextTick(()=>{
-          document.querySelector('#telephone-input input').focus()
-        })
-      },
-      check(val){
-        console.log('调用手机号检查方法')
-        if (!VALIDATE.mobile.test(val)) {
-          this.state = 'error'
-          this.errorMsg = '请输入正确的手机号'
-          this.setValid(false)
-          return
+    watch   : {
+      displayInput(val){
+        if (val) {
+          this.check(this.value)
+          this.$nextTick(() => {
+            document.querySelector('#telephone-input input').focus()
+          })
         }
-        this.state = 'success'
-        this.setValid(true)
-        this.$emit('input', val)
+      }
+    },
+    methods : {
+      check(val){
+          console.log('debounce调用手机号检查方法')
+          if (!VALIDATE.mobile.test(val)) {
+            this.state = 'error'
+            this.errorMsg = '请输入正确的手机号'
+            this.setValid(false)
+            return
+          }
+          this.state = 'success'
+          this.setValid(true)
+          this.$emit('input', val)
       },
       setValid(isValid){
         this.$emit('isValid', { 'key' : this.inputname, 'isValid' : isValid })
@@ -63,17 +72,13 @@
       }
     },
     created(){
-      if(this.initcheck) this.check(this.value)
+      if (this.initcheck) this.check(this.value)
     }
   }
 </script>
 <style lang="stylus" scoped>
   @import "../../style/base"
-  .error
-    color error-color
-    text-align right
-    padding-right 10px
-    font-size 0.8em
-    line-height 3em
+  #telephone-input
+    position relative
 </style>
 

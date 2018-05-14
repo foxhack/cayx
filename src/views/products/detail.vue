@@ -1,43 +1,80 @@
 <template>
-  <div class="product-detail-wrapper">
-    <div class="miss">图表</div>
-    <div>{{product.rate.rates7Day}}{{product.rate.incomePerUnit}}</div>
+  <div id="product-detail-wrapper" class="page-with-top-bottom">
+    <canvas id="chart"></canvas>
+    <!--<div>{{product.rate.rates7Day}}{{product.rate.incomePerUnit}}</div>-->
     <div class="miss">产品介绍</div>
-    <div class="miss">产品介绍</div>
-    <div class="footer-wrapper">
-      <router-link v-if="isBindCard && product.type==1" :to="{ name: 'transaction', params: { pid: product.pid, type:'out' }}" class="sell-btn">
-        <template v-if="isBindCard">赎回</template>
-      </router-link>
-      <router-link :to="{ name: 'transaction', params: { pid: product.pid, type:'in' }}" class="buy-btn">
+    <div class="footer-wrapper fix-bottom">
+      <div class="sell-btn primary-btn" v-if="product.type==1 && productAsset>0" @click="$router.push({ name: 'transaction', params: { pid: product.pid, type:'out' }})">赎回</div>
+      <div class="buy-btn primary-btn" @click="$router.push({ name: 'transaction', params: { pid: product.pid, type:'in' }})">
         <template v-if="product.type==1">申购</template>
         <template v-if="product.type==2">预约</template>
-      </router-link>
+      </div>
     </div>
   </div>
 </template>
 <script>
-  import { mixin }from '@/utils/mixin'
   export default {
     name     : 'ProductDetail',
-    mixins    : [mixin],
     computed : {
       product(){
         return this.$store.getters.getProductById(this.$route.params.pid)
+      },
+      productAsset(){
+        let productAsset = this.asset.detailAsset.find(a => {return a.productId==this.$route.params.pid})
+        if (productAsset && productAsset.totalAsset > 0) {
+          return productAsset.totalAsset
+        } else {
+          return 0
+        }
       }
     },
-    created(){
-//      this.$store.commit('saveToPath', this.$route.fullPath)
+    mounted(){
+      let data = {
+        labels   : ["5-1", "5-2", "5-3", "5-4", "5-5", "5-6", "5-7"],
+        datasets : [
+          {
+            label : "近7日年化收益率%",
+            data  : this.product.rate.rates7Day
+          }
+        ]
+      }
+      let options = {
+        tooltips : {
+          intersect : false,
+          mode      : 'nearest'
+        },
+        elements : {
+          line  : {
+            borderColor     : "rgba(244,85,0,1)",
+            backgroundColor : "rgba(244,85,0,0.2)",
+            borderWidth     : 1
+          },
+          point : {
+            radius          : 2,
+            backgroundColor : 'rgba(244,85,0,1)'
+          }
+        }
+      }
+
+      new Chart(document.getElementById("chart").getContext("2d"),
+        {
+          type    : 'line',
+          data    : data,
+          options : options
+        }
+      )
     }
   }
 </script>
 <style lang="stylus" scoped>
   @import "../../style/base"
+  #chart
+    width 100vw
+    height 15em
 
   .footer-wrapper
-    @extend .fix-bottom
     display flex
     .sell-btn, .buy-btn
-      @extend .primary-btn
       flex 1
     .sell-btn
       color secondary-text-color

@@ -1,5 +1,5 @@
 <template>
-  <div id="bankcard-input">
+  <div id="bankcard-input" style="position: relative">
     <mt-cell v-if="editable === false" :title="title ||'银行卡卡号'" @click.native="alert">{{value}}</mt-cell>
     <div v-else>
       <mt-cell v-if="!displayInput" :title="title || '银行卡卡号'" is-link @click.native="showMod">{{value}}</mt-cell>
@@ -67,11 +67,6 @@
 </script>
 <style lang="stylus" scoped>
   @import "../../style/base"
-  .error
-    color error-color
-    text-align right
-    padding-right 10px
-    font-size 0.8em
-    line-height 3em
+
 </style>
 

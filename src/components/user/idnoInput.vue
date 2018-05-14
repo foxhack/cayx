@@ -1,8 +1,8 @@
 <template>
-  <div id="idno">
-    <mt-cell v-if="editable === false" :title="title || '身份证号'" @click.native="alert">{{value}}</mt-cell>
+  <div id="idno" style="position: relative">
+    <mt-cell v-if="editable === false" :title="title || '身份证号'" @click.native="alert">{{value | cardNo}}</mt-cell>
     <div v-else>
-      <mt-cell v-if="!displayInput" :title="title || '身份证号'" is-link @click.native="showMod">{{value}}</mt-cell>
+      <mt-cell v-if="!displayInput" :title="title || '身份证号'" is-link @click.native="$emit('showInput',inputname)">{{value | cardNo}}</mt-cell>
       <mt-field v-if="displayInput"
                 :label="title || '身份证号'" :placeholder="placeholder || '请输入合法的身份证号'"
                 :state="state"
@@ -19,7 +19,6 @@
     name    : 'IdonInput',
     data(){
       return {
-        displayInput : false,
         state        : '',
         errorMsg     : ''
       }
@@ -30,16 +29,20 @@
       'placeholder',
       'inputname',
       'value',
+      'displayInput',
       'initcheck'
     ],
+    watch:{
+      displayInput(val){
+        if(val){
+          this.check(this.value)
+          this.$nextTick(()=>{
+            document.querySelector('#idno input').focus()
+          })
+        }
+      }
+    },
     methods : {
-      showMod(){
-        this.displayInput = true
-        this.check(this.value)
-        this.$nextTick(()=>{
-          document.querySelector('#idno input').focus()
-        })
-      },
       check(val){
         console.log('调用身份证检查方法')
         if (!VALIDATE.cardNo.test(val)) {
@@ -66,10 +69,5 @@
 </script>
 <style lang="stylus" scoped>
   @import "../../style/base"
-  .error
-    color error-color
-    text-align right
-    padding-right 10px
-    font-size 0.8em
-    line-height 3em
+
 </style>
