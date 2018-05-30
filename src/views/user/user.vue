@@ -39,13 +39,18 @@
         <svg slot="icon" class="icon" aria-hidden="true">
           <use xlink:href="#icon-money-"></use>
         </svg>
-        <router-link :to="{name: 'account',params:{type: 'out'}}"><span class="balance">提现</span></router-link>
-        <router-link :to="{name: 'account',params:{type: 'in'}}"><span class="balance">充值</span></router-link>
+        <template v-if="isOpenAccount">
+          <a><span class="balance" @click="checkAccount('out')">提现</span></a>
+          <a><span class="balance" @click="checkAccount('in')">充值</span></a>
+        </template>
+        <template v-else>
+          <a><span class="balance" @click="checkOpenAccount">申请开户</span></a>
+        </template>
       </mt-cell>
       <div v-if="asset.detailAsset && asset.detailAsset.length>0">
         <div v-for="asset in asset.detailAsset">
           <router-link :to="{name:'transaction-record',params:{pid:asset.productId}}">
-            <mt-cell :title="getProductNameById(asset.productId)" is-link>{{asset.totalAsset|toYuan|money|mask(showAsset)}}</mt-cell>
+            <mt-cell :title="getProductNameById(asset.productId)" is-link class="no-top-line">{{asset.totalAsset|toYuan|money|mask(showAsset)}}</mt-cell>
           </router-link>
         </div>
       </div>
@@ -61,25 +66,15 @@
       </div>
     </section>
     <section>
-      <router-link :to="{name:'bank'}">
-        <mt-cell title="我的银行卡" is-link :label="bindCard?bindCard.bankName:''">
-          <svg slot="icon" class="icon" aria-hidden="true">
-            <use xlink:href="#icon-yinxingqia"></use>
-          </svg>
-          <div v-if="isBindCard">已开户</div>
-        </mt-cell>
-      </router-link>
+      <mt-cell title="我的银行卡" is-link @click.native="checkBindCard">
+        <svg slot="icon" class="icon" aria-hidden="true">
+          <use xlink:href="#icon-yinxingqia"></use>
+        </svg>
+        <div v-if="bindCard.length>0">已绑卡</div>
+        <div v-if="bindCard.length==0">未绑卡</div>
+      </mt-cell>
     </section>
-    <section v-if="!isRegister">
-      <router-link :to="{name:'register'}">
-        <mt-cell title="注册" is-link>
-          <svg slot="icon" class="icon" aria-hidden="true">
-            <use xlink:href="#icon-yonghu"></use>
-          </svg>
-        </mt-cell>
-      </router-link>
-    </section>
-    <section v-else>
+    <section v-if="isRegister">
       <router-link :to="{name:'userSetting'}">
         <mt-cell title="个人信息设置" is-link>已注册
           <svg slot="icon" class="icon" aria-hidden="true">
@@ -131,6 +126,27 @@
     methods    : {
       getProductNameById(pid){
         return this.$store.state.products.find(p => {return p.pid==pid}).name
+      },
+      checkBindCard(){
+        if (!this.isOpenAccount) {
+          this.$message('您未开户，不能绑卡，请您先申请开户。')
+        } else {
+          this.$router.push({ name : 'bank' })
+        }
+      },
+      checkOpenAccount(){
+        if (!this.isRegister) {
+          this.$message('您未注册，不能开户，请您先进行注册。')
+        } else {
+          this.$router.push({ name : 'openAccount' })
+        }
+      },
+      checkAccount(type){
+        if (this.bindCard.length==0) {
+          this.$message('您未绑卡，不能操作，请您先在-我的银行卡-进行绑卡。')
+        } else {
+          this.$router.push({name: 'account',params:{type:type}})
+        }
       }
     },
     created(){
@@ -172,7 +188,7 @@
     font-family font-family-bold
 
   .top-part2 > div
-    padding 0 2em
+    padding 0 1em
     font-size extra-large
 
   .top-part2 > div span

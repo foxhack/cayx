@@ -1,6 +1,7 @@
 <template>
   <div id="identify-code" style="position: relative">
     <mt-field
+        disableClear
         :label="title ||'验证码'"
         type="number"
         :placeholder="placeholder || '请输入收到验证码'"
@@ -14,7 +15,6 @@
 </template>
 <script>
   import { VALIDATE } from '@/utils/config'
-  import { api } from '@/api/api'
   export default{
     name    : 'IdentifyCodeInput',
     data(){
@@ -31,7 +31,7 @@
         if (!this.isValid) return
         startCountDown(countDown)
         let postData = { userID : window.localStorage.getItem('userID'), mobile : this.mobile }
-        this.$post(api('getIdentifyCode', postData), { showSuccessMsg : false })
+        this.$post('getIdentifyCode', postData,false, { showSuccessMsg : false })
         function startCountDown(num) {
           _.count = num
           _countDown()

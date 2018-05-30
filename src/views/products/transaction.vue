@@ -1,67 +1,61 @@
 <template>
   <div id="transaction" class="page-with-top-bottom">
-    <div v-if="isBindCard">
-      <div v-if="this.$route.params.type=='in'">
-        <section>
-          <div class="title">{{transactionName}}途径</div>
-          <mt-cell
-              :title="bindCard.bankName"
-              :label="'尾号'+bindCard.bankCardNo+'  单笔限额X，每日限额X'"
-              @click.native="post.account='bindAccount'"
-              class="bank"
-              :class="{'selected':post.account=='bindAccount'}">
-          </mt-cell>
-          <mt-cell
-              v-if="asset.availableAsset>0"
-              title="账户余额"
-              @click.native="post.account='elecAccount'"
-              class="bank"
-              :class="{'selected':post.account=='elecAccount'}"
-              :label="asset.availableAsset|toYuan|money|unit('元')">
-          </mt-cell>
-        </section>
-        <section>
-          <div class="title">{{transactionName}}金额</div>
-          <mt-field class='money-input' label="￥" type="number" placeholder="0.01元起购" v-model="post.amount">
-            <span v-if="post.account=='elecAccount' && asset.availableAsset>0" class="all" @click="maxIn">全部余额买入</span>
-          </mt-field>
-          <input type="button" class="primary-btn fix-bottom" :disabled="!post.amount || !post.account" :value="'确定'+transactionName" @click="showT=true">
-        </section>
-      </div>
-      <div v-if="this.$route.params.type=='out'">
-        <section>
-          <div class="title">{{transactionName}}金额</div>
-          <mt-field class='money-input' label="￥" type="number" :placeholder="'最小'+transactionName+'金额0.01元'" v-model="post.amount">
-            <span class="all" @click="maxOut">全部{{transactionName}}</span>
-          </mt-field>
-          <mt-cell title="持有金额">{{productAsset|toYuan|money|unit('元')}}</mt-cell>
-          <input type="button" class="primary-btn fix-bottom" :disabled="!post.amount || !post.account" :value="'确定'+transactionName" @click="showT=true">
-        </section>
-        <section>
-          <div class="title">{{transactionName}}说明</div>
-        </section>
-      </div>
-      <transaction-input v-if=showT :tInfo="{title: transactionTitle, amount: post.amount, submitting : submitting}"
-                         v-on:transactionSubmit="submitTransaction"
-                         v-on:close="showT=false">
-      </transaction-input>
-      <result v-if="result.show" :result="result">
-        <div slot="footer">
-          <input type="button" class="primary-btn" value="确定" @click="$router.replace({path:'/product/'+$route.params.pid})">
-        </div>
-      </result>
+    <div v-if="this.$route.params.type=='in'">
+      <section>
+        <div class="title">{{transactionName}}途径</div>
+        <mt-cell
+            title="账户余额"
+            class="bank no-top-line selected"
+            :label="asset.availableAsset|toYuan|money|unit('元')">
+        </mt-cell>
+      </section>
+      <section>
+        <div class="title">{{transactionName}}金额</div>
+        <mt-field class='money-input no-top-line' label="￥" type="number" placeholder="0.01元起购" v-model="post.amount">
+          <span v-if="asset.availableAsset>0" class="all" @click="maxIn">全部余额买入</span>
+        </mt-field>
+        <input type="button" class="primary-btn fix-bottom" :disabled="!canBuy" :value="'确定'+transactionName" @click="showT=true">
+      </section>
+      <section v-if="outBuyRange">
+        <mt-cell title="余额不足" is-link @click.native="$router.push({name:'account', params:{type:'in', from:currentPath}})">去充值</mt-cell>
+      </section>
     </div>
-    <div v-else>
-      <bank></bank>
+    <div v-if="this.$route.params.type=='out'">
+      <section>
+        <div class="title">{{transactionName}}金额</div>
+        <mt-field class='money-input no-top-line' label="￥" type="number" :placeholder="'最小'+transactionName+'金额0.01元'" v-model="post.amount">
+          <span class="all" @click="maxOut">全部{{transactionName}}</span>
+        </mt-field>
+        <mt-cell title="持有金额">{{productAsset|toYuan|money|unit('元')}}</mt-cell>
+        <input type="button" class="primary-btn fix-bottom" :disabled="!canSell" :value="'确定'+transactionName" @click="showT=true">
+      </section>
+      <section>
+        <div class="title">{{transactionName}}说明</div>
+      </section>
     </div>
+    <transaction-input v-if=showT :tInfo="{title: transactionName, amount: post.amount, submitting : submitting}"
+                       v-on:transactionSubmit="submitTransaction"
+                       v-on:close="showT=false">
+    </transaction-input>
+    <result v-if="result.show" :result="result">
+      <div slot="footer">
+        <input type="button" class="primary-btn" value="确定" @click="$router.replace({path:'/product/'+$route.params.pid})">
+      </div>
+    </result>
+    <template v-if="dialog">
+      <el-dialog :visible=dialog.show :title="dialog.title" center :show-close="false" class="dialog-wrapper">
+        <div>{{dialog.msg}}</div>
+        <span slot="footer" class="dialog-footer">
+        <router-link :to="{path:'/user'}"><div class="primary-btn">确定</div></router-link>
+      </span>
+      </el-dialog>
+    </template>
   </div>
 </template>
 <script>
-  import Bank from '@/views/user/bank'
   import Result from '@/components/user/result'
   import TransactionInput from '@/components/user/transactionInput'
   import { toCent, toYuan } from '@/utils/filters'
-  import { api } from '@/api/api'
 
   export default{
     data(){
@@ -69,11 +63,11 @@
         submitting : false,
         showT      : false,
         post       : {
-          pid     : this.$route.params.pid,
-          type    : this.$route.params.type,
-          amount  : null,
-          account : 'elecAccount',
+          pid    : this.$route.params.pid,
+          type   : this.$route.params.type,
+          amount : null,
         },
+        dialog     : null,
         result     : {
           show    : false,
           title   : '',
@@ -82,7 +76,7 @@
         }
       }
     },
-    components : { Bank, TransactionInput, Result },
+    components : { TransactionInput, Result },
     computed   : {
       productAsset(){
         let productAsset = this.asset.detailAsset.find(a => {return a.productId==this.$route.params.pid})
@@ -97,9 +91,15 @@
         if (pType==1) return this.$route.params.type==='in' ? '申购' : '赎回'
         if (pType==2) return this.$route.params.type==='in' ? '购买' : '退出'
       },
-      transactionTitle(){
-        return this.post.account==='elecAccount' ? '帐户余额'+this.transactionName : this.bindCard.bankName+'('+this.bindCard.bankCardNo+')'+this.transactionName
-      }
+      outBuyRange(){
+        return this.post.amount && this.post.amount > 0 && parseFloat(this.post.amount) > toYuan(this.asset.availableAsset)
+      },
+      canBuy(){
+        return this.post.amount && this.post.amount > 0 && !this.outBuyRange
+      },
+      canSell(){
+        return this.post.amount && this.post.amount <= toYuan(this.productAsset)
+      },
     },
     watch      : {
       'post.amount'(val){
@@ -120,17 +120,16 @@
       submitTransaction(password){
         let post = {
           userID      : window.localStorage.getItem('userID'),
-          productCode : this.post.pid,
+          pid : this.post.pid,
           amount      : toCent(this.post.amount),
           tradePwd    : password,
-          buySource   : this.post.account
         }
         let operateType
         if (this.$route.params.type=='in') operateType = 'buyAsset'
         if (this.$route.params.type=='out') operateType = 'sellAsset'
-        this.submitting=true
+        this.submitting = true
         console.log(post)
-        this.$post(api(operateType, post),{
+        this.$post(operateType, post, false, {
           showProgress : '数据提交中，请勿重复提交...',
           callback     : {
             success : successCallback,
@@ -139,10 +138,11 @@
             always  : alwaysCallback
           }
         })
-        let _=this
+        let _ = this
+
         function successCallback(data, msg) {
           _.result = { show : true, title : _.transactionName+'结果', content : '恭喜您'+_.transactionName+'成功' }
-          _.$post(api('getAsset', { userID : window.localStorage.getItem('userID') }), { callback : { success : successCallback } })
+          _.$post('getAsset', { userID : window.localStorage.getItem('userID') }, false, { callback : { success : successCallback } })
           function successCallback(data) {
             _.$store.commit('setAsset', data)
           }
@@ -163,6 +163,24 @@
           _.submitting = false
           _.result.show = true
         }
+      }
+    },
+    created(){
+      if (!this.isRegister) {
+        this.dialog = { show : true, title : '操作提示', msg : '您现在还不能进行操作，您需要前往我的账户依次进行注册->开户->绑卡->账户充值' }
+        return
+      }
+      if (!this.isOpenAccount) {
+        this.dialog = { show : true, title : '操作提示', msg : '您现在还不能进行操作，您需要前往我的账户依次进行开户->绑卡->账户充值' }
+        return
+      }
+      if (this.bindCard.length==0) {
+        this.dialog = { show : true, title : '操作提示', msg : '您现在还不能进行操作，您需要前往我的账户进行绑卡->账户充值' }
+        return
+      }
+      if (this.$route.params.type=='in' && this.asset.availableAsset==0 ) {
+        this.dialog = { show : true, title : '操作提示', msg : '您的账户余额不足，您需要前往我的账户进行账户充值' }
+        return
       }
     }
   }

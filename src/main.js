@@ -2,7 +2,7 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import store from './store'
-import { unit, toCent, toYuan, fMoney, fMobile, fCardNo, fEmail, fAddress, fName } from './utils/filters'
+import { unit, toCent, toYuan, fMoney, fMobile, fIDCardNo, fEmail, fAddress, fName, fBankCardNo } from './utils/filters'
 import { post} from './utils/common'
 import { mixin } from '@/utils/mixin'
 
@@ -19,8 +19,9 @@ Vue.filter('money', fMoney)
 Vue.filter('name', fName)
 Vue.filter('mobile', fMobile)
 Vue.filter('email', fEmail)
-Vue.filter('cardNo', fCardNo)
+Vue.filter('IDCardNo', fIDCardNo)
 Vue.filter('address', fAddress)
+Vue.filter('bankCardNo', fBankCardNo)
 // UI Components
 Vue.use(InfiniteScroll)
 Vue.component(Field.name, Field)

@@ -9,24 +9,49 @@
       </div>
       <div class="content">
         说明页组件
-        <image-upload-input></image-upload-input>
+        <image-upload-input
+            inputname="cardPhoto"
+            title="点击上传"
+            v-on:getImage="getImage">
+        </image-upload-input>
+        <image-upload-input
+            inputname="cardPhoto"
+            title="点击上传"
+            v-on:getImage="getImage">
+        </image-upload-input>
+        <input type="button" class="primary-btn fix-bottom" @click="submit" value="提交">
       </div>
     </div>
   </transition>
 </template>
 <script>
+  import { api } from '@/api/api'
   import ImageUploadInput from '@/components/user/imageUploadInput'
   export default{
+    name       : 'Instruction',
     data(){
       return {
+        post : {
+          userID     : window.localStorage.getItem('userID'),
+          cardPhotos : []
+        }
       }
     },
-    name       : 'Instruction',
     props      : ['title'],
     components : { ImageUploadInput },
     methods    : {
+      getImage(img){
+        this.post.cardPhotos.push(img)
+      },
       close(){
         this.$emit('closeInstruction')
+      },
+      submit(){
+        let post = new FormData()
+        post.append('cardPhotos', this.post.cardPhotos[0])
+        post.append('cardPhotos', this.post.cardPhotos[1])
+        post.append('userID', this.post.userID)
+        this.$post(api('uploadIDCard', post, true))
       }
     }
   }

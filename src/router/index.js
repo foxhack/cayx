@@ -4,11 +4,11 @@ import store from '../store'
 import App from '@/App'
 import Author from '@/views/user/author'
 import Register from '@/components/user/register'
+import OpenAccount from '@/components/user/openAccount'
 import PasswordSetting from '@/views/user/passwordSetting'
 import Product from '@/views/products/list'
 import ProductDetail from '@/views/products/detail'
 import Transaction from '@/views/products/transaction'
-import TransactionResult from '@/views/products/transactionResult'
 import UserSetting from '@/views/user/setting'
 import Bank from '@/views/user/bank'
 import User from '@/views/user/user'
@@ -49,6 +49,14 @@ const router = new Router({
       }
     },
     {
+      path      : '/user/openaccount',
+      name      : 'openAccount',
+      component : OpenAccount,
+      meta      : {
+        title : '开户申请'
+      }
+    },
+    {
       path      : '/product',
       name      : 'productList',
       component : Product,
@@ -62,7 +70,6 @@ const router = new Router({
       component : User,
       meta      : {
         title    : '用户中心',
-        savePath : true
       }
     },
     {
@@ -80,7 +87,6 @@ const router = new Router({
       component : Transaction,
       meta      : {
         title    : '产品交易',
-        savePath : true
       }
     },
     {
@@ -107,16 +113,14 @@ const router = new Router({
       props     : true,
       meta      : {
         title    : '交易密码管理',
-        savePath : true
       }
     },
     {
-      path      : '/user/account/:type',
+      path      : '/user/account/:type/:from',
       name      : 'account',
       component : Account,
       meta      : {
         title    : '账户操作',
-        savePath : true
       }
     },
     {
@@ -148,53 +152,48 @@ router.beforeEach((to, from, next) => {
     store.commit('saveToTitle', to.meta.title)
   }
 
-  //if (to.meta.mustFrom && from!==to.meta.mustFrom) {
-  //  next(to.meta.mustFrom)
-  //}
-
-  //if (to.meta.savePath) {
-  //  store.commit('saveToPath', to.fullPath)
-  //}
-
   let userID = window.localStorage.getItem('userID')
   if (userID || to.path=='/author') {
-    console.log('已授权:'+userID)
+    if(userID){
+      console.log('已授权:'+userID)
+
+      let promises = []
+      let callbacks = []
+      if (!store.state.user) {
+        promises.push(api('getUserByUserID', { userID : userID }))
+        callbacks.push(function(data) {
+          store.commit('setUser', data)
+        })
+      }
+      if (!store.state.asset) {
+        promises.push(api('getAsset',{ userID : userID }))
+        callbacks.push(function(data) {
+          store.commit('setAsset', data)
+        })
+      }
+      if (to.path.indexOf('/product') > -1 && !store.getters.productsWithRate) {
+        let pid = []
+        store.state.products.forEach(p => {pid.push(p.pid)})
+        promises.push(api('getProductsRate', { pid : pid }))
+        callbacks.push(function(data) {
+          store.commit('saveProductsRate', data)
+        })
+      }
+      if (promises.length > 0) {
+        initAppData(promises, callbacks, next)
+      } else {
+        next()
+      }
+
+    }else{
+      console.log('去授权页')
+      next()
+    }
+
   } else {
     window.localStorage.setItem('toPath', to.fullPath)
-    console.log('去授权页面')
+    console.log('没有userID,去授权页面')
     next('/author')
-  }
-
-  //if (to.path=='/user/newbank') {
-  //  store.commit('saveToPath', from.fullPath)
-  //}
-
-  let promises = []
-  let callbacks = []
-  if (!store.state.user) {
-    promises.push(api('getUserByUserID', { userID : userID }))
-    callbacks.push(function(data) {
-      store.commit('setUser', data)
-    })
-  }
-  if (!store.state.asset) {
-    promises.push(api('getAsset',{ userID : userID }))
-    callbacks.push(function(data) {
-      store.commit('setAsset', data)
-    })
-  }
-  if (to.path.indexOf('/product') > -1 && !store.getters.productsWithRate) {
-    let pid = []
-    store.state.products.forEach(p => {pid.push(p.pid)})
-    promises.push(api('getProductsRate', { pid : pid }))
-    callbacks.push(function(data) {
-      store.commit('saveProductsRate', data)
-    })
-  }
-  if (promises.length > 0) {
-    initAppData(promises, callbacks, next)
-  } else {
-    next()
   }
 })
 

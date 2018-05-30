@@ -2,6 +2,7 @@ import { authorDomain, wxAppId } from '@/api/config'
 import { Message, Notification } from 'element-ui'
 import { Indicator } from 'mint-ui'
 import { CODE } from '@/utils/config'
+import { api } from '@/api/api'
 
 export function getCodeByType(type) {
   let keys = Object.keys(CODE)
@@ -39,8 +40,8 @@ export function getQueryString(name) {
 //  callback : {success:function,error:function,fail:function,always:function},
 //}
 
-export function post(promise, options) {
-  //if (options==undefined) options = {}
+export function post(apiName, postData, isFormData, options) {
+  console.log(':::::::::::发送请求'+apiName, postData)
   options = options || {}
   if (options.showProgress) {
     console.log('打开loading窗口')
@@ -53,7 +54,7 @@ export function post(promise, options) {
   options.showErrorMsg = options.showErrorMsg || true
   options.showFailMsg = options.showFailMsg || true
 
-  promise
+  api(apiName, postData, isFormData)
     .done(result => {
       if (result.code==getCodeByType('success')) {
         if (options.showSuccessMsg) {
@@ -131,45 +132,35 @@ export function initAppData(promises, callbacks, next) {
 
 export function debounce(func, wait, immediate) {
   // immediate默认为false
-  let timeout, args, context, timestamp, result;
+  let timeout, args, context, timestamp, result
 
   let later = function() {
-    let last = _.now() - timestamp;
+    let last = _.now()-timestamp
     if (last < wait && last >= 0) {
-      timeout = setTimeout(later, wait - last);
+      timeout = setTimeout(later, wait-last)
     } else {
-      timeout = null;
+      timeout = null
       if (!immediate) {
-        result = func.apply(context, args);
-        if (!timeout) context = args = null;
+        result = func.apply(context, args)
+        if (!timeout) context = args = null
       }
     }
-  };
+  }
 
   return function() {
-    context = this;
-    args = arguments;
-    timestamp = _.now();
-    var callNow = immediate && !timeout;
-    if (!timeout) timeout = setTimeout(later, wait);
+    context = this
+    args = arguments
+    timestamp = _.now()
+    var callNow = immediate && !timeout
+    if (!timeout) timeout = setTimeout(later, wait)
     if (callNow) {
-      result = func.apply(context, args);
-      context = args = null;
+      result = func.apply(context, args)
+      context = args = null
     }
 
-    return result;
-  };
-};
-
-//wx-jssdk
-wx.config({
-  debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
-  appId: 'wx1c307bfe1384b6cd', // 必填，公众号的唯一标识
-  timestamp: '', // 必填，生成签名的时间戳
-  nonceStr: '', // 必填，生成签名的随机串
-  signature: '',// 必填，签名
-  jsApiList: [] // 必填，需要使用的JS接口列表
-})
+    return result
+  }
+}
 
 function merge(a, b) {
   return Object.assign({}, a, b)

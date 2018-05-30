@@ -4,6 +4,7 @@
     <div v-else>
       <mt-cell v-if="!displayInput" :title="title || '银行卡卡号'" is-link @click.native="showMod">{{value}}</mt-cell>
       <mt-field v-if="displayInput"
+                disableClear
                 :label="title || '银行卡卡号'"
                 :placeholder="placeholder || '请输入银行卡卡号'"
                 :state="state"
@@ -65,8 +66,4 @@
     }
   }
 </script>
-<style lang="stylus" scoped>
-  @import "../../style/base"
-
-</style>
 

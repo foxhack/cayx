@@ -19,7 +19,6 @@
 </template>
 <script>
   import NewPassword from '@/components/user/newPassword'
-  import { api } from '@/api/api'
   export default{
     name       : 'UpdatePassword',
     data(){
@@ -47,7 +46,7 @@
       sendOldPassword(){
         this.submitting = true
         let post = { userID : window.localStorage.getItem('userID'), tradepwd : this.oldPassword }
-        this.$post(api('validPassword', post),
+        this.$post('validPassword', post, false,
           {
             showProgress : '请稍候...',
             callback     : { success : successCallback, always : alwaysCallback }

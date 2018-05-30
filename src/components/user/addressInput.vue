@@ -2,8 +2,16 @@
   <div id="address-input">
     <mt-cell v-if="editable === false" :title="title ||'联系地址'" @click.native="alert">{{value}}</mt-cell>
     <div v-else>
-      <mt-cell v-if="!displayInput" :title="title || '联系地址'" is-link @click.native="$emit('showInput',inputname)">{{value}}</mt-cell>
+      <mt-cell v-if="!displayInput" :title="title || '联系地址'" is-link @click.native="$emit('showInput',inputname)">
+        <template v-if="fValue">
+          {{value|address}}
+        </template>
+        <template v-else>
+          {{value}}
+        </template>
+      </mt-cell>
       <mt-field v-if="displayInput"
+                disableClear
                 :label="title || '联系地址'"
                 :placeholder="placeholder || '请输入联系地址'"
                 :state="state"
@@ -19,23 +27,24 @@
     name    : 'AddressInput',
     data(){
       return {
-        state        : '',
-        errorMsg     : ''
+        state    : '',
+        errorMsg : ''
       }
     },
     props   : [
       'editable',
+      'fValue',
       'displayInput',
       'title',
       'placeholder',
       'inputname',
       'value'
     ],
-    watch:{
+    watch   : {
       displayInput(val){
-        if(val){
+        if (val) {
           this.check(this.value)
-          this.$nextTick(()=>{
+          this.$nextTick(() => {
             document.querySelector('#address-input input').focus()
           })
         }
@@ -52,7 +61,7 @@
         this.$message('您已绑卡，不能修改此信息。');
       },
       setValid(isValid){
-        this.$emit('isValid',{'key':this.inputname, 'isValid':isValid})
+        this.$emit('isValid', { 'key' : this.inputname, 'isValid' : isValid })
       }
     }
   }

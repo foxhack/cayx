@@ -2,7 +2,8 @@
   <div id="user-setting" class="page-with-top" v-if="isRegister">
     <section>
       <name-input
-          :editable="!isBindCard"
+          :editable="!isOpenAccount"
+          :fValue="true"
           :displayInput="displayInput.name"
           inputname="name"
           v-model="post.name"
@@ -10,7 +11,8 @@
           v-on:showInput="showInput">
       </name-input>
       <idno-input
-          :editable="!isBindCard"
+          :editable="!isOpenAccount"
+          :fValue="true"
           :displayInput="displayInput.cardNo"
           inputname="cardNo"
           v-model="post.cardNo"
@@ -19,6 +21,7 @@
       </idno-input>
       <telephone-input
           :editable="true"
+          :fValue="true"
           :displayInput="displayInput.mobile"
           inputname="mobile"
           v-model="post.mobile"
@@ -35,20 +38,17 @@
           v-on:isValid="setValid">
       </identify-code>
       <email-input
+          :initcheck="true"
           :editable="true"
-          :displayInput="displayInput.email"
-          inputname="email"
-          v-model="post.email"
-          v-on:isValid="setValid"
-          v-on:showInput="showInput">
+          :filterValue="true"
+          v-on:setValue="setValue">
       </email-input>
       <address-input
           :editable="true"
-          :displayInput="displayInput.address"
+          :fValue="true"
           inputname="address"
           v-model="post.address"
-          v-on:isValid="setValid"
-          v-on:showInput="showInput">
+          v-on:isValid="setValid">
       </address-input>
     </section>
     <input type="button" class="primary-btn" value="提交修改" :disabled="forbidSubmit" @click="updateUser" style="margin-bottom: 10px">
@@ -74,7 +74,6 @@
           name    : false,
           cardNo  : false,
           mobile  : false,
-          email   : false,
           address : false
         },
         submitting   : false,
@@ -84,7 +83,6 @@
           cardNo       : null,
           identifyCode : null,
           mobile       : null,
-          email        : null,
           address      : null
         }
       }
@@ -98,6 +96,9 @@
       }
     },
     methods    : {
+      setValue(key,value){
+        this.post[key]=value
+      },
       showInput(inputName){
         this.displayInput[inputName] = true
       },
@@ -137,7 +138,7 @@
       }
     },
     mounted(){
-      this.post = { ...this.userInfo }
+      //this.post = { ...this.userInfo }
     }
   }
 

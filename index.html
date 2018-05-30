@@ -5,24 +5,27 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <link rel="stylesheet" href="/static/common.css">
   <script>
-    (function (doc, win) {
+    (function(doc, win) {
       var docEl = doc.documentElement,
         resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize',
-        recalc = function () {
-          var clientWidth = docEl.clientWidth<docEl.clientHeight?docEl.clientWidth:docEl.clientHeight
-          if (!clientWidth) return;
-          if(clientWidth>=750){
-            docEl.style.fontSize = '100px';
-          }else{
-            docEl.style.fontSize = 100 * (clientWidth / 750) + 'px';
+        recalc = function() {
+          var clientWidth = docEl.clientWidth < docEl.clientHeight ? docEl.clientWidth : docEl.clientHeight
+          if (!clientWidth) return
+          if (clientWidth >= 750) {
+            docEl.style.fontSize = '100px'
+          } else {
+            docEl.style.fontSize = 100*(clientWidth/750)+'px'
           }
-        };
+        }
       recalc()//第一次执行，在DOMContentLoaded之前
-      if (!doc.addEventListener) return;
-      win.addEventListener(resizeEvt, recalc, false);
-      doc.addEventListener('DOMContentLoaded', recalc, false);
-    })(document, window);
+      if (!doc.addEventListener) return
+      win.addEventListener(resizeEvt, recalc, false)
+      doc.addEventListener('DOMContentLoaded', recalc, false)
+    })(document, window)
 
+  </script>
+  <script>
+//    window.localStorage.setItem('userID', 'bea762e21af340a9b75caac26944c597')
   </script>
   <style>
     #logo {
@@ -33,7 +36,8 @@
       justify-content: center;
       align-items: center;
     }
-    #logo div{
+
+    #logo div {
       line-height: 2;
     }
 
@@ -41,7 +45,10 @@
   <title>长安严选</title>
 </head>
 <body>
-<div id="logo"><div>长安严选</div><div>放心的理财</div></div>
+<div id="logo">
+  <div>长安严选</div>
+  <div>放心的理财</div>
+</div>
 <div id="app"></div>
 <!-- built files will be auto injected -->
 <script src="/static/zepto.min.js"></script>

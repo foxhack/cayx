@@ -42,6 +42,9 @@
 
 <style lang="stylus">
   @import "./style/base"
+  html
+    background #f5f5f5
+
   body
     background #f5f5f5
     min-height 100vh
@@ -53,19 +56,19 @@
 
   @media screen and (max-width: 321px) {
     body {
-      font-size: 16px
+      font-size: 17px
     }
   }
 
   @media screen and (min-width: 321px) and (max-width: 400px) {
     body {
-      font-size: 17px;
+      font-size: 18px;
     }
   }
 
   @media screen and (min-width: 400px) {
     body {
-      font-size: 18px
+      font-size: 20px
     }
   }
 
@@ -81,8 +84,8 @@
     border none
 
   input[type="button"]:disabled
-    background primary-text-color
-    opacity 0.3
+    background neutral-text-color4
+    border neutral-text-color4
 
   .icon
     width 1em
@@ -188,10 +191,13 @@
 
   section
     .title, .tip
-      padding 0 10px
-      font-size 0.8em
+      padding 5px 10px
+      font-size extra-extra-small
       font-family font-family-light
       {third-level}
+
+    .title
+      background white
 
     .tip
       {second-level}
@@ -203,7 +209,7 @@
     left 0
     right 0
     top calc(100vh - 2.64em - 20px)
-    z-index 1000
+    z-index 2001
 
   input[type="button"].nofix-button
     width calc(100% - 20px)
@@ -271,13 +277,27 @@
     font-size medium
     box-shadow 0 2px 10px rgba(0, 0, 0, 0.2)
 
-  #bind-account .dialog-wrapper > div
-    width 90%
-    border-radius 0.5em
+  #product-detail-wrapper, #bind-account, #account-operate, #transaction
+    .dialog-wrapper > div
+      width 90%
+      border-radius 0.5em
 
-  #bind-account .el-dialog__header
-    border-top-left-radius 0.5em
-    border-top-right-radius 0.5em
+  #product-detail-wrapper, #bind-account, #account-operate, #transaction
+    .el-dialog__header
+      border-top-left-radius 0.5em
+      border-top-right-radius 0.5em
+
+  #transaction-input, #transaction-password-setting
+    .el-dialog__wrapper .el-dialog__header
+      border-top-left-radius 0em
+      border-top-right-radius 0em
+    .el-dialog__body
+      padding 0 !important
+
+  #open-account
+    .el-dialog
+      margin-bottom 0
+      width 100%
 
   .el-dialog__header
     position relative
@@ -285,9 +305,6 @@
 
   .el-dialog__title
     color white
-
-  #transaction-input .el-dialog__body, #transaction-password-setting .el-dialog__body
-    padding 0 !important
 
   .el-loading-mask
     height 100vh !important
@@ -321,12 +338,21 @@
     min-height 100vh
     padding-bottom menuHeight
 
+  .mint-cell
+    min-height 54px
+
+  .mint-cell-wrapper
+    font-size 1em
+
+  .no-top-line .mint-cell-wrapper
+    background none
+
   #user-home .mint-cell-label
-    margin-left calc(1.3em + 10px)
+    margin-left calc(1.8em + 10px)
 
   .error
     position absolute
-    z-index 2002
+    z-index 2000
     right 10px
     bottom -20px
     background-color error-color
@@ -380,4 +406,23 @@
       color secondary-text-color
     input
       color secondary-text-color
+
+  #email-input
+    position relative
+    input
+      margin-right 20px
+      color neutral-text-color3
+
+
+
+  #username, #idno, #telephone-input, #address-input, #email-input, #identify-code, #bankcard-input
+    input
+      text-align right
+      margin-right 20px
+
+  #username, #idno, #telephone-input, #address-input, #email-input, #identify-code, #bankcard-input
+    .mint-field-state
+      position absolute
+      right 10px
+
 </style>

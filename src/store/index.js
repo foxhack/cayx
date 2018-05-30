@@ -40,11 +40,11 @@ export default new Vuex.Store({
     setUser(s, user){
       s.user = user
     },
+    setDefaultBindCard(s, bid){
+      s.user.userInfo.defaultBindCard=bid
+    },
     setAsset(s, asset){
       s.asset = asset
-    },
-    bindUserAccount(s){
-      s.user.userStatus.isRegisterCayx = true
     },
     setUserPassword(s){
       s.user.userStatus.isSetPassword = true

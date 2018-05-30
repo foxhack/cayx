@@ -1,15 +1,16 @@
 <template>
   <div id="email-input">
-    <mt-cell v-if="editable === false" :title="title ||'email'" @click.native="alert">{{value | email}}</mt-cell>
+    <mt-cell v-if="editable === false" :title="title ||'email'" @click.native="alert">{{value|email}}</mt-cell>
     <div v-else>
-      <mt-cell v-if="!displayInput" :title="title || 'email'" is-link @click.native="$emit('showInput',inputname)">{{value | email}}</mt-cell>
-      <mt-field v-if="displayInput"
+      <mt-field v-if="showRawValue"
+                disableClear
                 :label="title || 'email'"
                 :placeholder="placeholder || '请输入email'"
-                :state="state"
                 :value="value"
+                :state="state"
                 @input.native="check($event.target.value)">
       </mt-field>
+      <mt-cell v-else :title="title ||'email'" is-link @click.native="displayInput">{{value|email}}</mt-cell>
       <div v-if="state=='error'" class="error">{{errorMsg}}</div>
     </div>
   </div>
@@ -20,46 +21,44 @@
     name    : 'EmailInput',
     data(){
       return {
-        state        : '',
-        errorMsg     : ''
+        value    : null,
+        showRawValue : !this.filterValue,
+        state    : '',
+        errorMsg : '',
       }
     },
     props   : [
+      'initcheck',
       'editable',
-      'displayInput',
+      'filterValue',
       'title',
       'placeholder',
-      'inputname',
-      'value'
     ],
-    watch:{
-      displayInput(val){
-        if(val){
-          this.check(this.value)
-          this.$nextTick(()=>{
-            document.querySelector('#email-input input').focus()
-          })
-        }
-      }
-    },
     methods : {
+      displayInput(){
+        this.showRawValue=true
+        this.check(this.value)
+      },
       check(val){
         console.log('调用email检查方法')
         if (!VALIDATE.email.test(val)) {
           this.state = 'error'
           this.errorMsg = '请输入合法的email'
-          this.setValid(false)
           return
         }
         this.state = 'success'
-        this.setValid(true)
-        this.$emit('input', val)
+        console.log('向父组件传递', val)
+        this.$emit('setValue', 'email', val)
       },
       alert(){
         this.$message('您已绑卡，不能修改此信息。');
       },
-      setValid(isValid){
-        this.$emit('isValid', { 'key' : this.inputname, 'isValid' : isValid })
+    },
+    created(){
+      this.value=this.userInfo.email
+      if (this.initcheck) {
+        this.showRawValue=true
+        this.check(this.value)
       }
     }
   }

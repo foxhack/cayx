@@ -6,8 +6,11 @@ let mixin = {
     isRegister(){
       return this.$store.state.user.userStatus.isRegisterCayx
     },
-    isBindCard(){
-      return this.$store.state.user.userStatus.isBindCard
+    isOpenAccount(){
+      return this.$store.state.user.userStatus.isOpenAccount
+    },
+    isRiskAppraisal(){
+      return this.$store.state.user.userStatus.isRiskAppraisal
     },
     isSetPassword(){
       return this.$store.state.user.userStatus.isSetPassword

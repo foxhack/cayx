@@ -1,8 +1,7 @@
 <template>
-  <div v-else v-loading.body="loading" element-loading-text="登陆中"></div>
+  <div></div>
 </template>
 <script>
-  import { api } from '@/api/api'
   import { guideToAuth, getQueryString } from '@/utils/common'
   export default{
     name : 'Author',
@@ -12,21 +11,20 @@
       }
     },
     created(){
-//      let code = getQueryString("code");
-      let code = '123'
+      console.log('进入授权页')
+      let code = getQueryString("code");
       let _ = this
       if (code) {
         console.log('得到code'+code)
         _.loading = true
-        _.$post(api('getUserByCode',{code:code}), { callback : { success : successCallback, always : alwaysCallback } })
+        _.$post('getUserByCode', { code : code }, false, {
+          showProgress : '数据获取中，请稍候......',
+          callback     : { success : successCallback }
+        })
         function successCallback(data) {
           window.localStorage.setItem('userID', data.userID)
           _.$store.commit('setUser', data)
           _.$router.replace(window.localStorage.getItem('toPath'))
-        }
-
-        function alwaysCallback() {
-          _.loading = false
         }
       } else {
         guideToAuth(_.$router.mode)

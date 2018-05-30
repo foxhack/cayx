@@ -27,7 +27,7 @@ export function fMoney(s) {
   return t.split('').reverse().join('')+'.'+r
 }
 
-export function fCardNo(s) {
+export function fIDCardNo(s) {
   if (s) {
     s = s+''
     return s.substr(0, 3)+'***********'+s.substr(-4)
@@ -66,4 +66,13 @@ export function fName(s) {
 
 export function fAddress(s) {
   return s
+}
+
+export function fBankCardNo(s) {
+  if (s) {
+    s = s+''
+    return '尾号'+ s.substr(-4)
+  } else {
+    return s
+  }
 }

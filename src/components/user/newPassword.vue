@@ -32,7 +32,6 @@
 </template>
 <script>
   import Result from '@/components/user/result'
-  import { api } from '@/api/api'
   export default{
     name       : 'NewPassword',
     data(){
@@ -98,7 +97,7 @@
       setPassword(){
         this.submitting = true
         let post = { userID : window.localStorage.getItem('userID'), tradepwd : this.password }
-        this.$post(api('setPassword', post),
+        this.$post('setPassword', post, false,
           {
             showProgress : '请稍候...',
             callback     : { success : successCallback, always : alwaysCallback }

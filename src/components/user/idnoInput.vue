@@ -1,9 +1,17 @@
 <template>
   <div id="idno" style="position: relative">
-    <mt-cell v-if="editable === false" :title="title || '身份证号'" @click.native="alert">{{value | cardNo}}</mt-cell>
+    <mt-cell v-if="editable === false" :title="title || '身份证号'" @click.native="alert">{{value|IDCardNo}}</mt-cell>
     <div v-else>
-      <mt-cell v-if="!displayInput" :title="title || '身份证号'" is-link @click.native="$emit('showInput',inputname)">{{value | cardNo}}</mt-cell>
+      <mt-cell v-if="!displayInput" :title="title || '身份证号'" is-link @click.native="$emit('showInput',inputname)">
+        <template v-if="fValue">
+          {{value|IDCardNo}}
+        </template>
+        <template v-else>
+          {{value}}
+        </template>
+      </mt-cell>
       <mt-field v-if="displayInput"
+                disableClear
                 :label="title || '身份证号'" :placeholder="placeholder || '请输入合法的身份证号'"
                 :state="state"
                 :value="value"
@@ -14,17 +22,18 @@
   </div>
 </template>
 <script>
-  import {VALIDATE} from '@/utils/config'
+  import { VALIDATE } from '@/utils/config'
   export default{
     name    : 'IdonInput',
     data(){
       return {
-        state        : '',
-        errorMsg     : ''
+        state    : '',
+        errorMsg : ''
       }
     },
     props   : [
       'editable',
+      'fValue',
       'title',
       'placeholder',
       'inputname',
@@ -32,11 +41,11 @@
       'displayInput',
       'initcheck'
     ],
-    watch:{
+    watch   : {
       displayInput(val){
-        if(val){
+        if (val) {
           this.check(this.value)
-          this.$nextTick(()=>{
+          this.$nextTick(() => {
             document.querySelector('#idno input').focus()
           })
         }
@@ -63,7 +72,7 @@
       }
     },
     created(){
-      if(this.initcheck) this.check(this.value)
+      if (this.initcheck) this.check(this.value)
     }
   }
 </script>

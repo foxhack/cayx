@@ -5,16 +5,16 @@ const CODE = {
 }
 //定义可绑定的银行卡
 const BANKS = [
-  { id : 'CEB', name : '光大银行', logoPos : '100% 74%' },
-  { id : 'ZHONGXINB', name : '中信银行', logoPos : '33.33% 24%' },
-  { id : 'PSBC', name : '邮储银行', logoPos : '33.33% 0' },
-  { id : 'ABC', name : '农业银行', logoPos : '' },
-  { id : 'MINSHENGB', name : '民生银行', logoPos : '' },
-  { id : 'ZHAOSHANGB', name : '招商银行', logoPos : '' },
-  { id : 'XINGYEB', name : '兴业银行', logoPos : '' },
-  { id : 'ICBC', name : '工商银行', logoPos : '' },
-  { id : 'PINGANB', name : '平安银行', logoPos : '' },
-  { id : 'CCB', name : '建设银行', logoPos : '' }
+  { code : 'CEB', name : '光大银行', logoPos : '100% 74%' },
+  { code : 'ZHONGXINB', name : '中信银行', logoPos : '33.33% 24%' },
+  { code : 'PSBC', name : '邮储银行', logoPos : '33.33% 0' },
+  { code : 'ABC', name : '农业银行', logoPos : '' },
+  //{ id : 'MINSHENGB', name : '民生银行', logoPos : '' },
+  //{ id : 'ZHAOSHANGB', name : '招商银行', logoPos : '' },
+  //{ id : 'XINGYEB', name : '兴业银行', logoPos : '' },
+  //{ id : 'ICBC', name : '工商银行', logoPos : '' },
+  //{ id : 'PINGANB', name : '平安银行', logoPos : '' },
+  //{ id : 'CCB', name : '建设银行', logoPos : '' }
 ]
 //定义产品
 const PRODUCTS = [

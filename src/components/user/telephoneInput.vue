@@ -7,9 +7,15 @@
                :label="subtitle"
                is-link
                @click.native="$emit('showInput',inputname)">
-        {{value|mobile}}
+        <template v-if="fValue">
+          {{value|mobile}}
+        </template>
+        <template v-else>
+          {{value}}
+        </template>
       </mt-cell>
       <mt-field v-if="displayInput"
+                disableClear
                 type="number"
                 :label="title || '手机号'" :placeholder="placeholder || '请输入手机号'"
                 :state="state"
@@ -33,6 +39,7 @@
     },
     props   : [
       'editable',
+      'fValue',
       'displayInput',
       'title',
       'subtitle',

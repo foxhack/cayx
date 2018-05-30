@@ -1,9 +1,17 @@
 <template>
   <div id="username">
-    <mt-cell v-if="editable === false" :title="title ||'姓名'" @click.native="alert">{{value | name}}</mt-cell>
+    <mt-cell v-if="editable === false" :title="title ||'姓名'" @click.native="alert">{{value|name}}</mt-cell>
     <div v-else>
-      <mt-cell v-if="!displayInput" :title="title || '姓名'" is-link @click.native="$emit('showInput',inputname)">{{value | name}}</mt-cell>
+      <mt-cell v-if="!displayInput" :title="title || '姓名'" is-link @click.native="$emit('showInput',inputname)">
+        <template v-if="fValue">
+          {{value|name}}
+        </template>
+        <template v-else>
+          {{value}}
+        </template>
+      </mt-cell>
       <mt-field v-if="displayInput"
+                disableClear
                 :label="title || '姓名'"
                 :placeholder="placeholder || '请输入姓名'"
                 :state="state"
@@ -15,17 +23,18 @@
   </div>
 </template>
 <script>
-  import {VALIDATE} from '@/utils/config'
+  import { VALIDATE } from '@/utils/config'
   export default{
     name    : 'NameInput',
     data(){
       return {
-        state        : '',
-        errorMsg     : ''
+        state    : '',
+        errorMsg : ''
       }
     },
     props   : [
       'editable',
+      'fValue',
       'displayInput',
       'title',
       'placeholder',
@@ -33,17 +42,14 @@
       'value',
       'initcheck'
     ],
-    watch:{
-      displayInput(val){
-        if(val){
-          this.check(this.value)
-          this.$nextTick(()=>{
-            document.querySelector('#username input').focus()
-          })
-        }
-      }
-    },
     methods : {
+      showMod(){
+        this.displayInput = true
+        this.check(this.value)
+        this.$nextTick(() => {
+          document.querySelector('#username input').focus()
+        })
+      },
       check(val){
         console.log('调用姓名检查方法')
         if (val.trim() && !VALIDATE.name.test(val)) {
@@ -60,16 +66,16 @@
         this.$message('您已绑卡，不能修改此信息。');
       },
       setValid(isValid){
-        this.$emit('isValid',{'key':this.inputname, 'isValid':isValid})
+        this.$emit('isValid', { 'key' : this.inputname, 'isValid' : isValid })
       }
     },
     created(){
-      if(this.initcheck) this.check(this.value)
+      if (this.initcheck) this.check(this.value)
     }
   }
 </script>
 <style lang="stylus" scoped>
   @import "../../style/base"
-    #username
-      position relative
+  #username
+    position relative
 </style>

@@ -2,6 +2,7 @@
   <div id="register" class="page-with-top">
     <bind-account v-if="isRegisterCaej && !isRegister" v-on:bindSuccess="bindSuccess"></bind-account>
     <section v-if="!isRegister">
+      <div class="title">请输入注册信息</div>
       <telephone-input
           :editable="true"
           :displayInput="true"
@@ -26,14 +27,13 @@
     </section>
     <result v-if="result.show" :result="result">
       <div slot="footer">
-        <router-link :to="{path:'/product'}"><input type="button" class="primary-btn" value="去逛商品"></router-link>
-        <input type="button" class="primary-btn plain" @click="$router.replace({path:'/user/setting'})" value="去完善信息">
+        <router-link :to="{path:'/user/openaccount'}"><input type="button" class="primary-btn" value="申请开户"></router-link>
+        <router-link :to="{path:'/user'}"><input type="button" class="primary-btn plain" value="返回会员中心"></router-link>
       </div>
     </result>
   </div>
 </template>
 <script>
-  import { api } from '@/api/api'
   import BindAccount from '@/components/user/bindAccount'
   import TelephoneInput from '@/components/user/telephoneInput'
   import IdentifyCode from '@/components/user/identifyCode'
@@ -65,8 +65,7 @@
     computed   : {
       forbidSubmit(){
         console.log('重新计算是否要禁用提交按钮')
-        if (this.submitting) return true
-        if (!this.agree) return true
+        if (this.submitting || !this.agree || this.isRegister) return true
         if (Object.keys(this.allowSubmit).length===1) return true
         return (Object.values(this.allowSubmit).some(e => {return e===false}))
       }
@@ -86,36 +85,33 @@
         }
         console.log(post)
         let _ = this
-        this.$post(api('register',post), {
-          showProgress   : '数据提交中，请勿重复提交...',
+        this.$post('register', post, false, {
+          showProgress   : '注册信息提交中，请勿重复提交...',
           showSuccessMsg : _.currentPath!=='/user/register',//作为组件使用的
           callback       : { success : successCallback, always : alwaysCallback }
         })
         function successCallback() {
-          _.$post(api('getUserByUserID',{userID:post.userID}), { callback : { success : successCallback } })
+          if (_.currentPath=='/user/register') {
+            _.result = { show : true, title : '注册结果', content : '恭喜您，注册成功' }
+          }//作为路由使用的
+          _.$post('getUserByUserID', { userID : post.userID }, false, {
+            showProgress : '用户信息更新中...',
+            callback     : { success : successCallback }
+          })
           function successCallback(data) {
-            if (_.currentPath=='/user/register') {
-              _.result = { show : true, title : '注册结果', content : '恭喜您，注册成功' }
-            }//作为路由使用的
             _.$store.commit('setUser', data)
           }
         }
 
         function alwaysCallback() {
-          console.log('恢复注册按钮')
-          _.submitting = false
+          if (!this.isRegister) _.submitting = false
         }
       }
     },
     created(){
       console.log('组件register::::'+this.currentPath)
-      if(this.isRegister) this.result = { show : true, title : '注册结果', content : '恭喜您，注册成功' }
-
+      if (this.isRegister) this.result = { show : true, title : '注册结果', content : '恭喜您，注册成功' }
     },
-    beforeRouteEnter (to, from, next) {
-      console.log('register component from:'+from.fullPath)
-      next()
-    }
   }
 </script>
 
