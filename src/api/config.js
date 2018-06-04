@@ -24,6 +24,7 @@ export const apiUrl = {
   buyAsset           : backServerBaseUrl+'/finance/asset/applybuy',
   sellAsset          : backServerBaseUrl+'/finance/asset/applyredeem',
   //getWxConfig        : backServerBaseUrl+'/weixin/getwxconfig',
-  uploadIDCard       : backServerBaseUrl+'/file/uploadidcard'
+  uploadIDCard       : backServerBaseUrl+'/file/uploadidcard',
+  validUser          : backServerBaseUrl+'/finance/sms/validuser'
 }
 

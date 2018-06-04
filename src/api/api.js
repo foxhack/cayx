@@ -1,12 +1,12 @@
 import  { apiUrl } from './config'
 
-export function api(apiName, postData, isFormData) {
+export function api(apiName, postData) {
   let contentType
-  if (!isFormData) {
+  if (apiName=='openAccount') {
+    contentType=false
+  }else{
     postData = JSON.stringify(postData)
     contentType='application/json'
-  }else{
-    contentType=false
   }
   return $.ajax({
     type        : 'POST',

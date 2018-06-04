@@ -51,7 +51,7 @@
         post.append('cardPhotos', this.post.cardPhotos[0])
         post.append('cardPhotos', this.post.cardPhotos[1])
         post.append('userID', this.post.userID)
-        this.$post(api('uploadIDCard', post, true))
+        this.$post(api('uploadIDCard', post))
       }
     }
   }

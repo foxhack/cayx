@@ -4,14 +4,12 @@
       <new-password></new-password>
     </section>
     <template v-if="isRegister && isSetPassword">
-      <section>
-        <mt-cell v-if="view==''" title="修改密码" is-link @click.native="view='update'"></mt-cell>
-        <update-password v-if="view=='update'" v-on:close="view=''"></update-password>
-      </section>
-      <section>
-        <mt-cell title="找回密码" v-show="view==''" is-link @click.native="view='reset'"></mt-cell>
-        <reset-password v-if="view=='reset'" v-on:close="view=''"></reset-password>
-      </section>
+      <div v-show="view==''">
+        <mt-cell title="修改密码" is-link @click.native="view='update'"></mt-cell>
+        <mt-cell title="找回密码" is-link @click.native="view='reset'"></mt-cell>
+      </div>
+      <update-password v-if="view=='update'" v-on:close="view=''"></update-password>
+      <reset-password v-if="view=='reset'" v-on:close="view=''"></reset-password>
     </template>
   </div>
 </template>
@@ -29,6 +27,11 @@
       }
     },
     components : { NewPassword, UpdatePassword, ResetPassword },
+    beforeRouteEnter (to, from, next) {
+      next(vm => {
+        if (!vm.isRegister) vm.$router.push('/user')
+      })
+    }
   }
 </script>
 

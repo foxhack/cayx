@@ -46,7 +46,7 @@
       sendOldPassword(){
         this.submitting = true
         let post = { userID : window.localStorage.getItem('userID'), tradepwd : this.oldPassword }
-        this.$post('validPassword', post, false,
+        this.$post('validPassword', post,
           {
             showProgress : '请稍候...',
             callback     : { success : successCallback, always : alwaysCallback }

@@ -9,19 +9,22 @@
     </el-dialog>
   </div>
   <div v-else id="transaction-input">
-    <el-dialog :visible="true" width="100%" title="请输入交易密码" center :show-close="false">
-      <div class="set-password" @click="showPasswordSetting=true">{{title}}</div>
-      <div style="font-size: large;text-align:center; padding: 1em">{{tInfo.title}}</div>
+    <el-dialog :visible="true" width="100%" fullscreen title="请输入交易密码" center :show-close="false">
+      <svg class="icon close" aria-hidden="true" @click="$emit('close')">
+        <use xlink:href="#icon-close"></use>
+      </svg>
+      <div style="font-size: large;text-align:center; padding: 0.6em" v-html="tInfo.title"></div>
+      <div style="font-size: x-large;text-align:center; padding: 0.6em" v-html="tInfo.subTitle"></div>
       <div style="font-size: xx-large;text-align:center">
         {{tInfo.amount|money}}元
       </div>
       <span slot="footer" class="dialog-footer">
-      <password-input v-on:getPassword="getPassword"></password-input>
-        <div class="primary-btn plain" @click="$emit('close')">取 消</div>
-      <div class="primary-btn"
-                 @click="$emit('transactionSubmit', password.password)"
-                 :disabled="password===null || (password && !password.isValid) || tInfo.submitting==true"
-                 >确 定</div>
+      <div class="set-password" @click="showPasswordSetting=true">{{title}}</div>
+      <password-input ref="password" v-on:close="$emit('close')" v-on:set-password="password=$event"></password-input>
+      <input type="button" class="primary-btn"
+           @click="$emit('transactionSubmit', password)"
+           :disabled="password==null || password!==null && password.length!=6|| tInfo.submitting==true"
+            value="确定">
     </span>
     </el-dialog>
   </div>
@@ -45,11 +48,6 @@
       title(){
         return this.isSetPassword ? '找回密码' : '设置密码'
       }
-    },
-    methods    : {
-      getPassword(password){
-        this.password = password
-      }
     }
   }
 </script>
@@ -59,15 +57,7 @@
   .set-password
     color error-color
     text-align right
-    padding-right 10px
-    line-height 3em
-    position absolute
-    right 10px
-
-  #transaction-input
-    .primary-btn
-      width 40%
-      display inline-flex
+    font-size medium
 
   .icon.close
     position absolute
@@ -76,4 +66,10 @@
     fill white
     width 1.2em
     height 1.2em
+
+  .primary-btn
+    width 100%
+    border-radius 0
+    margin 0
+
 </style>

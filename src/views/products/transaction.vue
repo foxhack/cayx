@@ -33,7 +33,7 @@
         <div class="title">{{transactionName}}说明</div>
       </section>
     </div>
-    <transaction-input v-if=showT :tInfo="{title: transactionName, amount: post.amount, submitting : submitting}"
+    <transaction-input v-if=showT :tInfo="{title: transactionName, subTitle: productName, amount: post.amount, submitting : submitting}"
                        v-on:transactionSubmit="submitTransaction"
                        v-on:close="showT=false">
     </transaction-input>
@@ -86,11 +86,15 @@
           return 0
         }
       },
+      productName(){
+        return this.productList.find(p=>{return p.pid==this.$route.params.pid}).name
+      },
       transactionName(){
         let pType = this.$store.getters.getProductById(this.$route.params.pid).type
         if (pType==1) return this.$route.params.type==='in' ? '申购' : '赎回'
         if (pType==2) return this.$route.params.type==='in' ? '购买' : '退出'
       },
+
       outBuyRange(){
         return this.post.amount && this.post.amount > 0 && parseFloat(this.post.amount) > toYuan(this.asset.availableAsset)
       },
@@ -119,17 +123,16 @@
       },
       submitTransaction(password){
         let post = {
-          userID      : window.localStorage.getItem('userID'),
-          pid : this.post.pid,
-          amount      : toCent(this.post.amount),
-          tradePwd    : password,
+          userID   : window.localStorage.getItem('userID'),
+          pid      : this.post.pid,
+          amount   : toCent(this.post.amount),
+          tradePwd : password,
         }
         let operateType
         if (this.$route.params.type=='in') operateType = 'buyAsset'
         if (this.$route.params.type=='out') operateType = 'sellAsset'
         this.submitting = true
-        console.log(post)
-        this.$post(operateType, post, false, {
+        this.$post(operateType, post, {
           showProgress : '数据提交中，请勿重复提交...',
           callback     : {
             success : successCallback,
@@ -142,10 +145,7 @@
 
         function successCallback(data, msg) {
           _.result = { show : true, title : _.transactionName+'结果', content : '恭喜您'+_.transactionName+'成功' }
-          _.$post('getAsset', { userID : window.localStorage.getItem('userID') }, false, { callback : { success : successCallback } })
-          function successCallback(data) {
-            _.$store.commit('setAsset', data)
-          }
+          _.$store.commit('setAsset', data)
         }
 
         function errorCallback(data, msg) {
@@ -178,7 +178,7 @@
         this.dialog = { show : true, title : '操作提示', msg : '您现在还不能进行操作，您需要前往我的账户进行绑卡->账户充值' }
         return
       }
-      if (this.$route.params.type=='in' && this.asset.availableAsset==0 ) {
+      if (this.$route.params.type=='in' && this.asset.availableAsset==0) {
         this.dialog = { show : true, title : '操作提示', msg : '您的账户余额不足，您需要前往我的账户进行账户充值' }
         return
       }

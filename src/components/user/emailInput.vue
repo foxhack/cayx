@@ -1,8 +1,13 @@
 <template>
   <div id="email-input">
-    <mt-cell v-if="editable === false" :title="title ||'email'" @click.native="alert">{{value|email}}</mt-cell>
+    <mt-cell v-if="readonly" :title="title ||'email'" @click.native="alert">
+      <template v-if="showRawValue">{{value}}</template>
+      <template v-else>{{value|email}}</template>
+    </mt-cell>
     <div v-else>
       <mt-field v-if="showRawValue"
+                :class="{'mint-cell-allow-right':state==''}"
+                type="email"
                 disableClear
                 :label="title || 'email'"
                 :placeholder="placeholder || '请输入email'"
@@ -17,57 +22,24 @@
 </template>
 <script>
   import { VALIDATE } from '@/utils/config'
+  import { inputMixin } from '@/utils/mixin'
   export default{
     name    : 'EmailInput',
-    data(){
-      return {
-        value    : null,
-        showRawValue : !this.filterValue,
-        state    : '',
-        errorMsg : '',
-      }
-    },
-    props   : [
-      'initcheck',
-      'editable',
-      'filterValue',
-      'title',
-      'placeholder',
-    ],
+    mixins:[inputMixin],
     methods : {
-      displayInput(){
-        this.showRawValue=true
-        this.check(this.value)
-      },
       check(val){
+        this.value=val
         console.log('调用email检查方法')
         if (!VALIDATE.email.test(val)) {
           this.state = 'error'
           this.errorMsg = '请输入合法的email'
-          return
+          this.$parent.state.email = false
+        }else {
+          this.state = 'success'
+          this.$parent.state.email = true
         }
-        this.state = 'success'
-        console.log('向父组件传递', val)
-        this.$emit('setValue', 'email', val)
-      },
-      alert(){
-        this.$message('您已绑卡，不能修改此信息。');
-      },
-    },
-    created(){
-      this.value=this.userInfo.email
-      if (this.initcheck) {
-        this.showRawValue=true
-        this.check(this.value)
       }
     }
   }
 </script>
-<style lang="stylus" scoped>
-  @import "../../style/base"
-  #email-input
-    position relative
-
-
-</style>
 

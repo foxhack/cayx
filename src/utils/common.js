@@ -40,7 +40,7 @@ export function getQueryString(name) {
 //  callback : {success:function,error:function,fail:function,always:function},
 //}
 
-export function post(apiName, postData, isFormData, options) {
+export function post(apiName, postData, options) {
   console.log(':::::::::::发送请求'+apiName, postData)
   options = options || {}
   if (options.showProgress) {
@@ -54,7 +54,7 @@ export function post(apiName, postData, isFormData, options) {
   options.showErrorMsg = options.showErrorMsg || true
   options.showFailMsg = options.showFailMsg || true
 
-  api(apiName, postData, isFormData)
+  api(apiName, postData)
     .done(result => {
       if (result.code==getCodeByType('success')) {
         if (options.showSuccessMsg) {

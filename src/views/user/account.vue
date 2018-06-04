@@ -2,7 +2,7 @@
   <div id="account-operate" class="page-with-top-bottom">
     <section>
       <div class="title">请选择{{operateType}}银行卡</div>
-      <bank v-on:getSelectedCard="getSelectedCard"></bank>
+      <bank ref="bank" v-on:setSelectedBank="post.bindId=$refs.bank.selectedBindId"></bank>
       <div class="tip">这里是一些说明</div>
     </section>
     <template v-if="type=='in'">
@@ -23,7 +23,7 @@
         <input type="button" class="primary-btn fix-bottom" @click="showT=true" :disabled="forbidSubmit" value="确认提现">
       </section>
     </template>
-    <transaction-input v-if=showT :tInfo="{title: transactionTitle,amount: post.amount, submitting : submitting}"
+    <transaction-input v-if=showT :tInfo="{title: transactionTitle, subTitle:operateType, amount: post.amount, submitting : submitting}"
                        v-on:transactionSubmit="changeAccount"
                        v-on:close="showT=false">
     </transaction-input>
@@ -43,6 +43,8 @@
   </div>
 </template>
 <script>
+  import { BANKS } from '@/utils/config'
+  import { fBankCardNo } from '@/utils/filters'
   import Bank from '@/views/user/bank'
   import Result from '@/components/user/result'
   import TransactionInput from '@/components/user/transactionInput'
@@ -53,7 +55,6 @@
         type       : this.$route.params.type,
         from       : this.$route.params.from,
         post       : {
-          userID : window.localStorage.getItem('userID'),
           bindId : null,
           amount : null
         },
@@ -85,8 +86,8 @@
     },
     computed   : {
       transactionTitle(){
-        if (this.type=='in') return '确定要存入'
-        if (this.type=='out') return '确定要提现'
+        if (this.type=='in') return '确定使用'+this.getSelectedBankName()+'（'+this.getSelectedBankCardNo()+')'
+        if (this.type=='out') return '确定使用'+this.getSelectedBankName()+'（'+this.getSelectedBankCardNo()+')'
       },
       operateType(){
         if (this.type=='in') return '充值'
@@ -98,11 +99,13 @@
       }
     },
     methods    : {
-      setDialog(title, msg){
-
+      getSelectedBankName(){
+        let bankCode=this.userInfo.bindCard.find(b => {return b.bindId==this.post.bindId}).bankCode
+        return BANKS.find(b => {return b.code==bankCode}).name
       },
-      getSelectedCard(bid){
-        this.post.bindId = bid
+      getSelectedBankCardNo(){
+        let bankCardNo=this.userInfo.bindCard.find(b => {return b.bindId==this.post.bindId}).bankCardNo
+        return fBankCardNo(bankCardNo)
       },
       maxOut(){
         this.post.amount = toYuan(this.asset.availableAsset)
@@ -110,18 +113,17 @@
       changeAccount(password){
         this.submitting = true
         let post = {
-          userID   : this.post.userID,
+          userID   : window.localStorage.getItem('userID'),
           amount   : toCent(this.post.amount),
           bindId   : this.post.bindId,
           tradePwd : password
         }
-        console.log(post)
         let _ = this
         let operateType
         if (this.type=='in') operateType = 'rechargeAccount'
         if (this.type=='out') operateType = 'takeoutAccount'
 
-        this.$post(operateType, post, false,
+        this.$post(operateType, post,
           {
             showProgress : '数据提交中，请勿重复提交...',
             callback     : {
@@ -134,10 +136,7 @@
         )
         function successCallback(data, msg) {
           _.result = { show : true, title : _.operateType+'结果', content : '恭喜您'+_.operateType+'成功' }
-          _.$post('getAsset', { userID : window.localStorage.getItem('userID') }, false, { callback : { success : successCallback } })
-          function successCallback(data) {
-            _.$store.commit('setAsset', data)
-          }
+          _.$store.commit('setAsset', data)
         }
 
         function errorCallback(data, msg) {

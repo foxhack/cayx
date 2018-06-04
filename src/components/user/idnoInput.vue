@@ -1,82 +1,44 @@
 <template>
-  <div id="idno" style="position: relative">
-    <mt-cell v-if="editable === false" :title="title || '身份证号'" @click.native="alert">{{value|IDCardNo}}</mt-cell>
+  <div id="idno-input">
+    <mt-cell v-if="readonly" :title="title || '身份证号'" @click.native="alert">
+      <template v-if="showRawValue">{{value}}</template>
+      <template v-else>{{value|IDCardNo}}</template>
+    </mt-cell>
     <div v-else>
-      <mt-cell v-if="!displayInput" :title="title || '身份证号'" is-link @click.native="$emit('showInput',inputname)">
-        <template v-if="fValue">
-          {{value|IDCardNo}}
-        </template>
-        <template v-else>
-          {{value}}
-        </template>
-      </mt-cell>
-      <mt-field v-if="displayInput"
+      <mt-field v-if="showRawValue"
                 disableClear
-                :label="title || '身份证号'" :placeholder="placeholder || '请输入合法的身份证号'"
-                :state="state"
+                :class="{'mint-cell-allow-right':state==''}"
+                :label="title || '身份证号'"
+                :placeholder="placeholder || '请输入合法的身份证号'"
                 :value="value"
+                :state="state"
                 @input.native="check($event.target.value)">
       </mt-field>
+      <mt-cell v-else :title="title ||'身份证号'" is-link @click.native="displayInput">{{value|IDCardNo}}</mt-cell>
+      <div v-if="state=='error'" class="error">{{errorMsg}}</div>
     </div>
-    <div v-if="state=='error'" class="error">{{errorMsg}}</div>
   </div>
 </template>
 <script>
   import { VALIDATE } from '@/utils/config'
+  import { inputMixin } from '@/utils/mixin'
   export default{
     name    : 'IdonInput',
-    data(){
-      return {
-        state    : '',
-        errorMsg : ''
-      }
-    },
-    props   : [
-      'editable',
-      'fValue',
-      'title',
-      'placeholder',
-      'inputname',
-      'value',
-      'displayInput',
-      'initcheck'
-    ],
-    watch   : {
-      displayInput(val){
-        if (val) {
-          this.check(this.value)
-          this.$nextTick(() => {
-            document.querySelector('#idno input').focus()
-          })
-        }
-      }
-    },
+    mixins:[inputMixin],
     methods : {
       check(val){
+        this.value=val
         console.log('调用身份证检查方法')
         if (!VALIDATE.cardNo.test(val)) {
           this.state = 'error'
           this.errorMsg = '请输入正确的身份证号码'
-          this.setValid(false)
-          return
+          this.$parent.state.cardNo = false
+        }else {
+          this.state = 'success'
+          this.$parent.state.cardNo = true
         }
-        this.state = 'success'
-        this.setValid(true)
-        this.$emit('input', val)
-      },
-      setValid(isValid){
-        this.$emit('isValid', { 'key' : this.inputname, 'isValid' : isValid })
-      },
-      alert(){
-        this.$message('您已绑卡，不能修改此信息。');
       }
-    },
-    created(){
-      if (this.initcheck) this.check(this.value)
     }
   }
 </script>
-<style lang="stylus" scoped>
-  @import "../../style/base"
 
-</style>

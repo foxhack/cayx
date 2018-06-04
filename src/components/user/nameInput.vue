@@ -1,81 +1,44 @@
 <template>
-  <div id="username">
-    <mt-cell v-if="editable === false" :title="title ||'姓名'" @click.native="alert">{{value|name}}</mt-cell>
+  <div id="name-input">
+    <mt-cell v-if="readonly" :title="title ||'姓名'" @click.native="alert">
+      <template v-if="showRawValue">{{value}}</template>
+      <template v-else>{{value|name}}</template>
+    </mt-cell>
     <div v-else>
-      <mt-cell v-if="!displayInput" :title="title || '姓名'" is-link @click.native="$emit('showInput',inputname)">
-        <template v-if="fValue">
-          {{value|name}}
-        </template>
-        <template v-else>
-          {{value}}
-        </template>
-      </mt-cell>
-      <mt-field v-if="displayInput"
+      <mt-field v-if="showRawValue"
+                :class="{'mint-cell-allow-right':state==''}"
                 disableClear
                 :label="title || '姓名'"
                 :placeholder="placeholder || '请输入姓名'"
-                :state="state"
                 :value="value"
+                :state="state"
                 @input.native="check($event.target.value)">
       </mt-field>
+      <mt-cell v-else :title="title ||'姓名'" is-link @click.native="displayInput">{{value|name}}</mt-cell>
+      <div v-if="state=='error'" class="error">{{errorMsg}}</div>
     </div>
-    <div v-if="state=='error'" class="error">{{errorMsg}}</div>
   </div>
 </template>
 <script>
   import { VALIDATE } from '@/utils/config'
+  import { inputMixin } from '@/utils/mixin'
   export default{
     name    : 'NameInput',
-    data(){
-      return {
-        state    : '',
-        errorMsg : ''
-      }
-    },
-    props   : [
-      'editable',
-      'fValue',
-      'displayInput',
-      'title',
-      'placeholder',
-      'inputname',
-      'value',
-      'initcheck'
-    ],
+    mixins:[inputMixin],
     methods : {
-      showMod(){
-        this.displayInput = true
-        this.check(this.value)
-        this.$nextTick(() => {
-          document.querySelector('#username input').focus()
-        })
-      },
       check(val){
+        this.value=val.trim()
         console.log('调用姓名检查方法')
-        if (val.trim() && !VALIDATE.name.test(val)) {
+        if (!this.value || this.value && !VALIDATE.name.test(this.value)) {
           this.state = 'error'
           this.errorMsg = '姓名只能是2至4位中文或者英文，不含空格'
-          this.setValid(false)
-          return
+          this.$parent.state.name = false
+        }else {
+          this.state = 'success'
+          this.$parent.state.name = true
         }
-        this.state = 'success'
-        this.setValid(true)
-        this.$emit('input', val)
-      },
-      alert(){
-        this.$message('您已绑卡，不能修改此信息。');
-      },
-      setValid(isValid){
-        this.$emit('isValid', { 'key' : this.inputname, 'isValid' : isValid })
       }
-    },
-    created(){
-      if (this.initcheck) this.check(this.value)
     }
   }
 </script>
-<style lang="stylus" scoped>
-  @import "../../style/base"
-  #username
-    position relative
-</style>
+

@@ -33,4 +33,38 @@ let mixin = {
   }
 }
 
-export { mixin }
+let inputMixin = {
+  data(){
+    return {
+      value        : this.initValue,
+      showRawValue : !this.filterValue,
+      state        : '',
+      errorMsg     : ''
+    }
+  },
+  props   : {
+    initcheck   : Boolean,
+    readonly    : Boolean,
+    initValue   : [String, Number],
+    filterValue : Boolean,
+    title       : String,
+    placeholder : String
+  },
+  methods : {
+    displayInput(){
+      this.showRawValue = true
+      this.check(this.value)
+    },
+    alert(){
+      this.$message('您已开户，不能修改此信息。')
+    }
+  },
+  mounted(){
+    if (this.initcheck) {
+      this.showRawValue = true
+      this.check(this.value)
+    }
+  }
+}
+
+export { mixin, inputMixin }

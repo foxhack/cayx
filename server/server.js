@@ -18,7 +18,7 @@ app.all('/*', function(req, res, next) {
   next()
 })
 
-app.post('/finance/user/openaccount', upload.array('cardPhotos'), function(req, res) {
+app.post('/finance/user/openaccount', upload.fields([{ name : 'cardPhotoF' }, { name : 'cardPhotoB' }]), function(req, res) {
   console.log('收到请求openaccount')
   let post = req.body
   console.log(post)
@@ -28,8 +28,8 @@ app.post('/finance/user/openaccount', upload.array('cardPhotos'), function(req, 
   }
   mock.user.userStatus.isOpenAccount = true
   setTimeout(() => {
-    res.json({ code : 0, msg : '开户成功' })
-  }, 3000)
+    res.json({ code : 0, msg : '开户成功', data : mock.user })
+  }, 1000)
 })
 
 app.post('/finance/user/getuserbycode', function(req, res) {
@@ -43,7 +43,7 @@ app.post('/finance/user/getuserbyid', function(req, res) {
   console.log('返回'+mock.user)
   setTimeout(() => {
     res.json({ code : 0, msg : '获取用户信息成功', data : mock.user })
-  }, 3000)
+  }, 1000)
 })
 
 app.post('/finance/sms/singlesend', function(req, res) {
@@ -62,8 +62,17 @@ app.post('/finance/user/registmobile', function(req, res) {
   mock.user.userInfo.email = ''
   mock.user.userInfo.address = ''
   setTimeout(() => {
-    res.json({ code : 0, msg : '注册成功' })
-  }, 3000)
+    res.json({ code : 0, msg : '注册成功', data : mock.user })
+  }, 1000)
+})
+
+app.post('/finance/sms/validUser', function(req, res) {
+  console.log('收到请求validUser')
+  if (req.body.mobile==mock.user.userInfo.mobile && req.body.identifyCode=='1234') {
+    setTimeout(() => {
+      res.json({ code : 0, msg : '验证通过', data : mock.user })
+    }, 1000)
+  }
 })
 
 app.post('/finance/user/binduseraccount', function(req, res) {
@@ -72,7 +81,7 @@ app.post('/finance/user/binduseraccount', function(req, res) {
   console.log('返回成功')
   mock.user.userStatus.isRegisterCayx = true
   setTimeout(() => {
-    res.json({ code : 0, msg : '用户信息关联成功' })
+    res.json({ code : 0, msg : '用户信息关联成功', data : mock.user })
   }, 1000)
 })
 
@@ -87,7 +96,7 @@ app.post('/finance/product/getproductrate', function(req, res) {
     } else {
       res.json({ code : 1, msg : '抱歉，无法获取产品收益率信息' })
     }
-  }, 2000)
+  }, 1000)
 
 })
 
@@ -99,8 +108,8 @@ app.post('/finance/user/updateinfo', function(req, res) {
     mock.user.userInfo[k] = post[k]
   }
   setTimeout(() => {
-    res.json({ code : 0, msg : '更新成功' })
-  }, 3000)
+    res.json({ code : 0, msg : '更新成功', data : mock.user })
+  }, 1000)
 })
 
 app.post('/finance/user/bindcard', function(req, res) {
@@ -111,8 +120,8 @@ app.post('/finance/user/bindcard', function(req, res) {
   console.log('返回'+post)
   mock.user.userInfo.bindCard.push(post)
   setTimeout(() => {
-    res.json({ code : 0, msg : '绑卡成功' })
-  }, 3000)
+    res.json({ code : 0, msg : '绑卡成功', data : mock.user })
+  }, 1000)
 })
 
 app.post('/finance/user/setdefaultbindcard', function(req, res) {
@@ -134,7 +143,7 @@ app.post('/finance/user/unbindCard', function(req, res) {
   if (mock.user.userInfo.bindCard.length==1) mock.user.userInfo.defaultBindCard = mock.user.userInfo.bindCard[0]
   if (mock.user.userInfo.bindCard.length==0) mock.user.userInfo.defaultBindCard = ''
   setTimeout(() => {
-    res.json({ code : 0, msg : '移除成功' })
+    res.json({ code : 0, msg : '移除成功', data : mock.user })
   }, 1000)
 })
 
@@ -142,7 +151,7 @@ app.post('/finance/asset/assetquery', function(req, res) {
   console.log('收到请求assetquery')
   setTimeout(() => {
     res.json({ code : 0, msg : '获取资产成功', data : mock.asset })
-  }, 2000)
+  }, 1000)
 })
 
 app.post('/finance/asset/pwdservice', function(req, res) {
@@ -165,7 +174,7 @@ app.post('/finance/capital/recharge', function(req, res) {
   let amount = parseFloat(req.body.amount)
   mock.asset.availableAsset += amount
   setTimeout(() => {
-    res.json({ code : 0, msg : '冲值成功', data : { amount : amount } })
+    res.json({ code : 0, msg : '冲值成功', data : mock.asset })
   }, 2000)
 })
 
@@ -174,7 +183,7 @@ app.post('/finance/capital/takeout', function(req, res) {
   let amount = parseFloat(req.body.amount)
   mock.asset.availableAsset -= amount
   setTimeout(() => {
-    res.json({ code : 0, msg : '提现成功', data : { amount : amount } })
+    res.json({ code : 0, msg : '提现成功', data : mock.asset })
   }, 2000)
 })
 
@@ -186,7 +195,7 @@ app.post('/finance/asset/applybuy', function(req, res) {
   mock.asset.availableAsset -= amount
   mock.asset.totalAsset += amount
   setTimeout(() => {
-    res.json({ code : 0, msg : '购买成功', data : { amount : amount } })
+    res.json({ code : 0, msg : '购买成功', data : mock.asset })
   }, 1000)
 })
 
@@ -198,7 +207,7 @@ app.post('/finance/asset/applyredeem', function(req, res) {
   mock.asset.availableAsset += amount
   mock.asset.totalAsset -= amount
   setTimeout(() => {
-    res.json({ code : 0, msg : '赎回成功', data : { amount : amount } })
+    res.json({ code : 0, msg : '赎回成功', data : mock.asset })
   }, 1000)
 })
 
@@ -215,6 +224,15 @@ function randomStr(length) {
   }
   str += random(length-str.length)
   return str
+}
+
+
+function randomDate(startDate) {
+  let newTime=startDate.getTime()+1000000000*randomInt(1,10)
+  return new Date(newTime).toLocaleString()
+  function randomInt(min,max){
+    return Math.ceil(Math.random()*(max-min)+min)
+  }
 }
 
 //app.get('/wx', function(req, res) {

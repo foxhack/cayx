@@ -4,13 +4,13 @@ export function unit(s,u) {
 
 export function toCent(s) {
   if (s===null || s===undefined) s = 0
-  s = s*100
+ // s = s*100
   return s
 }
 
 export function toYuan(s) {
   if (s===null || s===undefined) s = 0
-  s = (s/100).toFixed(2)
+  //s = (s/100).toFixed(2)
   return s
 }
 
@@ -65,7 +65,7 @@ export function fName(s) {
 }
 
 export function fAddress(s) {
-  return s
+  return s.substr(0, 4)+'****'
 }
 
 export function fBankCardNo(s) {

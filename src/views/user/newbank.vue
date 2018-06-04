@@ -3,42 +3,25 @@
     <div v-if="bindCard.length==0" class='add-bank center' v-show="!showNewBank" @click="showNewBank=true">添加银行卡</div>
     <mt-cell v-if="bindCard.length>0" v-show="!showNewBank" @click.native="showNewBank=true" title="添加银行卡" is-link></mt-cell>
     <section v-if="showNewBank">
-      <mt-cell v-if="post.bankCode" :title="post.bankSelectedName" label="已选择" is-link @click.native="showBankList=true"></mt-cell>
-      <mt-cell v-if="!post.bankCode" title="请选择一个银行" is-link @click.native="showBankList=true"></mt-cell>
+      <mt-cell v-if="selectedBank" :title="getBankName(selectedBank)" label="已选择" is-link @click.native="showBankList=true"></mt-cell>
+      <mt-cell v-else title="请选择一个银行" is-link @click.native="showBankList=true"></mt-cell>
       <div v-show="showBankList" class="bank-list">
-        <mt-cell v-for="b in bankList" :key="b.code" class="bank" :class="{'selected':post.bankCode==b.code}" @click.native="checkBank(b.code,b.name)" :title="b.name">
+        <mt-cell v-for="b in bankList" :key="b.code" class="bank" :class="{'selected':selectedBank==b.code}" @click.native="selectBank(b.code,b.name)" :title="b.name">
           <div slot="icon" class="bank-icon" :style="{backgroundPosition: b.logoPos}"></div>
         </mt-cell>
       </div>
-      <div v-if="post.bankCode">
+      <div v-if="selectedBank">
         <div class="title" style="margin-top:1em">请输入银行卡信息</div>
         <mt-cell title="持卡人姓名" label="与开户信息一致">{{userInfo.name|name}}</mt-cell>
         <mt-cell title="身份证号" label="与开户信息一致">{{userInfo.cardNo|IDCardNo}}</mt-cell>
-        <bankcard-input
-            inputname="bankCardNo"
-            :initcheck="true"
-            v-model="post.bankCardNo"
-            v-on:isValid="setValid">
-        </bankcard-input>
-        <telephone-input
-            :editable="true"
-            inputname="bankSavedmobile"
-            :displayInput="displayInput.bankSavedmobile"
-            :initcheck="true"
-            subtitle="银行预留手机号"
-            placeholder="请输入在银行预留的手机号"
-            v-model="post.bankSavedmobile"
-            v-on:isValid="setValid"
-            v-on:showInput="showInput">
-        </telephone-input>
-        <identify-code
-            :mobile="post.bankSavedmobile"
-            inputname="identifyCode"
-            :isValid="allowSubmit.bankSavedmobile"
-            :initcheck="true"
-            v-model="post.identifyCode"
-            v-on:isValid="setValid">
-        </identify-code>
+        <bankcard-input ref="bankCardNo"></bankcard-input>
+        <telephone-input ref="mobile"
+                         title="银行预留手机号"
+                         placeholder="请输入在银行预留的手机号"
+                         filterValue initcheck
+                         :initValue="userInfo.mobile"
+                         v-on:setMobile="mobile=$refs.mobile.value"></telephone-input>
+        <identify-code v-if="showIdentifyCode" ref="identifyCode" :validMobile="mobile"></identify-code>
       </div>
       <input type="button" class="primary-btn fix-bottom" @click="submitBankInfo" :disabled="forbidSubmit" value="提交">
     </section>
@@ -56,18 +39,14 @@
         showNewBank  : false,
         fromPath     : null,
         submitting   : false,
-        allowSubmit  : { init : true },
         bankList     : BANKS,
         showBankList : true,
-        post         : {
-          bankSelectedName : null,
-          bankCode         : null,
-          bankCardNo       : null,
-          bankSavedmobile  : null,
-          identifyCode     : null,
-        },
-        displayInput : {
-          bankSavedmobile : false
+        selectedBank : null,
+        mobile       : null,
+        state        : {
+          bankCardNo   : false,
+          mobile       : false,
+          identifyCode : false,
         },
         result       : {
           show    : false,
@@ -83,59 +62,44 @@
       IdentifyCode
     },
     computed   : {
+      showIdentifyCode(){
+        return this.state.mobile && this.mobile!=this.userInfo.mobile
+      },
       forbidSubmit(){
-        if (this.submitting) return true
-        if (Object.keys(this.allowSubmit).length===1) return true
-        return (Object.values(this.allowSubmit).some(e => {return e===false}))
+        if (this.submitting || !this.selectedBank || !this.state.bankCardNo || !this.state.mobile) return true
+        if (this.showIdentifyCode && !this.state.identifyCode) return true
+        return false
       }
     },
     methods    : {
-      initData(val){
-        console.log('初始化userInfo')
-        this.post.bankSavedmobile = val.mobile
+      getBankName(bcode){
+        return this.bankList.filter(b => {return b.code==bcode})[0].name
       },
-      showInput(inputName){
-        this.displayInput[inputName] = true
-      },
-      setValid(isValid){
-        this.$set(this.allowSubmit, isValid.key, isValid.isValid)
-      },
-      checkBank(bcode, bname){
-        this.post.bankCode = bcode
-        this.post.bankSelectedName = bname
+      selectBank(bcode){
+        this.selectedBank = bcode
         this.showBankList = false
       },
       submitBankInfo(){
-        this.submitting = true
-        let post = { userID : window.localStorage.getItem('userID'), bankCode : this.post.bankCode }
-        for (let k in this.post) {
-          if (this.allowSubmit[k]) post[k] = this.post[k]
+        let postData = { userID : window.localStorage.getItem('userID'), bankCode : this.selectedBank }
+        for (let k in this.state) {
+          if (this.state[k]) postData[k] = this.$refs[k].value
         }
-        console.log(post)
+
+        this.submitting = true
         let _ = this
-        this.$post('bindCard', post, false, {
+        this.$post('bindCard', postData, {
           showProgress   : '绑卡信息提交中，请勿重复提交...',
           showSuccessMsg : true,
           callback       : { success : successCallback, always : alwaysCallback }
         })
-        function successCallback() {
-          _.$post('getUserByUserID', { userID : post.userID }, false, {
-            showProgress : '绑卡信息更新中...',
-            callback     : { success : successCallback }
-          })
-          function successCallback(data) {
+        function successCallback(data) {
             _.$store.commit('setUser', data)
             _.$emit('refresh')
           }
-        }
-
         function alwaysCallback() {
           _.submitting = false
         }
       }
-    },
-    created(){
-      this.initData(this.userInfo)
     }
   }
 </script>

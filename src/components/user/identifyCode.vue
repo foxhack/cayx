@@ -7,7 +7,7 @@
         :placeholder="placeholder || '请输入收到验证码'"
         :value="value"
         @input.native="check($event.target.value)">
-      <span class="get-code-btn" :class="{active:isValid}" v-show="!count" @click="getIdentifyCode(5)">获取验证码</span>
+      <span class="get-code-btn" :class="{active:validMobile}" v-show="!count" @click="getIdentifyCode(5)">获取验证码</span>
       <span class="count-num" v-show="count">{{count}}&nbsp;秒后重新获取</span>
     </mt-field>
     <div v-if="state=='error'" class="error">{{errorMsg}}</div>
@@ -15,23 +15,24 @@
 </template>
 <script>
   import { VALIDATE } from '@/utils/config'
+  import { inputMixin } from '@/utils/mixin'
+
   export default{
     name    : 'IdentifyCodeInput',
+    mixins:[inputMixin],
     data(){
       return {
-        state    : '',
-        errorMsg : '',
         count    : 0,
       }
     },
-    props   : ['mobile', 'isValid', 'value', 'title', 'placeholder', 'inputname', 'initcheck'],
+    props   : ['validMobile'],
     methods : {
       getIdentifyCode(countDown){
+        console.log('get code')
         let _ = this
-        if (!this.isValid) return
         startCountDown(countDown)
-        let postData = { userID : window.localStorage.getItem('userID'), mobile : this.mobile }
-        this.$post('getIdentifyCode', postData,false, { showSuccessMsg : false })
+        let postData = { userID : window.localStorage.getItem('userID'), mobile : this.validMobile }
+        this.$post('getIdentifyCode', postData,  { showSuccessMsg : false })
         function startCountDown(num) {
           _.count = num
           _countDown()
@@ -44,23 +45,17 @@
         }
       },
       check(val){
+        this.value=val
         console.log('调用短信验证码检查方法')
         if (!VALIDATE.identifyCode.test(val)) {
           this.state = 'error'
           this.errorMsg = '请输入正确格式的验证码'
-          this.setValid(false)
-          return false
+          this.$parent.state.identifyCode = false
+        }else {
+          this.state = 'success'
+          this.$parent.state.identifyCode = true
         }
-        this.state = 'success'
-        this.setValid(true)
-        this.$emit('input', val)
       },
-      setValid(isValid){
-        this.$emit('isValid', { 'key' : this.inputname, 'isValid' : isValid })
-      }
-    },
-    created(){
-      if (this.initcheck) this.check(this.value)
     }
   }
 </script>

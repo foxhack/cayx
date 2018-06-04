@@ -1,51 +1,50 @@
 <template>
   <div id="password-wrapper">
-      <div class="password-input center">
-        <input type="number" id="p1" v-model="p1" maxlength="1" required @focus="p1=null" @input="focus($event,'p2')">
-        <input type="number" id="p2" v-model="p2" maxlength="1" required @focus="p2=null" @input="focus($event,'p3')">
-        <input type="number" id="p3" v-model="p3" maxlength="1" required @focus="p3=null" @input="focus($event,'p4')">
-        <input type="number" id="p4" v-model="p4" maxlength="1" required @focus="p4=null" @input="focus($event,'p5')">
-        <input type="number" id="p5" v-model="p5" maxlength="1" required @focus="p5=null" @input="focus($event,'p6')">
-        <input type="number" id="p6" v-model="p6" maxlength="1" required @focus="p6=null" @input="$event.target.blur()">
-      </div>
-      <div class="error" style="display: none">{{errorMsg}}</div>
+    <div class="password-input center">
+      <span class="fake-input" v-for="n in 6">
+        <span v-show="password[n-1]!==undefined" v-text="'.'"></span>
+      </span>
     </div>
+    <div id="password-keyboard" class="flex-col">
+      <div class="flex-row">
+        <span  v-for="n in 3" @click="setNumber(n)">{{n}}</span>
+      </div>
+      <div class="flex-row">
+        <span  v-for="n in [4,5,6]" @click="setNumber(n)">{{n}}</span>
+      </div>
+      <div class="flex-row">
+        <span  v-for="n in [7,8,9]" @click="setNumber(n)">{{n}}</span>
+      </div>
+      <div class="flex-row">
+        <span @click="$emit('close')">取消</span>
+        <span @click="setNumber(0)">0</span>
+        <span @click="setBack">X</span></div>
+    </div>
+  </div>
 </template>
 <script>
   import { VALIDATE } from '@/utils/config'
   export default{
     data(){
       return {
-        p1        : null,
-        p2        : null,
-        p3        : null,
-        p4        : null,
-        p5        : null,
-        p6        : null
+        password     : []
       }
     },
-    computed   : {
-      errorMsg(){
-        let password = this.p1+this.p2+this.p3+this.p4+this.p5+this.p6
-        if (!VALIDATE.password.test(password)) {
-          this.$emit('getPassword', { isValid : false, password : password })
-          return '请输入6位数字的密码'
-        } else {
-          this.$emit('getPassword', { isValid : true, password : password })
+    methods  : {
+      setNumber(n){
+        let len=this.password.length
+        if (len < 6) {
+          this.password.push(n)
+          this.$emit('set-password', this.password.join(''))
+        }
+      },
+      setBack(){
+        let len=this.password.length
+        if (len > 0) {
+          this.password.pop()
+          this.$emit('set-password',this.password.join(''))
         }
       }
-    },
-    methods    : {
-      focus(e, f){
-        e.target.blur()
-        document.getElementById(f).focus()
-      },
-      resetPassword(){
-
-      }
-    },
-    mounted(){
-      document.getElementById("p1").focus()
     },
     created(){
       console.log('输入密码组件')
@@ -54,21 +53,33 @@
 </script>
 <style lang="stylus" scoped>
   @import "../../style/base.styl"
+
   .password-input
     position relative
     width 14em
     margin 10px auto
     justify-content space-between
-    input
+    .fake-input
       width 2em
       height 2em
       border-radius 5px
       border 1px solid neutral-border-color2
-      -webkit-text-security disc
-      text-security disc
       text-align center
+      span
+        line-height 2em
 
   .tip
     text-decoration underline
+
+  #password-keyboard
+    .flex-row
+      height 3em
+      border-top 1px solid neutral-border-color2
+    span
+      flex 1
+      line-height 3em
+      border-right 1px solid neutral-border-color2
+    span:first-child
+      border-left 1px solid neutral-border-color2
 
 </style>

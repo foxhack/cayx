@@ -9,20 +9,19 @@
   export default{
     data(){
       return {
-        img     : null,
-        value   : null,
-        err     : '',
+        img   : null,
+        value : null,
+        err   : '',
       }
     },
-    props   : ['title', 'inputname', 'initcheck'],
+    props   : ['title', 'name'],
     methods : {
       check(val){
         //在这里写更多的校验规则
         if (val) {
-          this.setValid(true)
-          this.$emit('getImage', val)
+          this.$parent.state[this.name] = true
         } else {
-          this.setValid(false)
+          this.$parent.state[this.name] = false
         }
       },
       getFile(event){
@@ -33,26 +32,19 @@
       },
       displayImage(image){
         if (!window.FileReader) {
-          this.err="您的浏览器不支持图片浏览功能"
+          this.err = "您的浏览器不支持图片浏览功能"
           return
         }
         let reader = new FileReader()
         reader.readAsDataURL(image)
         reader.onload = e => {
           this.img = e.target.result
-          this.$emit('getImageUrl', this.img)
         }
         reader.onerror = (err) => {
           this.err = err
           console.log('出错了')
         }
-      },
-      setValid(isValid){
-        this.$emit('isValid', { 'key' : this.inputname, 'isValid' : isValid })
       }
-    },
-    created(){
-      if (this.initcheck) this.check(this.value)
     }
   }
 </script>

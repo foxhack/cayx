@@ -28,29 +28,17 @@
       bindUserAccount(){
         let _ = this
         this.$post(
-          'bindUserAccount',
-          { userID : window.localStorage.getItem('userID') },
-          false,
+          'bindUserAccount', { userID : window.localStorage.getItem('userID') },
           {
             showProgress   : '用户信息关联中...',
             showSuccessMsg : _.currentPath!=='/user/register',
             callback       : { success : successCallback }
           })
-        function successCallback() {
+        function successCallback(data) {
           if (_.currentPath=='/user/register') {
             _.$emit('bindSuccess', { show : true, title : '绑定结果', content : '恭喜您，绑定成功' })
           }
-          _.$post(
-            'getUserByUserID',
-            { userID : window.localStorage.getItem('userID') },
-            false,
-            {
-              showProgress : '用户信息更新中...',
-              callback     : { success : successCallback }
-            })
-          function successCallback(data) {
-            _.$store.commit('setUser', data)
-          }
+          _.$store.commit('setUser', data)
         }
       }
     },

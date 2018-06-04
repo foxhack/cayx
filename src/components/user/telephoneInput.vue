@@ -1,91 +1,46 @@
 <template>
   <div id="telephone-input">
-    <mt-cell v-if="editable === false" :title="title || '手机号'" @click.native="alert">{{value|mobile}}</mt-cell>
+    <mt-cell v-if="readonly" :title="title || '手机号'" @click.native="alert">
+      <template v-if="filterValue">{{value|mobile}}</template>
+      <template v-else>{{value}}</template>
+    </mt-cell>
     <div v-else>
-      <mt-cell v-if="!displayInput"
-               :title="title || '手机号'"
-               :label="subtitle"
-               is-link
-               @click.native="$emit('showInput',inputname)">
-        <template v-if="fValue">
-          {{value|mobile}}
-        </template>
-        <template v-else>
-          {{value}}
-        </template>
-      </mt-cell>
-      <mt-field v-if="displayInput"
+      <mt-field v-if="showRawValue"
+                type="tel"
                 disableClear
-                type="number"
-                :label="title || '手机号'" :placeholder="placeholder || '请输入手机号'"
-                :state="state"
+                :class="{'mint-cell-allow-right':state==''}"
+                :label="title || '手机号'"
+                :placeholder="placeholder || '请输入手机号'"
                 :value="value"
+                :state="state"
                 @input.native="check($event.target.value)">
       </mt-field>
+      <mt-cell v-else :title="title ||'手机号'" is-link @click.native="displayInput">{{value|mobile}}</mt-cell>
+      <div v-if="state=='error'" class="error">{{errorMsg}}</div>
     </div>
-    <div v-if="state=='error'" class="error">{{errorMsg}}</div>
   </div>
 </template>
 <script>
   import { VALIDATE } from '@/utils/config'
-  import { debounce } from '@/utils/common'
+  import { inputMixin } from '@/utils/mixin'
   export default{
-    name    : 'TelephoneInput',
-    data(){
-      return {
-        state    : '',
-        errorMsg : ''
-      }
-    },
-    props   : [
-      'editable',
-      'fValue',
-      'displayInput',
-      'title',
-      'subtitle',
-      'placeholder',
-      'inputname',
-      'value',
-      'initcheck'
-    ],
-    watch   : {
-      displayInput(val){
-        if (val) {
-          this.check(this.value)
-          this.$nextTick(() => {
-            document.querySelector('#telephone-input input').focus()
-          })
-        }
-      }
-    },
+    name : 'TelephoneInput',
+    mixins:[inputMixin],
     methods : {
       check(val){
-          console.log('debounce调用手机号检查方法')
-          if (!VALIDATE.mobile.test(val)) {
-            this.state = 'error'
-            this.errorMsg = '请输入正确的手机号'
-            this.setValid(false)
-            return
-          }
+        this.value = val
+        if (!VALIDATE.mobile.test(val)) {
+          this.state = 'error'
+          this.errorMsg = '请输入正确的手机号'
+          this.$parent.state.mobile = false
+        } else {
           this.state = 'success'
-          this.setValid(true)
-          this.$emit('input', val)
-      },
-      setValid(isValid){
-        this.$emit('isValid', { 'key' : this.inputname, 'isValid' : isValid })
-      },
-      alert(){
-        this.$message('您已绑卡，不能修改此信息。');
+          this.$parent.state.mobile = true
+        }
+        this.$emit('setMobile')
       }
-    },
-    created(){
-      if (this.initcheck) this.check(this.value)
     }
   }
 </script>
-<style lang="stylus" scoped>
-  @import "../../style/base"
-  #telephone-input
-    position relative
-</style>
+
 

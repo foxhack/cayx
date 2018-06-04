@@ -9,12 +9,19 @@ const BANKS = [
   { code : 'ZHONGXINB', name : '中信银行', logoPos : '33.33% 24%' },
   { code : 'PSBC', name : '邮储银行', logoPos : '33.33% 0' },
   { code : 'ABC', name : '农业银行', logoPos : '' },
-  //{ id : 'MINSHENGB', name : '民生银行', logoPos : '' },
-  //{ id : 'ZHAOSHANGB', name : '招商银行', logoPos : '' },
-  //{ id : 'XINGYEB', name : '兴业银行', logoPos : '' },
-  //{ id : 'ICBC', name : '工商银行', logoPos : '' },
-  //{ id : 'PINGANB', name : '平安银行', logoPos : '' },
-  //{ id : 'CCB', name : '建设银行', logoPos : '' }
+  { code : 'MINSHENGB', name : '⺠⽣银⾏', logoPos : '' },
+  { code : 'ZHAOSHANGB', name : '招商银行', logoPos : '' },
+  { code : 'ICBC', name : '工商银行', logoPos : '' },
+  { code : 'PINGANB', name : '平安银行', logoPos : '' },
+  { code : 'CCB', name : '建设银行', logoPos : '' },
+  { code : 'BOC', name : '中国银行', logoPos : '' },
+  { code : 'GUANGFAB', name : '广发银行', logoPos : '' },
+  { code : 'PUFAB', name : '浦发银行', logoPos : '' },
+  { code : 'HUAXIAB', name : '华夏银行', logoPos : '' },
+  { code : 'HENGFENGB', name : '恒丰银行', logoPos : '' },
+  { code : 'ZHESHANGB', name : '浙商银行', logoPos : '' },
+  { code : 'BOHAIB', name : '渤海银行', logoPos : '' }
+
 ]
 //定义产品
 const PRODUCTS = [
@@ -42,7 +49,9 @@ const VALIDATE = {
   mobile       : /^1(3[0-9]|4[579]|5[0-35-9]|66|7[0-35-8]|8[0-9]|9[89])[0-9]{8}$/,
   identifyCode : /^\d{4}$/,
   email        : /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/,
-  password     : /^\d{6}$/
+  password     : /^\d{6}$/,
+  address      : /^.{6,}/,
+  bankCardNo   : /^(\d{16}|\d{19})$/
 }
 export { CODE, BANKS, PRODUCTS, VALIDATE }
 

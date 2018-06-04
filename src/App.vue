@@ -35,7 +35,6 @@
     },
     created(){
       console.log('组件APP')
-      document.querySelector('#logo').style.display = 'none'
     }
   }
 </script>
@@ -287,12 +286,21 @@
       border-top-left-radius 0.5em
       border-top-right-radius 0.5em
 
+  #transaction-input .el-dialog
+    display flex
+    flex-direction column
+    justify-content space-between
+
   #transaction-input, #transaction-password-setting
     .el-dialog__wrapper .el-dialog__header
       border-top-left-radius 0em
       border-top-right-radius 0em
+      font-size large
+      font-family pingfang-bold
+
     .el-dialog__body
       padding 0 !important
+      font-size 1em
 
   #open-account
     .el-dialog
@@ -407,20 +415,12 @@
     input
       color secondary-text-color
 
-  #email-input
+  #name-input, #idno-input, #email-input, #telephone-input, #address-input, #identify-code, #bankcard-input
     position relative
     input
       margin-right 20px
-      color neutral-text-color3
-
-
-
-  #username, #idno, #telephone-input, #address-input, #email-input, #identify-code, #bankcard-input
-    input
       text-align right
-      margin-right 20px
-
-  #username, #idno, #telephone-input, #address-input, #email-input, #identify-code, #bankcard-input
+      color neutral-text-color3
     .mint-field-state
       position absolute
       right 10px
