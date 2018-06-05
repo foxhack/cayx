@@ -13,7 +13,7 @@
       <input type="button" class="primary-btn fix-bottom" @click="showConfirm=true" :disabled="forbidSubmit" value="提交">
     </section>
     <el-dialog :visible=showConfirm title="开户信息确认" center :show-close="false" class="dialog-wrapper" top="0">
-      <div>您的开户信息提交后不能进行线上修改，请您在提交申请前再次确认开户信息</div>
+      <div class="confirm-tip">您的开户信息提交后不能进行线上修改，请您在提交申请前再次确认以下信息：</div>
       <ul v-if="showConfirm">
         <li class="cell"><span>姓名</span><span>{{$refs.name.value}}</span></li>
         <li class="cell"><span>身份证号</span><span>{{$refs.cardNo.value}}</span></li>
@@ -130,5 +130,13 @@
 
   .no-top-line::after
     border-top none
+
+  .confirm-tip
+    text-indent 2em
+    background-color info-color
+    border-radius 10px
+    padding 1em
+    color white
+    margin-bottom 1em
 
 </style>

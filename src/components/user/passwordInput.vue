@@ -1,8 +1,8 @@
 <template>
   <div id="password-wrapper">
     <div class="password-input center">
-      <span class="fake-input" v-for="n in 6">
-        <span v-show="password[n-1]!==undefined" v-text="'.'"></span>
+      <span class="fake-input center" :class="{'active':password.length==n-1}" v-for="n in 6">
+        <span :class="{'input':password[n-1]!==undefined}"></span>
       </span>
     </div>
     <div id="password-keyboard" class="flex-col">
@@ -65,11 +65,14 @@
       border-radius 5px
       border 1px solid neutral-border-color2
       text-align center
-      span
-        line-height 2em
+    .fake-input.active
+      border-color secondary-text-color
+    span.input
+      width 4px
+      height 4px
+      border-radius 50%
+      background-color secondary-text-color
 
-  .tip
-    text-decoration underline
 
   #password-keyboard
     .flex-row
