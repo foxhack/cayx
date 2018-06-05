@@ -8,8 +8,8 @@
       <email-input ref="email" :initValue="userInfo.email" :initcheck="!!userInfo.email"></email-input>
       <address-input ref="address" :initValue="userInfo.address" :initcheck="!!userInfo.email"></address-input>
       <div class="title">请上传身份证</div>
-      <image-upload-input ref="cardPhotoF" name="cardPhotoF" title="点击上传正面"></image-upload-input>
-      <image-upload-input ref="cardPhotoB" name="cardPhotoB" title="点击上传背面"></image-upload-input>
+      <image-upload-input ref="cardPhotoF" name="cardPhotoF" title="点击上传人像面"></image-upload-input>
+      <image-upload-input ref="cardPhotoB" name="cardPhotoB" title="点击上传国徽面"></image-upload-input>
       <input type="button" class="primary-btn fix-bottom" @click="showConfirm=true" :disabled="forbidSubmit" value="提交">
     </section>
     <el-dialog :visible=showConfirm title="开户信息确认" center :show-close="false" class="dialog-wrapper" top="0">
@@ -133,7 +133,7 @@
 
   .confirm-tip
     text-indent 2em
-    background-color info-color
+    background-color #5F5EB7
     border-radius 10px
     padding 1em
     color white

@@ -203,13 +203,13 @@
     border-radius 1.5em
 
   #account .mint-cell-value a:nth-of-type(1) .balance
-    color secondary-text-color
+    color striking-text-color
     border 1px solid
     margin-right 0.4em
 
   #account .mint-cell-value a:nth-of-type(2) .balance
-    background-color secondary-text-color
-    color #fff
+    background-color striking-text-color
+    color white
 
   .icon
     vertical-align middle

@@ -36,11 +36,10 @@
       top calc(100vh - 3.4em)//menuHeight
 
   .main-menu
-    background-color white
     height menuHeight
-
-  .main-menu
-    border-top 1px solid gray
+    color secondary-text-color
+    background-color #f5f5f5
+    border-top 1px solid secondary-text-color
 
   .main-btn
     border-radius 0px
@@ -58,6 +57,7 @@
     height 2em
 
   .main-btn.active
-    color secondary-text-color
+    background-color secondary-text-color
+    color white
 
 </style>

@@ -6,7 +6,7 @@
       <div slot="top" class="mint-loadmore-top">
         <span v-show="topStatus !== 'loading'" :class="{ 'rotate': topStatus === 'drop' }">↓</span>
         <span v-show="topStatus === 'loading'">
-          <mt-spinner type="fading-circle" color="#F45500"></mt-spinner>
+          <mt-spinner type="fading-circle" color="#C49A16"></mt-spinner>
         </span>
       </div>
       <div v-infinite-scroll="generateMock"
@@ -17,7 +17,7 @@
                  :key="index" :label="r.type">
           {{r.amount|money}}|{{index}}
         </mt-cell>
-        <mt-spinner type="fading-circle" color="#F45500" v-show="loadMore"></mt-spinner>
+        <mt-spinner type="fading-circle" color="#C49A16" v-show="loadMore"></mt-spinner>
       </div>
     </mt-loadmore>
   </div>

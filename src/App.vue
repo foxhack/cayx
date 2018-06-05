@@ -242,7 +242,7 @@
 
   .cell
     @extend .flex-row
-    color secondary-text-color
+    color primary-text-color
     background-color white
     justify-content space-between
     align-items center
@@ -260,6 +260,9 @@
 
   .mint-indicator-mask
     z-index 3000
+
+  .mint-field-state.is-success
+    color success-color
 
   .mint-field-core
     {third-level}
