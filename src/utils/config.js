@@ -5,22 +5,22 @@ const CODE = {
 }
 //定义可绑定的银行卡
 const BANKS = [
-  { code : 'CEB', name : '光大银行', logoPos : '100% 74%' },
-  { code : 'ZHONGXINB', name : '中信银行', logoPos : '33.33% 24%' },
-  { code : 'PSBC', name : '邮储银行', logoPos : '33.33% 0' },
-  { code : 'ABC', name : '农业银行', logoPos : '' },
-  { code : 'MINSHENGB', name : '⺠⽣银⾏', logoPos : '' },
-  { code : 'ZHAOSHANGB', name : '招商银行', logoPos : '' },
-  { code : 'ICBC', name : '工商银行', logoPos : '' },
-  { code : 'PINGANB', name : '平安银行', logoPos : '' },
-  { code : 'CCB', name : '建设银行', logoPos : '' },
-  { code : 'BOC', name : '中国银行', logoPos : '' },
-  { code : 'GUANGFAB', name : '广发银行', logoPos : '' },
-  { code : 'PUFAB', name : '浦发银行', logoPos : '' },
-  { code : 'HUAXIAB', name : '华夏银行', logoPos : '' },
-  { code : 'HENGFENGB', name : '恒丰银行', logoPos : '' },
-  { code : 'ZHESHANGB', name : '浙商银行', logoPos : '' },
-  { code : 'BOHAIB', name : '渤海银行', logoPos : '' }
+  { code : 'CEB', name : '光大银行', logoPos : '100% 75%' },
+  { code : 'ZHONGXINB', name : '中信银行', logoPos : '33.33% 25%' },
+  { code : 'PSBC', name : '邮储银行', logoPos : '66.67% 0' },
+  { code : 'ABC', name : '农业银行', logoPos : '0 0' },
+  { code : 'MINSHENGB', name : '⺠⽣银⾏', logoPos : '0 100%' },
+  { code : 'ZHAOSHANGB', name : '招商银行', logoPos : '33.33% 0' },
+  { code : 'ICBC', name : '工商银行', logoPos : '33.33% 25%' },
+  { code : 'PINGANB', name : '平安银行', logoPos : '100% 100%' },
+  { code : 'CCB', name : '建设银行', logoPos : '66.67% 100%' },
+  { code : 'BOC', name : '中国银行', logoPos : '0 75%' },
+  { code : 'GUANGFAB', name : '广发银行', logoPos : '66.67% 50%' },
+  { code : 'PUFAB', name : '浦发银行', logoPos : '66.67% 25%' },
+  { code : 'HUAXIAB', name : '华夏银行', logoPos : '0 25%' },
+  { code : 'HENGFENGB', name : '恒丰银行', logoPos : '100% 25%' },
+  { code : 'ZHESHANGB', name : '浙商银行', logoPos : '0 100%' },
+  { code : 'BOHAIB', name : '渤海银行', logoPos : '0 50%' }
 
 ]
 //定义产品
