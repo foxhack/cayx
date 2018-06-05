@@ -83,7 +83,7 @@
         </mt-cell>
       </router-link>
     </section>
-    <section v-if="isRegister">
+    <section v-if="isOpenAccount">
       <router-link :to="{name:'passwordSetting',params:{type:1}}">
         <mt-cell title="交易密码" is-link :label="isSetPassword?'已设置':'未设置'">
           <svg slot="icon" class="icon" aria-hidden="true">

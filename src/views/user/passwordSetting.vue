@@ -1,9 +1,9 @@
 <template>
-  <div id="set-password" v-if="isRegister" class="page-with-top">
-    <section v-if="isRegister && !isSetPassword">
+  <div id="set-password" v-if="isOpenAccount" class="page-with-top">
+    <section v-if="!isSetPassword">
       <new-password></new-password>
     </section>
-    <template v-if="isRegister && isSetPassword">
+    <template v-else>
       <div v-show="view==''">
         <mt-cell title="修改密码" is-link @click.native="view='update'"></mt-cell>
         <mt-cell title="找回密码" is-link @click.native="view='reset'"></mt-cell>
@@ -29,7 +29,7 @@
     components : { NewPassword, UpdatePassword, ResetPassword },
     beforeRouteEnter (to, from, next) {
       next(vm => {
-        if (!vm.isRegister) vm.$router.push('/user')
+        if (!vm.isOpenAccount) vm.$router.push('/user')
       })
     }
   }

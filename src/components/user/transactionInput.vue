@@ -13,18 +13,18 @@
       <svg class="icon close" aria-hidden="true" @click="$emit('close')">
         <use xlink:href="#icon-close"></use>
       </svg>
-      <div style="font-size: large;text-align:center; padding: 0.6em" v-html="tInfo.title"></div>
-      <div style="font-size: x-large;text-align:center; padding: 0.6em" v-html="tInfo.subTitle"></div>
-      <div style="font-size: xx-large;text-align:center">
+      <div class="info-title" v-html="tInfo.title"></div>
+      <div class="info-subtitle" v-html="tInfo.subTitle"></div>
+      <div class="money-confirm">
         {{tInfo.amount|money}}元
       </div>
       <span slot="footer" class="dialog-footer">
       <div class="set-password" @click="showPasswordSetting=true">{{title}}</div>
       <password-input ref="password" v-on:close="$emit('close')" v-on:set-password="password=$event"></password-input>
       <input type="button" class="primary-btn"
-           @click="$emit('transactionSubmit', password)"
-           :disabled="password==null || password!==null && password.length!=6|| tInfo.submitting==true"
-            value="确定">
+             @click="$emit('transactionSubmit', password)"
+             :disabled="password==null || password!==null && password.length!=6|| tInfo.submitting==true"
+             value="确定">
     </span>
     </el-dialog>
   </div>
@@ -46,8 +46,11 @@
     components : { PasswordInput, NewPassword, ResetPassword },
     computed   : {
       title(){
-        return this.isSetPassword ? '找回密码' : '设置密码'
+        return this.isSetPassword ? '找回密码' : '设置交易密码'
       }
+    },
+    created(){
+      this.showPasswordSetting = !this.isSetPassword
     }
   }
 </script>
@@ -55,9 +58,9 @@
   @import "../../style/base.styl"
 
   .set-password
-    color error-color
+    color info-color
     text-align right
-    font-size medium
+    font-size small
 
   .icon.close
     position absolute
@@ -66,6 +69,22 @@
     fill white
     width 1.2em
     height 1.2em
+
+  .info-title
+    font-size large
+    text-align center
+    padding 0.6em
+
+  .info-subtitle
+    font-size x-large
+    text-align center
+    padding 0.6em
+    color secondary-text-color
+
+  .money-confirm
+    font-size xx-large
+    text-align center
+    color secondary-text-color
 
   .primary-btn
     width 100%
