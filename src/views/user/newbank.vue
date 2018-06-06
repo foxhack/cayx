@@ -12,8 +12,22 @@
       </div>
       <div v-if="selectedBank">
         <div class="title" style="margin-top:1em">请输入银行卡信息</div>
-        <mt-cell title="持卡人姓名" label="与开户信息一致">{{userInfo.name|name}}</mt-cell>
-        <mt-cell title="身份证号" label="与开户信息一致">{{userInfo.cardNo|IDCardNo}}</mt-cell>
+        <mt-cell title="持卡人姓名" label="与开户信息一致">
+          <template v-if="isOpenAccount">
+            {{userInfo.name|name}}
+          </template>
+          <template v-else>
+            {{this.$parent.$refs.name.value | name}}
+          </template>
+        </mt-cell>
+        <mt-cell title="身份证号" label="与开户信息一致">
+          <template v-if="isOpenAccount">
+            {{userInfo.cardNo|IDCardNo}}
+          </template>
+          <template v-else>
+            {{this.$parent.$refs.cardNo.value | IDCardNo}}
+          </template>
+        </mt-cell>
         <bankcard-input ref="bankCardNo"></bankcard-input>
         <telephone-input ref="mobile"
                          title="银行预留手机号"
@@ -110,7 +124,7 @@
           _.submitting = false
         }
       }
-    }
+    },
   }
 </script>
 <style lang="stylus" scoped>

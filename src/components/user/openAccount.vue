@@ -18,7 +18,7 @@
         <el-dialog :visible="currentStep==3" title="开户信息确认" center :show-close="false" class="dialog-wrapper" top="0">
           <div class="confirm-tip">您的开户信息提交后不能进行线上修改，请您在提交申请前再次确认以下信息：</div>
           <ul>
-            <li class="cell"><span>姓名</span><span>{{$refs.name.value}}</span></li>
+            <li class="cell"><span>持卡人姓名</span><span>{{$refs.name.value}}</span></li>
             <li class="cell"><span>身份证号</span><span>{{$refs.cardNo.value}}</span></li>
             <li class="cell"><span>手机号</span><span>{{userInfo.mobile}}</span></li>
             <li class="cell"><span>开户银行</span><span>{{getBankName(postData.bankCode)}}</span></li>
