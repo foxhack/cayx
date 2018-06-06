@@ -427,4 +427,8 @@
       position absolute
       right 10px
 
+  #set-password .mint-field-core
+    -webkit-text-security disc
+    text-security disc
+
 </style>

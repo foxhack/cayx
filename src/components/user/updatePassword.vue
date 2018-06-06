@@ -4,7 +4,7 @@
       <div class="cell">第一步：请输入原交易密码</div>
       <div style="position: relative">
         <mt-field
-            type="password"
+            type="tel"
             label="原交易密码"
             placeholder="请输入原交易密码"
             :state="state"
@@ -64,10 +64,4 @@
     }
   }
 </script>
-<style lang="stylus" scoped>
-  @import "../../style/base"
 
-  #set-password .mint-field-core
-    -webkit-text-security disc
-    text-security disc
-</style>

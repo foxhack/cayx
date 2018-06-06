@@ -3,7 +3,7 @@
     <div class="cell" v-if="title">{{title}}</div>
     <div style="position: relative">
       <mt-field
-          type="password"
+          type="tel"
           label="交易密码"
           placeholder="请输入6位数字的交易密码"
           :state="state1"
@@ -14,7 +14,7 @@
     <div style="position: relative">
       <mt-field
           :disabled="state1!=='success'"
-          type="password"
+          type="tel"
           label="重复密码"
           :state="state2"
           placeholder="请再次输入密码"
@@ -123,10 +123,4 @@
     }
   }
 </script>
-<style lang="stylus" scoped>
-  @import "../../style/base"
 
-  #set-password .mint-field-core
-    -webkit-text-security disc
-    text-security disc
-</style>

@@ -3,7 +3,7 @@
     <mt-field
         disableClear
         :label="title ||'验证码'"
-        type="number"
+        type="tel"
         :placeholder="placeholder || '请输入收到验证码'"
         :value="value"
         @input.native="check($event.target.value)">

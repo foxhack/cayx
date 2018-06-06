@@ -3,7 +3,7 @@
     <mt-cell v-if="readonly" :title="title ||'银行卡卡号'">{{value}}</mt-cell>
     <div v-else>
       <mt-field :class="{'mint-cell-allow-right':state==''}"
-                type="email"
+                type="tel"
                 disableClear
                 :label="title || '银行卡卡号'"
                 :placeholder="placeholder || '请输入银行卡卡号'"
