@@ -72,11 +72,10 @@
     color #fff
     border-radius 0.4em
     border 1px solid
-    background primary-text-color
+    background striking-text-color
     opacity 0.3
 
   .get-code-btn.active
-    background secondary-text-color
     opacity 1
 
   .count-num

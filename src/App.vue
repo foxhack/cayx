@@ -191,9 +191,8 @@
   section
     .title, .tip
       padding 5px 10px
-      font-size extra-extra-small
-      font-family font-family-light
-      {third-level}
+      color striking-text-color
+      font-size extra-small
 
     .title
       background white
