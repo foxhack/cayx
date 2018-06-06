@@ -82,7 +82,16 @@
       submitBankInfo(){
         let postData = { userID : window.localStorage.getItem('userID'), bankCode : this.selectedBank }
         for (let k in this.state) {
-          if (this.state[k]) postData[k] = this.$refs[k].value
+          if (k=='mobile' && this.state[k]) {
+            postData['bankSavedMobile'] = this.$refs[k].value
+          } else {
+            if (this.state[k]) postData[k] = this.$refs[k].value
+          }
+        }
+        //在开户阶段绑卡时，不提交绑卡信息，而是向上抛出绑卡信息
+        if (this.currentPath!=='/user/bank') {
+          this.$emit('getBankInfo', postData)
+          return
         }
 
         this.submitting = true
@@ -93,9 +102,10 @@
           callback       : { success : successCallback, always : alwaysCallback }
         })
         function successCallback(data) {
-            _.$store.commit('setUser', data)
-            _.$emit('refresh')
-          }
+          _.$store.commit('setUser', data)
+          _.$emit('refresh')
+        }
+
         function alwaysCallback() {
           _.submitting = false
         }

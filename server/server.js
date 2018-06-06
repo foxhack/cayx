@@ -26,6 +26,8 @@ app.post('/finance/user/openaccount', upload.fields([{ name : 'cardPhotoF' }, { 
   for (k in post) {
     mock.user.userInfo[k] = post[k]
   }
+  post.bindId = randomStr(8)
+  mock.user.userInfo.bindCard.push({bindID:post.bindId, bankCode:post.bankCode, bankCardNo:post.bankCardNo})
   mock.user.userStatus.isOpenAccount = true
   setTimeout(() => {
     res.json({ code : 0, msg : '开户成功', data : mock.user })
@@ -116,7 +118,6 @@ app.post('/finance/user/bindcard', function(req, res) {
   console.log('收到请求bindcard')
   let post = req.body
   post.bindId = randomStr(8)
-  if (mock.user.userInfo.bindCard.length==0) mock.user.userInfo.defaultBindCard = post.bindId
   console.log('返回'+post)
   mock.user.userInfo.bindCard.push(post)
   setTimeout(() => {
