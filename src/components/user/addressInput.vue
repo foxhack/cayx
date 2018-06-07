@@ -6,6 +6,7 @@
     </mt-cell>
     <div v-else>
       <mt-field v-if="showRawValue"
+                type="textarea"
                 :class="{'mint-cell-allow-right':state==''}"
                 disableClear
                 :label="title || '联系地址'"
@@ -32,7 +33,7 @@
         console.log('调用联系地址检查方法')
         if (!VALIDATE.address.test(val)){
           this.state = 'error'
-          this.errorMsg = '请输入大于6个字符的地址'
+          this.errorMsg = '请输入8-30个汉字'
           this.$parent.state.address = false
         }else {
           this.state = 'success'
