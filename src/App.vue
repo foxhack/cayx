@@ -432,4 +432,6 @@
       -webkit-text-security disc
       text-security disc
 
+  .mint-toast-icon
+    font-size 2em
 </style>

@@ -1,6 +1,6 @@
 import { authorDomain, wxAppId } from '@/api/config'
-import { Message, Notification } from 'element-ui'
-import { Indicator } from 'mint-ui'
+import { Message } from 'element-ui'
+import { Indicator, Toast } from 'mint-ui'
 import { CODE } from '@/utils/config'
 import { api } from '@/api/api'
 
@@ -58,10 +58,15 @@ export function post(apiName, postData, options) {
     .done(result => {
       if (result.code==getCodeByType('success')) {
         if (options.showSuccessMsg) {
-          Notification({
-            showClose : true,
-            message   : result.msg,
-            type      : 'success'
+          //Notification({
+          //  showClose : true,
+          //  message   : result.msg,
+          //  type      : 'success'
+          //})
+          Toast({
+            message   : '操作成功',
+            iconClass : 'el-icon-success',
+            duration  : 2000
           })
         }
         if (options.callback && typeof options.callback.success==='function') options.callback.success(result.data, result.msg)
