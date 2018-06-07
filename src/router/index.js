@@ -116,7 +116,7 @@ const router = new Router({
       }
     },
     {
-      path      : '/user/account/:type/:from',
+      path      : '/user/account/:type',
       name      : 'account',
       component : Account,
       meta      : {
