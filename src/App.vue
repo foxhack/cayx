@@ -193,13 +193,12 @@
       padding 5px 10px
       color striking-text-color
       font-size extra-small
-
     .title
       background white
+      font-family font-family-bold
 
     .tip
       {second-level}
-      color: secondary-text-color
       text-align right
 
   .fix-bottom
@@ -354,6 +353,9 @@
   .mint-cell-wrapper
     font-size 1em
 
+  .mint-cell-label
+    font-size extra-extra-small
+
   .no-top-line .mint-cell-wrapper
     background none
 
@@ -416,6 +418,9 @@
       color secondary-text-color
     input
       color secondary-text-color
+   .money-input.active
+     input
+      font-size 1.7em
 
   #name-input, #idno-input, #email-input, #telephone-input, #address-input, #identify-code, #bankcard-input
     position relative
@@ -434,4 +439,9 @@
 
   .mint-toast-icon
     font-size 2em
+
+  .all
+    color striking-text-color
+    font-size small
+
 </style>

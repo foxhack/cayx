@@ -212,12 +212,9 @@
     color white
 
   .icon
-    vertical-align middle
-    fill secondary-text-color
-    width 1.3em
-    height 1.3em
-    position relative
-    top 3px
+    vertical-align calc(1em - 24px)
+    width 24px
+    height 24px
 
   .icon.zichan
     fill white

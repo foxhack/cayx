@@ -8,15 +8,16 @@
     <template v-if="type=='in'">
       <section>
         <div class="title">充值金额（元）</div>
-        <mt-field class="money-input no-top-line" label="￥" placeholder="请输入充值金额" type="number" v-model="post.amount"><span @click="post.amount=50000.00">单笔最大充值</span></mt-field>
+        <mt-field class="money-input no-top-line" :class="{'active':post.amount}" label="￥" placeholder="请输入充值金额" type="number" v-model="post.amount">
+          <span class="all" @click="post.amount=50000.00">单笔最大充值</span></mt-field>
       </section>
       <input type="button" class="primary-btn fix-bottom" @click="showT=true" :disabled="forbidSubmit" value="立即充值">
     </template>
     <template v-if="type=='out'">
       <section>
         <div class="title">提现金额（元）</div>
-        <mt-field class="money-input" label="￥" v-if="asset.availableAsset>0" placeholder="最小提现金额0.01元" type="number" v-model="post.amount">
-          <span @click="maxOut">全部提现</span>
+        <mt-field class="money-input" :class="{'active':post.amount}" label="￥" v-if="asset.availableAsset>0" placeholder="最小提现金额0.01元" type="number" v-model="post.amount">
+          <span class="all" @click="maxOut">全部提现</span>
         </mt-field>
         <mt-cell title="账户余额" :value="asset.availableAsset | toYuan | money | unit('元')"></mt-cell>
         <input type="button" class="primary-btn fix-bottom" @click="showT=true" :disabled="forbidSubmit" value="确认提现">
@@ -28,20 +29,21 @@
     </transaction-input>
     <result v-if="result.show" :result="result">
       <div slot="footer">
-        <input type="button" class="primary-btn" value="确定" @click="$router.push({path:from?from:'/user'})">
+        <input type="button" class="primary-btn" value="确定" @click="$router.push({path:from?from+'?buy-amount='+buyAmount:'/user'})">
       </div>
     </result>
     <template v-if="dialog">
       <el-dialog :visible=dialog.show :title="dialog.title" center :show-close="false" class="dialog-wrapper">
         <div>{{dialog.msg}}</div>
         <span slot="footer" class="dialog-footer">
-        <router-link :to="{path:'/user'}"><div class="primary-btn">确定</div></router-link>
-      </span>
+          <router-link :to="{path:'/user'}"><div class="primary-btn">确定</div></router-link>
+        </span>
       </el-dialog>
     </template>
   </div>
 </template>
 <script>
+  import { getQueryString } from '@/utils/common'
   import { BANKS } from '@/utils/config'
   import { fBankCardNo } from '@/utils/filters'
   import Bank from '@/views/user/bank'
@@ -52,7 +54,8 @@
     data(){
       return {
         type       : this.$route.params.type,
-        from       : this.$route.params.from,
+        from       : null,
+        buyAmount : null,
         post       : {
           bindId : null,
           amount : null
@@ -74,15 +77,6 @@
       TransactionInput,
       Result
     },
-    watch      : {
-      'post.amount'(val){
-        if (val) {
-          this.$nextTick(() => {document.querySelector('.money-input input').style.fontSize = '1.7em'})
-        } else {
-          this.$nextTick(() => {document.querySelector('.money-input input').style.fontSize = '1em'})
-        }
-      }
-    },
     computed   : {
       transactionTitle(){
         if (this.type=='in') return '确定使用'+this.getSelectedBankName()+'（'+this.getSelectedBankCardNo()+')'
@@ -99,11 +93,11 @@
     },
     methods    : {
       getSelectedBankName(){
-        let bankCode=this.userInfo.bindCard.find(b => {return b.bindId==this.post.bindId}).bankCode
+        let bankCode = this.userInfo.bindCard.find(b => {return b.bindId==this.post.bindId}).bankCode
         return BANKS.find(b => {return b.code==bankCode}).name
       },
       getSelectedBankCardNo(){
-        let bankCardNo=this.userInfo.bindCard.find(b => {return b.bindId==this.post.bindId}).bankCardNo
+        let bankCardNo = this.userInfo.bindCard.find(b => {return b.bindId==this.post.bindId}).bankCardNo
         return fBankCardNo(bankCardNo)
       },
       maxOut(){
@@ -168,6 +162,10 @@
         this.dialog = { show : true, title : '操作提示', msg : '您现在还不能进行账户操作，您需要前往会员中心进行绑卡' }
         return
       }
+      this.from = getQueryString("from")
+      if (getQueryString("amount")) this.post.amount = getQueryString("amount")
+      if (getQueryString("buy-amount")) this.buyAmount = getQueryString("buy-amount")
+
     }
   }
 </script>

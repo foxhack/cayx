@@ -1,5 +1,9 @@
 <template>
   <div id="transaction" class="page-with-top-bottom">
+    <section>
+      <div class="title">产品名称</div>
+      <mt-cell class="no-top-line" :title="productName"></mt-cell>
+    </section>
     <div v-if="this.$route.params.type=='in'">
       <section>
         <div class="title">{{transactionName}}途径</div>
@@ -11,19 +15,24 @@
       </section>
       <section>
         <div class="title">{{transactionName}}金额</div>
-        <mt-field class='money-input no-top-line' label="￥" type="number" placeholder="0.01元起购" v-model="post.amount">
+        <mt-field class='money-input no-top-line' label="￥" :class="{'active':post.amount}" type="tel" placeholder="0.01元起购" v-model="post.amount">
           <span v-if="asset.availableAsset>0" class="all" @click="maxIn">全部余额买入</span>
         </mt-field>
         <input type="button" class="primary-btn fix-bottom" :disabled="!canBuy" :value="'确定'+transactionName" @click="showT=true">
       </section>
       <section v-if="outBuyRange">
-        <mt-cell title="余额不足" is-link @click.native="$router.push({name:'account', params:{type:'in', from:currentPath}})">去充值</mt-cell>
+        <mt-cell title="余额不足">需要充值{{outBuyRange | money | unit('元')}}
+        </mt-cell>
+        <input type="button"
+               class="primary-btn fix-bottom"
+               @click="$router.push('/user/account/in?from='+currentPath+'&amount='+outBuyRange+'&buy-amount='+post.amount)"
+               value="去充值">
       </section>
     </div>
     <div v-if="this.$route.params.type=='out'">
       <section>
         <div class="title">{{transactionName}}金额</div>
-        <mt-field class='money-input no-top-line' label="￥" type="number" :placeholder="'最小'+transactionName+'金额0.01元'" v-model="post.amount">
+        <mt-field class='money-input no-top-line' label="￥" :class="{'active':post.amount}" type="tel" :placeholder="'最小'+transactionName+'金额0.01元'" v-model="post.amount">
           <span class="all" @click="maxOut">全部{{transactionName}}</span>
         </mt-field>
         <mt-cell title="持有金额">{{productAsset|toYuan|money|unit('元')}}</mt-cell>
@@ -56,6 +65,7 @@
   import Result from '@/components/user/result'
   import TransactionInput from '@/components/user/transactionInput'
   import { toCent, toYuan } from '@/utils/filters'
+  import { getQueryString } from '@/utils/common'
 
   export default{
     data(){
@@ -87,31 +97,23 @@
         }
       },
       productName(){
-        return this.productList.find(p=>{return p.pid==this.$route.params.pid}).name
+        return this.productList.find(p => {return p.pid==this.$route.params.pid}).name
       },
       transactionName(){
         let pType = this.$store.getters.getProductById(this.$route.params.pid).type
         if (pType==1) return this.$route.params.type==='in' ? '申购' : '赎回'
         if (pType==2) return this.$route.params.type==='in' ? '购买' : '退出'
       },
-
       outBuyRange(){
-        return this.post.amount && this.post.amount > 0 && parseFloat(this.post.amount) > toYuan(this.asset.availableAsset)
+        if (this.post.amount && this.post.amount > 0 && parseFloat(this.post.amount) > toYuan(this.asset.availableAsset))
+          return (parseFloat(this.post.amount) - toYuan(this.asset.availableAsset)).toFixed(2)
+
       },
       canBuy(){
         return this.post.amount && this.post.amount > 0 && !this.outBuyRange
       },
       canSell(){
         return this.post.amount && this.post.amount <= toYuan(this.productAsset)
-      },
-    },
-    watch      : {
-      'post.amount'(val){
-        if (val) {
-          this.$nextTick(() => {document.querySelector('.money-input input').style.fontSize = '1.7em'})
-        } else {
-          this.$nextTick(() => {document.querySelector('.money-input input').style.fontSize = '1em'})
-        }
       }
     },
     methods    : {
@@ -182,15 +184,12 @@
         this.dialog = { show : true, title : '操作提示', msg : '您的账户余额不足，您需要前往我的账户进行账户充值' }
         return
       }
+      if (getQueryString("buy-amount")) this.post.amount = getQueryString("buy-amount")
     }
   }
 </script>
 <style lang="stylus" scoped>
   @import '../../style/base.styl'
-
-  .all
-    color neutral-text-color2
-    font-size small
 
   .other
     color secondary-text-color
@@ -201,5 +200,8 @@
       display inline-block
       line-height 4em
       padding-right 10px
+
+  .money-input input
+    font-size 1.7em
 
 </style>
