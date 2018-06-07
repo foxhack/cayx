@@ -1,5 +1,5 @@
 <template>
-  <section>
+  <section id="new-password">
     <div class="cell" v-if="title">{{title}}</div>
     <div style="position: relative">
       <mt-field

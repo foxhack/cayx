@@ -419,7 +419,7 @@
 
   #name-input, #idno-input, #email-input, #telephone-input, #address-input, #identify-code, #bankcard-input
     position relative
-    input
+    input, textarea
       margin-right 20px
       text-align right
       color neutral-text-color3
@@ -427,8 +427,9 @@
       position absolute
       right 10px
 
-  #set-password .mint-field-core
-    -webkit-text-security disc
-    text-security disc
+  #new-password, #update-password
+    .mint-field-core
+      -webkit-text-security disc
+      text-security disc
 
 </style>
