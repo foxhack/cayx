@@ -15,7 +15,6 @@
     <template v-if="type=='out'">
       <section>
         <div class="title">提现金额（元）</div>
-        <mt-cell v-if="asset.availableAsset==0" title="尚无可用资产"></mt-cell>
         <mt-field class="money-input" label="￥" v-if="asset.availableAsset>0" placeholder="最小提现金额0.01元" type="number" v-model="post.amount">
           <span @click="maxOut">全部提现</span>
         </mt-field>

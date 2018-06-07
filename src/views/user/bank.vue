@@ -1,7 +1,7 @@
 <template>
   <div id="bank">
     <div v-if="currentPath=='/user/bank'" class='page-with-top-bottom'>
-      <section v-if="userInfo.bindCard.length>0">
+      <section v-if="bindCard.length>0">
         <div class="title">已绑定的银行卡</div>
         <div v-for="b in userInfo.bindCard">
           <mt-cell
@@ -16,7 +16,7 @@
       <mt-actionsheet :actions="actions" v-model="sheetVisible"></mt-actionsheet>
     </div>
     <div v-else>
-      <section v-if="userInfo.bindCard.length>0">
+      <section v-if="bindCard.length>0">
         <div v-for="b in userInfo.bindCard">
           <mt-cell
               :title="getBankName(b.bankCode)"
@@ -29,7 +29,6 @@
       </section>
     </div>
   </div>
-
 </template>
 <script>
   import { BANKS } from '@/utils/config'
@@ -50,7 +49,7 @@
       }
     },
     components : { NewBank, 'mt-actionsheet' : Actionsheet },
-    watch:{
+    watch      : {
       selectedBindId(){
         this.$emit('setSelectedBank')
       }
@@ -80,7 +79,7 @@
       }
     },
     created(){
-      if(this.userInfo.bindCard.length==1) this.selectedBindId=this.userInfo.bindCard[0].bindId
+      if (this.userInfo.bindCard.length==1) this.selectedBindId = this.userInfo.bindCard[0].bindId
     },
     beforeRouteEnter (to, from, next) {
       next(vm => {
