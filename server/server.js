@@ -27,7 +27,7 @@ app.post('/finance/user/openaccount', upload.fields([{ name : 'cardPhotoF' }, { 
     mock.user.userInfo[k] = post[k]
   }
   post.bindId = randomStr(8)
-  mock.user.userInfo.bindCard.push({bindID:post.bindId, bankCode:post.bankCode, bankCardNo:post.bankCardNo})
+  mock.user.userInfo.bindCard.push({bindId:post.bindId, bankCode:post.bankCode, bankCardNo:post.bankCardNo})
   mock.user.userStatus.isOpenAccount = true
   setTimeout(() => {
     res.json({ code : 0, msg : '开户成功', data : mock.user })
