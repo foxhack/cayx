@@ -174,7 +174,7 @@
         this.dialog = { show : true, title : '操作提示', msg : '您现在还不能进行操作，您需要前往我的账户依次进行开户->绑卡->账户充值' }
         return
       }
-      if (this.bindCard.length==0) {
+      if (this.bindCard.length==0 && this.asset.availableAsset==0) {
         this.dialog = { show : true, title : '操作提示', msg : '您现在还不能进行操作，您需要前往我的账户进行绑卡->账户充值' }
         return
       }
