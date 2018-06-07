@@ -17,18 +17,24 @@
       <template v-if="!isOpenAccount && currentStep==3">
         <el-dialog :visible="currentStep==3" title="开户信息确认" center :show-close="false" class="dialog-wrapper" top="0">
           <div class="confirm-tip">您的开户信息提交后不能进行线上修改，请您在提交申请前再次确认以下信息：</div>
-          <ul>
-            <li class="cell"><span>持卡人姓名</span><span>{{$refs.name.value}}</span></li>
-            <li class="cell"><span>身份证号</span><span>{{$refs.cardNo.value}}</span></li>
-            <li class="cell"><span>手机号</span><span>{{userInfo.mobile}}</span></li>
-            <li class="cell"><span>开户银行</span><span>{{getBankName(postData.bankCode)}}</span></li>
-            <li class="cell"><span>银行卡号</span><span>{{postData.bankCardNo}}</span></li>
-            <li class="cell"><span>银行预留手机号</span><span>{{postData.bankSavedMobile}}</span></li>
-            <li class="cell"><span>email</span><span>{{$refs.email.value}}</span></li>
-            <li class="cell"><span>联系地址</span><span>{{$refs.address.value}}</span></li>
-            <li class="cell flex-col no-top-line"><span>身份证正面照片</span><img :src="$refs.cardPhotoF.img" class="id-card"></li>
-            <li class="cell flex-col no-top-line"><span>身份证背面照片</span><img :src="$refs.cardPhotoB.img" class="id-card"></li>
-          </ul>
+          <div id="confirm-table">
+            <div><span class="c-item">持卡人姓名</span><span class="c-content">{{$refs.name.value}}</span></div>
+            <div><span class="c-item">身份证号</span><span class="c-content">{{$refs.cardNo.value}}</span></div>
+            <div><span class="c-item">手机号</span><span class="c-content">{{userInfo.mobile|fMobile}}</span></div>
+            <div><span class="c-item">开户银行</span><span class="c-content">{{getBankName(postData.bankCode)}}</span></div>
+            <div><span class="c-item">银行卡号</span><span class="c-content">{{postData.bankCardNo}}</span></div>
+            <div><span class="c-item">银行预留手机号</span><span class="c-content">{{postData.bankSavedMobile}}</span></div>
+            <div><span class="c-item">email</span><span class="c-content">{{$refs.email.value}}</span></div>
+            <div><span class="c-item last">联系地址</span><span class="c-content last">{{$refs.address.value}}</span></div>
+            <div><span class="photo-title">身份证正面照片</span></div>
+            <div><span class="photo-content">
+              <img :src="$refs.cardPhotoF.img" class="id-card">
+            </span></div>
+            <div><span class="photo-title">身份证背面照片</span></div>
+            <div><span class="photo-content">
+              <img :src="$refs.cardPhotoB.img" class="id-card">
+            </span></div>
+          </div>
           <span slot="footer" class="dialog-footer">
           <input type="button" class="primary-btn plain" :disabled="submitting" @click="currentStep=1" value="我要修改">
           <input type="button" class="primary-btn" :disabled="submitting" @click="submitAccountInfo" value="我已确认">
@@ -90,6 +96,15 @@
       forbidNext(){
         console.log('重新计算是否要禁用提交按钮')
         return (Object.values(this.state).some(e => {return e===false}))
+      }
+    },
+    filters    : {
+      fMobile(val){
+        return val.substr(0, 3)+' '+val.substr(3, 4)+' '+val.substr(7, 4)
+      },
+      fCardNo(val){
+//        return val.substr(0, 4)+' '+val.substr(4, 4)+' '+val.substr(7, 4)
+        return val
       }
     },
     methods    : {
@@ -162,11 +177,52 @@
     border-top none
 
   .confirm-tip
+    margin 0 -15px
     text-indent 2em
     background-color striking-text-color
     border-radius 10px
     padding 1em
     color white
     margin-bottom 1em
+
+  #confirm-table
+    margin 0 -15px
+    border 1px solid striking-text-color
+    div
+      display flex
+      flex-direction row
+    span
+      padding 10px
+    .c-item
+      flex 2
+      text-align right
+      background-color secondary-text-color
+      color white
+      border-bottom 1px solid
+    .c-item.last, .c-content.last
+      border-bottom none
+    .c-content
+      flex 3
+      text-align right
+      color striking-text-color
+      border-bottom 1px solid
+      white-space normal
+      word-break break-all
+      word-wrap break-word
+    .photo-title
+      flex 1
+      text-align center
+      background-color striking-text-color
+      color white
+      border-right 1px solid striking-text-color
+      border-left 1px solid striking-text-color
+    span.photo-content
+      line-height 0
+      flex 1
+      padding 0
+      background none
+      img
+        width 100%
+        height calc(62.8vw - 14.8px)
 
 </style>
