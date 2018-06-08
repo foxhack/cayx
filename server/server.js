@@ -190,7 +190,7 @@ app.post('/finance/capital/takeout', function(req, res) {
 
 app.post('/finance/asset/applybuy', function(req, res) {
   console.log('收到请求applybuy')
-  let amount = req.body.amount
+  let amount = parseFloat(req.body.amount)
   let pid = req.body.pid
   mock.asset.detailAsset.find(a => {return a.productId==pid}).totalAsset += amount
   mock.asset.availableAsset -= amount
@@ -202,7 +202,7 @@ app.post('/finance/asset/applybuy', function(req, res) {
 
 app.post('/finance/asset/applyredeem', function(req, res) {
   console.log('收到请求applyredeem')
-  let amount = req.body.amount
+  let amount = parseFloat(req.body.amount)
   let pid = req.body.pid
   mock.asset.detailAsset.find(a => {return a.productId==pid}).totalAsset -= amount
   mock.asset.availableAsset += amount
