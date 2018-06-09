@@ -27,7 +27,7 @@
   .wrapper
     background-color secondary-text-color
     color white
-    z-index 2000
+    z-index 2001
     position fixed
     height navHeight
     top 0
