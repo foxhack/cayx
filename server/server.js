@@ -27,7 +27,7 @@ app.post('/finance/user/openaccount', upload.fields([{ name : 'cardPhotoF' }, { 
     mock.user.userInfo[k] = post[k]
   }
   post.bindId = randomStr(8)
-  mock.user.userInfo.bindCard.push({bindId:post.bindId, bankCode:post.bankCode, bankCardNo:post.bankCardNo})
+  mock.user.userInfo.bindCard.push({ bindId : post.bindId, bankCode : post.bankCode, bankCardNo : post.bankCardNo })
   mock.user.userStatus.isOpenAccount = true
   setTimeout(() => {
     res.json({ code : 0, msg : '开户成功', data : mock.user })
@@ -139,13 +139,25 @@ app.post('/finance/user/unbindCard', function(req, res) {
   console.log('收到请求unbindCard')
   let post = req.body
   console.log('返回'+post)
-  let index = mock.user.userInfo.bindCard.indexOf(post.bindId)
-  mock.user.userInfo.bindCard.splice(index, 1)
-  if (mock.user.userInfo.bindCard.length==1) mock.user.userInfo.defaultBindCard = mock.user.userInfo.bindCard[0]
-  if (mock.user.userInfo.bindCard.length==0) mock.user.userInfo.defaultBindCard = ''
-  setTimeout(() => {
-    res.json({ code : 0, msg : '移除成功', data : mock.user })
-  }, 1000)
+  let index = -1
+  mock.user.userInfo.bindCard.forEach((v, k) => {
+    if (v.bindId==post.bindId) {
+      index = k
+      return
+    }
+  })
+  console.log(index)
+  if (index!= -1) {
+    mock.user.userInfo.bindCard.splice(index, 1)
+    setTimeout(() => {
+      res.json({ code : 0, msg : '移除成功', data : mock.user })
+    }, 1000)
+  }
+  else {
+    setTimeout(() => {
+      res.json({ code : 1, msg : '移除失败，不存在此卡', data : mock.user })
+    }, 1000)
+  }
 })
 
 app.post('/finance/asset/assetquery', function(req, res) {
@@ -227,11 +239,10 @@ function randomStr(length) {
   return str
 }
 
-
 function randomDate(startDate) {
-  let newTime=startDate.getTime()+1000000000*randomInt(1,10)
+  let newTime = startDate.getTime()+1000000000*randomInt(1, 10)
   return new Date(newTime).toLocaleString()
-  function randomInt(min,max){
+  function randomInt(min, max) {
     return Math.ceil(Math.random()*(max-min)+min)
   }
 }
