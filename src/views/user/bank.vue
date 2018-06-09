@@ -3,31 +3,27 @@
     <div v-if="currentPath=='/user/bank'" class='page-with-top-bottom'>
       <section v-if="bindCard.length>0">
         <div class="title">已绑定的银行卡</div>
-        <div v-for="b in userInfo.bindCard">
-          <mt-cell
-              :title="getBankName(b.bankCode)"
-              :label="b.bankCardNo | bankCardNo"
-              class="bank no-top-line"
-              @click.native="operateBankCard(b.bindId)">
-            <div slot="icon" class="bank-icon" :style="{backgroundPosition: getBankIcon(b.bankCode), float:'left'}"></div>
-          </mt-cell>
-        </div>
+        <bank-item v-for="b in userInfo.bindCard" class="no-top-line"
+                   :key="b.bindId"
+                   :bankCode="b.bankCode"
+                   :bankBindId="b.bindId"
+                   :subTitle="b.bankCardNo | bankCardNo"
+                   @click.native="operateBankCard(b.bindId)">
+        </bank-item>
       </section>
       <new-bank :key="newBankId" v-on:refresh="newBankId=+new Date()"></new-bank>
       <mt-actionsheet :actions="actions" v-model="sheetVisible"></mt-actionsheet>
     </div>
     <div v-else>
       <section v-if="bindCard.length>0">
-        <div v-for="b in userInfo.bindCard">
-          <mt-cell
-              :title="getBankName(b.bankCode)"
-              :label="b.bankCardNo | bankCardNo"
-              class="bank no-top-line"
-              :class="{selected:b.bindId==selectedBindId}"
-              @click.native="selectBankCard(b.bindId)">
-            <div slot="icon" class="bank-icon" :style="{backgroundPosition: getBankIcon(b.bankCode), float:'left'}"></div>
-          </mt-cell>
-        </div>
+        <bank-item v-for="b in userInfo.bindCard" class="no-top-line"
+                   :key="b.bindId"
+                   :bankCode="b.bankCode"
+                   :bankBindId="b.bindId"
+                   :selected="b.bindId==selectedBindId"
+                   :subTitle="b.bankCardNo | bankCardNo"
+                   @click.native="selectBankCard(b.bindId)">
+        </bank-item>
       </section>
     </div>
   </div>
@@ -35,6 +31,7 @@
 <script>
   import { BANKS } from '@/utils/config'
   import { Actionsheet } from 'mint-ui'
+  import BankItem from '@/components/user/bankItem'
   import NewBank from '@/views/user/newbank'
 
   export default{
@@ -50,23 +47,18 @@
         ]
       }
     },
-    components : { NewBank, 'mt-actionsheet' : Actionsheet },
+    components : { BankItem, NewBank, 'mt-actionsheet' : Actionsheet },
     watch      : {
       selectedBindId(){
         this.$emit('setSelectedBank')
       }
     },
     methods    : {
-      getBankName(bcode){
-        return this.bankList.filter(b => {return b.code==bcode})[0].name
-      },
-      getBankIcon(bcode){
-        return this.bankList.filter(b => {return b.code==bcode})[0].logoPos
-      },
       selectBankCard(bid){
         this.selectedBindId = bid
       },
       operateBankCard(bid){
+        console.log(bid)
         this.sheetVisible = true
         this.operateBindId = bid
       },

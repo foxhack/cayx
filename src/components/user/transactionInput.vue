@@ -15,15 +15,15 @@
       </svg>
       <section v-if="tInfo.moneyFrom=='bank'">
         <div class="title">{{tInfo.title}}</div>
-        <mt-cell :title="tInfo.bankInfo.bankName" :label="tInfo.bankInfo.bankCardNo" class="no-top-line">
-          <div slot="icon" class="bank-icon" :style="{backgroundPosition: tInfo.bankInfo.bankIcon, float:'left'}"></div>
-        </mt-cell>
+        <bank-item class="no-top-line" :selected="true"
+            :bankCode="tInfo.bankInfo.bankCode"
+            :subTitle="tInfo.bankInfo.bankCardNo |bankCardNo">
+        </bank-item>
       </section>
       <section v-if="tInfo.moneyFrom=='account'">
         <div class="title">{{tInfo.title}}</div>
         <mt-cell :title="tInfo.productName" class="no-top-line"></mt-cell>
       </section>
-
       <div class="set-password" @click="showPasswordSetting=true">{{title}}</div>
       <div class="info-subtitle" v-html="tInfo.subTitle"></div>
       <div class="money-confirm">
@@ -43,6 +43,7 @@
   import PasswordInput from '@/components/user/passwordInput'
   import NewPassword from '@/components/user/newPassword'
   import ResetPassword from '@/components/user/resetPassword'
+  import BankItem from '@/components/user/bankItem'
 
   export default{
     name       : 'TransactionInput',
@@ -53,7 +54,7 @@
       }
     },
     props      : ['tInfo'],
-    components : { PasswordInput, NewPassword, ResetPassword },
+    components : { PasswordInput, NewPassword, ResetPassword, BankItem },
     computed   : {
       title(){
         return this.isSetPassword ? '找回密码' : '设置交易密码'

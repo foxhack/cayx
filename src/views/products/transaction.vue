@@ -53,8 +53,8 @@
     </result>
     <template v-if="dialog">
       <el-dialog :visible=dialog.show :title="dialog.title" center :show-close="false" class="dialog-wrapper">
-        <div class="d-msg">{{dialog.msg}}</div>
-        <div class="d-sub-msg">{{dialog.subMsg}}</div>
+        <div class="d-msg" v-html="dialog.msg"></div>
+        <div class="d-sub-msg" v-html="dialog.subMsg"></div>
         <span slot="footer" class="dialog-footer">
         <router-link :to="{path:'/user'}"><div class="primary-btn">确定</div></router-link>
       </span>
@@ -170,19 +170,19 @@
     },
     created(){
       if (!this.isRegister) {
-        this.dialog = { show : true, title : '操作提示', msg : '您现在还不能进行操作，您需要前往我的账户进行如下操作：', subMsg : '注册->申请开户->绑卡->账户充值' }
+        this.dialog = { show : true, title : '操作提示', msg : '您现在还不能进行操作，您需要前往<b>我的理财</b>进行如下操作：', subMsg : '注册<span class=el-icon-d-arrow-right></span>申请开户<span class=el-icon-d-arrow-right></span>绑卡<span class=el-icon-d-arrow-right></span>账户充值' }
         return
       }
       if (!this.isOpenAccount) {
-        this.dialog = { show : true, title : '操作提示', msg : '您现在还不能进行操作，您需要前往我的账户进行如下操作：', subMsg : '申请开户->绑卡->账户充值' }
+        this.dialog = { show : true, title : '操作提示', msg : '您现在还不能进行操作，您需要前往<b>我的理财</b>进行如下操作：', subMsg : '申请开户<span class=el-icon-d-arrow-right></span>绑卡<span class=el-icon-d-arrow-right></span>账户充值' }
         return
       }
       if (this.bindCard.length==0 && this.asset.availableAsset==0) {
-        this.dialog = { show : true, title : '操作提示', msg : '您现在还不能进行操作，您需要前往我的账户进行如下操作：', subMsg : '我的银行卡->绑卡->账户充值' }
+        this.dialog = { show : true, title : '操作提示', msg : '您现在还不能进行操作，您需要前往<b>我的理财</b>进行如下操作：', subMsg : '我的银行卡<span class=el-icon-d-arrow-right></span>绑卡<span class=el-icon-d-arrow-right></span>账户充值' }
         return
       }
       if (this.$route.params.type=='in' && this.asset.availableAsset==0) {
-        this.dialog = { show : true, title : '操作提示', msg : '您的账户余额不足，您需要前往我的账户进行如下操作：', subMsg : '账户充值' }
+        this.dialog = { show : true, title : '操作提示', msg : '您的账户余额不足，您需要前往<b>我的理财</b>进行如下操作：', subMsg : '账户充值' }
         return
       }
       if (getQueryString("buy-amount")) this.post.amount = getQueryString("buy-amount")

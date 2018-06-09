@@ -11,7 +11,7 @@
         <svg class="icon menu-icon" aria-hidden="true">
           <use xlink:href="#icon-zhuanjifenxinzhuce"></use>
         </svg>
-        我的账户
+        我的理财
       </router-link>
     </div>
   </div>

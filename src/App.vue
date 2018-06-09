@@ -379,30 +379,6 @@
     top -11px
     right 3px
 
-  .bank.selected
-    position relative
-
-  .bank.selected:before
-    content ''
-    position absolute
-    top 50%
-    transform translateY(-50%)
-    right 1em
-    width 1.2em
-    height 1.2em
-    border-radius 50%
-    background-color secondary-text-color
-
-  .bank.selected:after
-    content ''
-    position absolute
-    top calc(50% - 0.1em)
-    transform translateY(-50%) scale(0.5) rotate(45deg)
-    right 1.2em
-    width 0.8em
-    height 1.2em
-    border-right 2px solid white
-    border-bottom 2px solid white
 
   .mint-spinner-fading-circle
     margin 10px auto
@@ -441,14 +417,15 @@
     color striking-text-color
     font-size small
 
-  .bank-icon
-    width 2em
-    height 2em
-    background-size 400% 500%
-    background-image url('assets/icon/bank.jpg')
-    display inline-block
-    vertical-align middle
-    margin-right 10px
+  .add-bank
+    width 90%
+    color silver
+    margin 0.5em auto
+    line-height 4em
+    font-size 2em
+    {third-level}
+    border 2px dashed
+    border-radius 0.2em
 
   .d-msg
     color striking-text-color
@@ -457,6 +434,9 @@
     font-size extra-extra-large
     margin-top 1em
     text-align center
+    color primary-text-color
+
+  b
     color primary-text-color
 
 </style>

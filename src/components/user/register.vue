@@ -16,7 +16,7 @@
     <result v-if="result.show" :result="result">
       <div slot="footer">
         <router-link :to="{path:'/user/openaccount'}"><input type="button" class="primary-btn" value="申请开户"></router-link>
-        <router-link :to="{path:'/user'}"><input type="button" class="primary-btn plain" value="返回会员中心"></router-link>
+        <router-link :to="{path:'/user'}"><input type="button" class="primary-btn plain" value="返回我的理财"></router-link>
       </div>
     </result>
   </div>

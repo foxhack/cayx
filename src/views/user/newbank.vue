@@ -3,14 +3,16 @@
     <div v-if="bindCard.length==0" class='add-bank center' v-show="!showNewBank" @click="showNewBank=true">添加银行卡</div>
     <mt-cell v-if="bindCard.length>0" v-show="!showNewBank" @click.native="showNewBank=true" title="添加银行卡" is-link></mt-cell>
     <section v-if="showNewBank">
-      <mt-cell v-if="selectedBank" :title="getBankName(selectedBank)" label="已选择" is-link @click.native="showBankList=true">
-        <div slot="icon" class="bank-icon" :style="{backgroundPosition: getBankIcon(selectedBank), float:'left'}"></div>
-      </mt-cell>
+      <bank-item v-if="selectedBank" :bankCode="selectedBank" subTitle="已选择" @click.native="showBankList=true" isLink></bank-item>
+      <!--<mt-cell v-if="selectedBank" :title="getBankName(selectedBank)" label="已选择" is-link >-->
       <mt-cell v-else title="请选择一个银行" is-link @click.native="showBankList=true"></mt-cell>
-      <div v-show="showBankList" class="bank-list">
-        <mt-cell v-for="b in bankList" :key="b.code" class="bank" :class="{'selected':selectedBank==b.code}" @click.native="selectBank(b.code,b.name)" :title="b.name">
-          <div slot="icon" class="bank-icon" :style="{backgroundPosition: b.logoPos}"></div>
-        </mt-cell>
+      <div v-show="showBankList">
+        <bank-item v-for="b in bankList"
+                   :key="b.code"
+                   :bankCode="b.code"
+                   :selected="selectedBank==b.code"
+                   @click.native="selectBank(b.code,b.name)">
+        </bank-item>
       </div>
       <div v-if="selectedBank">
         <div class="title" style="margin-top:1em">请输入银行卡信息</div>
@@ -48,6 +50,7 @@
   import BankcardInput from '@/components/user/bankcardInput'
   import TelephoneInput from '@/components/user/telephoneInput'
   import IdentifyCode from '@/components/user/identifyCode'
+  import BankItem from '@/components/user/bankItem'
 
   export default{
     data(){
@@ -73,6 +76,7 @@
       }
     },
     components : {
+      BankItem,
       BankcardInput,
       TelephoneInput,
       IdentifyCode
@@ -88,12 +92,6 @@
       }
     },
     methods    : {
-      getBankName(bcode){
-        return this.bankList.filter(b => {return b.code==bcode})[0].name
-      },
-      getBankIcon(bcode){
-        return this.bankList.filter(b => {return b.code==bcode})[0].logoPos
-      },
       selectBank(bcode){
         this.selectedBank = bcode
         this.showBankList = false
@@ -132,29 +130,3 @@
     },
   }
 </script>
-<style lang="stylus" scoped>
-  @import "../../style/base"
-
-  .bank
-    font-family font-family-bold
-
-  .back
-    color secondary-text-color
-    line-height 4em
-    text-align right
-    font-size 0.8em
-    span
-      display inline-block
-      line-height 4em
-      padding-right 10px
-
-  .add-bank
-    width 90%
-    color silver
-    margin 0.5em auto
-    line-height 4em
-    font-size 2em
-    {third-level}
-    border 2px dashed
-    border-radius 0.2em
-</style>
