@@ -9,6 +9,7 @@
               :label="b.bankCardNo | bankCardNo"
               class="bank no-top-line"
               @click.native="operateBankCard(b.bindId)">
+            <div slot="icon" class="bank-icon" :style="{backgroundPosition: getBankIcon(b.bankCode), float:'left'}"></div>
           </mt-cell>
         </div>
       </section>
@@ -24,6 +25,7 @@
               class="bank no-top-line"
               :class="{selected:b.bindId==selectedBindId}"
               @click.native="selectBankCard(b.bindId)">
+            <div slot="icon" class="bank-icon" :style="{backgroundPosition: getBankIcon(b.bankCode), float:'left'}"></div>
           </mt-cell>
         </div>
       </section>
@@ -57,6 +59,9 @@
     methods    : {
       getBankName(bcode){
         return this.bankList.filter(b => {return b.code==bcode})[0].name
+      },
+      getBankIcon(bcode){
+        return this.bankList.filter(b => {return b.code==bcode})[0].logoPos
       },
       selectBankCard(bid){
         this.selectedBindId = bid

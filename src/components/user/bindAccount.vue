@@ -1,7 +1,7 @@
 <template>
   <div id="bind-account">
-    <el-dialog :visible=show title="绑定账户" center :show-close="false" class="dialog-wrapper">
-      <div>系统检测到您已注册过长安一家，是否使用该注册信息进行注册，并将长安严选与之关联？</div>
+    <el-dialog :visible=show title="账户注册" center :show-close="false" class="dialog-wrapper">
+      <div class="ins">系统检测到您已注册过长安一家，是否继续使用该信息进行注册？</div>
       <ul>
         <li class="cell" v-if="userInfo.name"><span>姓名</span><span>{{userInfo.name|name}}</span></li>
         <li class="cell" v-if="userInfo.cardNo"><span>身份证号</span><span>{{userInfo.cardNo|IDCardNo}}</span></li>
@@ -48,6 +48,7 @@
   }
 </script>
 <style lang="stylus" scoped>
+  @import "../../style/base"
   .cell
     line-height 2em
 
@@ -55,4 +56,10 @@
     .primary-btn
       width 40%
       display inline-flex
+
+  .ins
+    text-indent 2em
+    margin-bottom 1em
+    color striking-text-color
+
 </style>

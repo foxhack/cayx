@@ -16,7 +16,10 @@
       <new-bank v-show="!isOpenAccount && currentStep==2" v-on:getBankInfo="getBankInfo"></new-bank>
       <template v-if="!isOpenAccount && currentStep==3">
         <el-dialog :visible="currentStep==3" title="开户信息确认" center :show-close="false" class="dialog-wrapper" top="0">
-          <div class="confirm-tip">您的开户信息提交后不能进行线上修改，请您在提交申请前再次确认以下信息：</div>
+          <div class="confirm-tip flex-row">
+            <span class="el-icon-warning"></span>
+            <span>除email、联系地址之外的信息在您成功开户后不能进行线上修改。请您在提交申请前再次确认。</span>
+          </div>
           <div id="confirm-table">
             <div><span class="c-item">持卡人姓名</span><span class="c-content">{{$refs.name.value}}</span></div>
             <div><span class="c-item">身份证号</span><span class="c-content">{{$refs.cardNo.value}}</span></div>
@@ -44,7 +47,7 @@
     </div>
     <result v-show="result.show" :result="result">
       <div slot="footer">
-        <router-link :to="{name: 'account', params:{type:'in'}}"><input type="button" class="primary-btn" value="去充值"></router-link>
+        <router-link :to="{name: 'account', params:{type:'in'}}"><input type="button" class="primary-btn" value="去给账户充值"></router-link>
         <router-link :to="{name: 'user'}"><input type="button" class="primary-btn plain" value="返回用户中心"></router-link>
       </div>
     </result>
@@ -178,7 +181,6 @@
 
   .confirm-tip
     margin 0 -15px
-    text-indent 2em
     background-color striking-text-color
     border-radius 10px
     padding 1em
@@ -224,5 +226,9 @@
       img
         width 100%
         height calc(62.8vw - 14.8px)
+
+  .el-icon-warning
+    margin-right 10px
+    line-height inherit
 
 </style>

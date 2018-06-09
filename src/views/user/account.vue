@@ -23,7 +23,8 @@
         <input type="button" class="primary-btn fix-bottom" @click="showT=true" :disabled="forbidSubmit" value="确认提现">
       </section>
     </template>
-    <transaction-input v-if=showT :tInfo="{title: transactionTitle, subTitle:operateType, amount: post.amount, submitting : submitting}"
+    <transaction-input v-if=showT
+                       :tInfo="{moneyFrom:'bank', title:'使用银行卡', bankInfo:selectedBankInfo, subTitle:operateType+'金额', amount: post.amount, submitting : submitting}"
                        v-on:transactionSubmit="changeAccount"
                        v-on:close="showT=false">
     </transaction-input>
@@ -34,7 +35,8 @@
     </result>
     <template v-if="dialog">
       <el-dialog :visible=dialog.show :title="dialog.title" center :show-close="false" class="dialog-wrapper">
-        <div>{{dialog.msg}}</div>
+        <div class="d-msg">{{dialog.msg}}</div>
+        <div class="d-sub-msg">{{dialog.subMsg}}</div>
         <span slot="footer" class="dialog-footer">
           <router-link :to="{path:'/user'}"><div class="primary-btn">确定</div></router-link>
         </span>
@@ -78,9 +80,12 @@
       Result
     },
     computed   : {
-      transactionTitle(){
-        if (this.type=='in') return '确定使用'+this.getSelectedBankName()+'（'+this.getSelectedBankCardNo()+')'
-        if (this.type=='out') return '确定使用'+this.getSelectedBankName()+'（'+this.getSelectedBankCardNo()+')'
+      selectedBankInfo(){
+        return {
+          bankName:this.getSelectedBankName(),
+          bankCardNo:this.getSelectedBankCardNo(),
+          bankIcon:this.getSelectedBankIcon()
+        }
       },
       operateType(){
         if (this.type=='in') return '充值'
@@ -99,6 +104,10 @@
       getSelectedBankCardNo(){
         let bankCardNo = this.userInfo.bindCard.find(b => {return b.bindId==this.post.bindId}).bankCardNo
         return fBankCardNo(bankCardNo)
+      },
+      getSelectedBankIcon(){
+        let bankCode = this.userInfo.bindCard.find(b => {return b.bindId==this.post.bindId}).bankCode
+        return BANKS.find(b => {return b.code==bankCode}).logoPos
       },
       maxOut(){
         this.post.amount = toYuan(this.asset.availableAsset)
@@ -151,7 +160,7 @@
     },
     created(){
       if (!this.isRegister) {
-        this.dialog = { show : true, title : '操作提示', msg : '您现在还不能进行账户操作，您需要前往会员中心依次进行注册->开户->绑卡' }
+        this.dialog = { show : true, title : '操作提示', msg : '您现在还不能进行账户操作，您需要前往会员中心依次进行如下操作：',subMsg:'注册->开户->绑卡' }
         return
       }
       if (!this.isOpenAccount) {

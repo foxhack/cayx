@@ -3,7 +3,9 @@
     <div v-if="bindCard.length==0" class='add-bank center' v-show="!showNewBank" @click="showNewBank=true">添加银行卡</div>
     <mt-cell v-if="bindCard.length>0" v-show="!showNewBank" @click.native="showNewBank=true" title="添加银行卡" is-link></mt-cell>
     <section v-if="showNewBank">
-      <mt-cell v-if="selectedBank" :title="getBankName(selectedBank)" label="已选择" is-link @click.native="showBankList=true"></mt-cell>
+      <mt-cell v-if="selectedBank" :title="getBankName(selectedBank)" label="已选择" is-link @click.native="showBankList=true">
+        <div slot="icon" class="bank-icon" :style="{backgroundPosition: getBankIcon(selectedBank), float:'left'}"></div>
+      </mt-cell>
       <mt-cell v-else title="请选择一个银行" is-link @click.native="showBankList=true"></mt-cell>
       <div v-show="showBankList" class="bank-list">
         <mt-cell v-for="b in bankList" :key="b.code" class="bank" :class="{'selected':selectedBank==b.code}" @click.native="selectBank(b.code,b.name)" :title="b.name">
@@ -89,6 +91,9 @@
       getBankName(bcode){
         return this.bankList.filter(b => {return b.code==bcode})[0].name
       },
+      getBankIcon(bcode){
+        return this.bankList.filter(b => {return b.code==bcode})[0].logoPos
+      },
       selectBank(bcode){
         this.selectedBank = bcode
         this.showBankList = false
@@ -142,15 +147,6 @@
       display inline-block
       line-height 4em
       padding-right 10px
-
-  .bank-icon
-    width 2em
-    height 2em
-    background-size 400% 500%
-    background-image url('../../assets/icon/bank.jpg')
-    display inline-block
-    vertical-align middle
-    margin-right 10px
 
   .add-bank
     width 90%

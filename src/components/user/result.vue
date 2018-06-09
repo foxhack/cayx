@@ -2,8 +2,9 @@
   <transition name="slide">
     <div id="result-wrapper">
       <div class="top center">
-        <div class="">{{result.title}}</div>
+        <div>{{result.title}}</div>
       </div>
+      <div class="result-icon el-icon-success"></div>
       <main class="content">
         {{result.content}}
       </main>
@@ -20,7 +21,6 @@
     },
     name       : 'Result',
     props      : ['result'],
-    methods    : {}
   }
 </script>
 <style lang="stylus" scoped>
@@ -37,6 +37,7 @@
 
     .top
       position fixed
+      font-family font-family-bold
       z-index 2001
       left 0
       top 0
@@ -48,7 +49,12 @@
     .go-back
       position absolute
       left 10px
-
+    .result-icon
+      color secondary-text-color
+      font-size 3.5em
+      line-height 1.6
+      margin-left 50%
+      transform translateX(-50%)
     .content
       font-size x-large
       text-align center

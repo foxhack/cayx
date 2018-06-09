@@ -13,13 +13,23 @@
       <svg class="icon close" aria-hidden="true" @click="$emit('close')">
         <use xlink:href="#icon-close"></use>
       </svg>
-      <div class="info-title" v-html="tInfo.title"></div>
+      <section v-if="tInfo.moneyFrom=='bank'">
+        <div class="title">{{tInfo.title}}</div>
+        <mt-cell :title="tInfo.bankInfo.bankName" :label="tInfo.bankInfo.bankCardNo" class="no-top-line">
+          <div slot="icon" class="bank-icon" :style="{backgroundPosition: tInfo.bankInfo.bankIcon, float:'left'}"></div>
+        </mt-cell>
+      </section>
+      <section v-if="tInfo.moneyFrom=='account'">
+        <div class="title">{{tInfo.title}}</div>
+        <mt-cell :title="tInfo.productName" class="no-top-line"></mt-cell>
+      </section>
+
+      <div class="set-password" @click="showPasswordSetting=true">{{title}}</div>
       <div class="info-subtitle" v-html="tInfo.subTitle"></div>
       <div class="money-confirm">
         {{tInfo.amount|money}}元
       </div>
       <span slot="footer" class="dialog-footer">
-      <div class="set-password" @click="showPasswordSetting=true">{{title}}</div>
       <password-input ref="password" v-on:close="$emit('close')" v-on:set-password="password=$event"></password-input>
       <input type="button" class="primary-btn"
              @click="$emit('transactionSubmit', password)"
@@ -56,10 +66,13 @@
 </script>
 <style lang="stylus" scoped>
   @import "../../style/base.styl"
+  section
+    margin-bottom 0
 
   .set-password
+    position absolute
+    right 10px
     color info-color
-    text-align right
     font-size small
 
   .icon.close

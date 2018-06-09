@@ -21,7 +21,7 @@
         <input type="button" class="primary-btn fix-bottom" :disabled="!canBuy" :value="'确定'+transactionName" @click="showT=true">
       </section>
       <section v-if="outBuyRange">
-        <mt-cell title="余额不足">需要充值{{outBuyRange | money | unit('元')}}
+        <mt-cell title="余额不足">需要充值{{outBuyRange|money|unit('元')}}
         </mt-cell>
         <input type="button"
                class="primary-btn fix-bottom"
@@ -42,7 +42,7 @@
         <div class="title">{{transactionName}}说明</div>
       </section>
     </div>
-    <transaction-input v-if=showT :tInfo="{title: transactionName, subTitle: productName, amount: post.amount, submitting : submitting}"
+    <transaction-input v-if=showT :tInfo="{moneyFrom:'account', title:transactionName+'产品', productName: productName, amount: post.amount, submitting : submitting}"
                        v-on:transactionSubmit="submitTransaction"
                        v-on:close="showT=false">
     </transaction-input>
@@ -53,7 +53,8 @@
     </result>
     <template v-if="dialog">
       <el-dialog :visible=dialog.show :title="dialog.title" center :show-close="false" class="dialog-wrapper">
-        <div>{{dialog.msg}}</div>
+        <div class="d-msg">{{dialog.msg}}</div>
+        <div class="d-sub-msg">{{dialog.subMsg}}</div>
         <span slot="footer" class="dialog-footer">
         <router-link :to="{path:'/user'}"><div class="primary-btn">确定</div></router-link>
       </span>
@@ -106,7 +107,7 @@
       },
       outBuyRange(){
         if (this.post.amount && this.post.amount > 0 && parseFloat(this.post.amount) > toYuan(this.asset.availableAsset))
-          return (parseFloat(this.post.amount) - toYuan(this.asset.availableAsset)).toFixed(2)
+          return (parseFloat(this.post.amount)-toYuan(this.asset.availableAsset)).toFixed(2)
 
       },
       canBuy(){
@@ -169,19 +170,19 @@
     },
     created(){
       if (!this.isRegister) {
-        this.dialog = { show : true, title : '操作提示', msg : '您现在还不能进行操作，您需要前往我的账户依次进行注册->开户->绑卡->账户充值' }
+        this.dialog = { show : true, title : '操作提示', msg : '您现在还不能进行操作，您需要前往我的账户进行如下操作：', subMsg : '注册->申请开户->绑卡->账户充值' }
         return
       }
       if (!this.isOpenAccount) {
-        this.dialog = { show : true, title : '操作提示', msg : '您现在还不能进行操作，您需要前往我的账户依次进行开户->绑卡->账户充值' }
+        this.dialog = { show : true, title : '操作提示', msg : '您现在还不能进行操作，您需要前往我的账户进行如下操作：', subMsg : '申请开户->绑卡->账户充值' }
         return
       }
       if (this.bindCard.length==0 && this.asset.availableAsset==0) {
-        this.dialog = { show : true, title : '操作提示', msg : '您现在还不能进行操作，您需要前往我的账户进行绑卡->账户充值' }
+        this.dialog = { show : true, title : '操作提示', msg : '您现在还不能进行操作，您需要前往我的账户进行如下操作：', subMsg : '我的银行卡->绑卡->账户充值' }
         return
       }
       if (this.$route.params.type=='in' && this.asset.availableAsset==0) {
-        this.dialog = { show : true, title : '操作提示', msg : '您的账户余额不足，您需要前往我的账户进行账户充值' }
+        this.dialog = { show : true, title : '操作提示', msg : '您的账户余额不足，您需要前往我的账户进行如下操作：', subMsg : '账户充值' }
         return
       }
       if (getQueryString("buy-amount")) this.post.amount = getQueryString("buy-amount")

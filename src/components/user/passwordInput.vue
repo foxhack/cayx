@@ -76,6 +76,7 @@
 
   #password-keyboard
     .flex-row
+      font-size large
       height 3em
       border-top 1px solid neutral-border-color2
     span

@@ -287,10 +287,6 @@
       border-top-left-radius 0.5em
       border-top-right-radius 0.5em
 
-  #transaction-input .el-dialog
-    display flex
-    flex-direction column
-    justify-content space-between
 
   #transaction-input, #transaction-password-setting
     .el-dialog__wrapper .el-dialog__header
@@ -300,6 +296,7 @@
       font-family pingfang-bold
 
     .el-dialog__body
+      color inherit
       padding 0 !important
       font-size 1em
 
@@ -443,5 +440,23 @@
   .all
     color striking-text-color
     font-size small
+
+  .bank-icon
+    width 2em
+    height 2em
+    background-size 400% 500%
+    background-image url('assets/icon/bank.jpg')
+    display inline-block
+    vertical-align middle
+    margin-right 10px
+
+  .d-msg
+    color striking-text-color
+  .d-sub-msg
+    font-family font-family-bold
+    font-size extra-extra-large
+    margin-top 1em
+    text-align center
+    color primary-text-color
 
 </style>
