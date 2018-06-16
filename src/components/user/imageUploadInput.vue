@@ -1,20 +1,27 @@
 <template>
   <div class="upload center">
-    <div v-if="!img">{{title}}{{err}}</div>
-    <img v-else :src="img">
-    <input type="file" accept="image/jpg,image/jpeg,image/png,image/gif" @change="getFile($event)">
+    <div>
+      <div v-show="!dataUrl">
+        <template v-if="err">{{err}}</template>
+        <template v-else>{{title}}</template>
+      </div>
+      <img v-show="dataUrl" :id="'i'+id">
+      <input type="file" accept="image/jpg,image/jpeg,image/png,image/gif" @change="getFile($event)">
+    </div>
+    <canvas :id="'c'+id" style="display: none"></canvas>
   </div>
 </template>
 <script>
+  import { Indicator} from 'mint-ui'
   export default{
     data(){
       return {
-        img   : null,
-        value : null,
-        err   : '',
+        value   : null,
+        dataUrl : null,
+        err     : '',
       }
     },
-    props   : ['title', 'name'],
+    props   : ['title', 'name', 'id'],
     methods : {
       check(val){
         //在这里写更多的校验规则
@@ -25,20 +32,41 @@
         }
       },
       getFile(event){
-        console.log('发生改变')
-        this.value = event.target.files[0]
-        this.check(this.value)
-        this.displayImage(this.value)
+        let fileData = event.target.files[0]
+        let canvas = document.getElementById('c'+this.id)
+        let image = document.getElementById('i'+this.id)
+        if (!fileData) {
+          console.log('没有选择文件')
+          return
+        }
+        if (!canvas.getContext("2d")) {
+          this.err('抱歉，您的浏览器不支持图片浏览/压缩功能，请进行升级后再操作。')
+          return
+        }
+        this.displayAndCompressImage(fileData, image, canvas)
       },
-      displayImage(image){
+      displayAndCompressImage(imageData, image, canvas){
         if (!window.FileReader) {
-          this.err = "您的浏览器不支持图片浏览功能"
+          this.err = "抱歉，您的浏览器不支持图片浏览/压缩功能，请进行升级，或者自行将图片压缩至1M以下再操作。"
+          this.value = imageData
+          this.check(this.value)
           return
         }
         let reader = new FileReader()
-        reader.readAsDataURL(image)
+        Indicator.open('图像获取中，请稍候......')
+        reader.readAsDataURL(imageData)
         reader.onload = e => {
-          this.img = e.target.result
+          image.src = this.dataUrl = e.target.result
+          image.onload = e => {
+            canvas.width = 800
+            canvas.height = 600
+            canvas.getContext("2d").drawImage(image, 0, 0, 800, 600)
+            let cDataUrl = canvas.toBlob(b => {
+              Indicator.close()
+              this.value = b
+              this.check(this.value)
+            }, imageData.type);
+          }
         }
         reader.onerror = (err) => {
           this.err = err
@@ -63,7 +91,7 @@
 
   img
     width 100%
-    height 100%
+    height calc(62.8vw - 12.6px)
 
   input[type='file']
     opacity 0
@@ -71,4 +99,5 @@
     position absolute
     top 0
     left 0
+
 </style>

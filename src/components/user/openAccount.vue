@@ -9,8 +9,9 @@
         <email-input ref="email" :initValue="userInfo.email" :initcheck="!!userInfo.email"></email-input>
         <address-input ref="address" :initValue="userInfo.address" :initcheck="!!userInfo.email"></address-input>
         <div class="title">请上传身份证</div>
-        <image-upload-input ref="cardPhotoF" name="cardPhotoF" title="点击上传人像面"></image-upload-input>
-        <image-upload-input ref="cardPhotoB" name="cardPhotoB" title="点击上传国徽面"></image-upload-input>
+        <div class="tip"><i class="el-icon-info"></i>如果你使用的是Android，请至少升级至4.3.1及以上</div>
+        <image-upload-input ref="cardPhotoF" name="cardPhotoF" title="点击上传人像面" id="cardPhotoF"></image-upload-input>
+        <image-upload-input ref="cardPhotoB" name="cardPhotoB" title="点击上传国徽面" id="cardPhotoB"></image-upload-input>
         <input type="button" class="primary-btn fix-bottom" @click="goNext" :disabled="forbidNext" value="下一步">
       </section>
       <new-bank v-show="!isOpenAccount && currentStep==2" v-on:getBankInfo="getBankInfo"></new-bank>
@@ -31,11 +32,11 @@
             <div><span class="c-item last">联系地址</span><span class="c-content last">{{$refs.address.value}}</span></div>
             <div><span class="photo-title">身份证正面照片</span></div>
             <div><span class="photo-content">
-              <img :src="$refs.cardPhotoF.img" class="id-card">
+              <img :src="$refs.cardPhotoF.dataUrl" class="id-card">
             </span></div>
             <div><span class="photo-title">身份证背面照片</span></div>
             <div><span class="photo-content">
-              <img :src="$refs.cardPhotoB.img" class="id-card">
+              <img :src="$refs.cardPhotoB.dataUrl" class="id-card">
             </span></div>
           </div>
           <span slot="footer" class="dialog-footer">
@@ -114,21 +115,18 @@
       getBankName(bcode){
         return BANKS.filter(b => {return b.code==bcode})[0].name
       },
-
       goNext(){
         for (let k in this.state) {
           if (this.state[k]) this.postData[k] = this.$refs[k].value
         }
         this.currentStep = 2
       },
-
       getBankInfo(bankInfo){
         for (let k in bankInfo) {
           this.postData[k] = bankInfo[k]
         }
         this.currentStep = 3
       },
-
       submitAccountInfo(){
         let postData = new FormData()
         for (let k in this.postData) {
