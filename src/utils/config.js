@@ -1,28 +1,70 @@
 //定义返回码
 const CODE = {
   0 : { type : 'success', msg : '操作成功' },
-  1 : { type : 'error', msg : '操作失败' }
+  1 : { type : 'error', msg : '操作失败' },
+  2 : { type : 'processing', msg : '处理中' }
 }
 //定义可绑定的银行卡
 const BANKS = [
-  { code : 'CEB', name : '光大银行', logoPos : '100% 75%' },
-  { code : 'ZHONGXINB', name : '中信银行', logoPos : '33.33% 25%' },
-  { code : 'PSBC', name : '邮储银行', logoPos : '66.67% 0' },
+  { code : 'ICBC', name : '工商银行', logoPos : '25% 25%' },
   { code : 'ABC', name : '农业银行', logoPos : '0 0' },
-  { code : 'MINSHENGB', name : '⺠⽣银⾏', logoPos : '0 100%' },
-  { code : 'ZHAOSHANGB', name : '招商银行', logoPos : '33.33% 0' },
-  { code : 'ICBC', name : '工商银行', logoPos : '33.33% 25%' },
-  { code : 'PINGANB', name : '平安银行', logoPos : '100% 100%' },
-  { code : 'CCB', name : '建设银行', logoPos : '66.67% 100%' },
   { code : 'BOC', name : '中国银行', logoPos : '0 75%' },
-  { code : 'GUANGFAB', name : '广发银行', logoPos : '66.67% 50%' },
-  { code : 'PUFAB', name : '浦发银行', logoPos : '66.67% 25%' },
-  { code : 'HUAXIAB', name : '华夏银行', logoPos : '0 25%' },
-  { code : 'HENGFENGB', name : '恒丰银行', logoPos : '100% 25%' },
-  { code : 'ZHESHANGB', name : '浙商银行', logoPos : '0 100%' },
-  { code : 'BOHAIB', name : '渤海银行', logoPos : '0 50%' }
-
+  { code : 'CCB', name : '建设银行', logoPos : '50% 100%' },
+  { code : 'COMM', name : '交通银行', logoPos : '25% 75%' },
+  { code : 'CMB', name : '招商银行', logoPos : '25% 0' },
+  { code : 'CEB', name : '光大银行', logoPos : '75% 75%' },
+  { code : 'CMBC', name : '⺠⽣银⾏', logoPos : '0 100%' },
+  { code : 'CITIC', name : '中信银行', logoPos : '25% 100%' },
+  { code : 'CIB', name : '兴业银行', logoPos : '100% 25%' },
+  { code : 'SPDB', name : '浦发银行', logoPos : '50% 25%' },
+  { code : 'GDB', name : '广发银行', logoPos : '50% 50%' },
+  { code : 'SPABANK', name : '平安银行', logoPos : '75% 100%' },
+  { code : 'HXBANK', name : '华夏银行', logoPos : '0 25%' },
+  { code : 'PSBC', name : '邮储银行', logoPos : '50% 0' },
+  { code : 'EGBANK', name : '恒丰银行', logoPos : '75% 25%' },
+  { code : 'CZBANK', name : '浙商银行', logoPos : '75% 0' },
+  { code : 'BOHAIB', name : '渤海银行', logoPos : '0 50%' },
+  { code : 'BJBANK', name : '北京银行', logoPos : '75% 50%' },
+  { code : 'SHBANK', name : '上海银行', logoPos : '100% 0' },
+  { code : 'JSBANK', name : '江苏银行', logoPos : '100% 50%' },
+  { code : 'NJCB', name : '南京银行', logoPos : '100% 75%' },
+  { code : 'BHB', name : '河北银行', logoPos : '100% 100%' },
+  { code : 'GCB', name : '广州银行', logoPos : '' },
+  { code : 'CDRCB', name : '成都商业银行', logoPos : '' },
+  { code : 'CQBANK', name : '重庆银行', logoPos : '' },
+  { code : 'BSB', name : '包商银行', logoPos : '' },
+  { code : 'H3CB', name : '内蒙古银行', logoPos : '' }
 ]
+//const BANKS = [
+//  { code : 'ICBC', name : '工商银行', logo : 'gongshangyinhang' },
+//  { code : 'ABC', name : '农业银行', logo : 'nongyeyinhang' },
+//  { code : 'BOC', name : '中国银行', logo : 'zhongguoyinhang' },
+//  { code : 'CCB', name : '建设银行', logo : 'jiansheyinhang' },
+//  { code : 'COMM', name : '交通银行', logo : 'jiaotongyinhang' },
+//  { code : 'CMB', name : '招商银行', logo : 'zhaoshangyinhang' },
+//  { code : 'CEB', name : '光大银行', logo : 'guangdayinhang' },
+//  { code : 'CMBC', name : '⺠⽣银⾏', logo : 'minshengyinhang' },
+//  { code : 'CITIC', name : '中信银行', logo : 'zhongxinyinhang' },
+//  { code : 'CIB', name : '兴业银行', logo : 'xingyeyinhang' },
+//  { code : 'SPDB', name : '浦发银行', logo : 'pufayinhang' },
+//  { code : 'GDB', name : '广发银行', logo : 'guangfayinhang' },
+//  { code : 'SPABANK', name : '平安银行', logo : 'pinganyinhang' },
+//  { code : 'HXBANK', name : '华夏银行', logo : 'huaxiayinhang' },
+//  { code : 'PSBC', name : '邮储银行', logo : 'youchuyinhang' },
+//  { code : 'EGBANK', name : '恒丰银行', logo : 'hengfengyinhang' },
+//  { code : 'CZBANK', name : '浙商银行', logo : 'zheshangyinhang' },
+//  { code : 'BOHAIB', name : '渤海银行', logo : 'bohaiyinhang' },
+//  { code : 'BJBANK', name : '北京银行', logo : 'beijingyinhang' },
+//  { code : 'SHBANK', name : '上海银行', logo : 'shanghaiyinhang' },
+//  { code : 'JSBANK', name : '江苏银行', logo : 'jiangsuyinhang' },
+//  { code : 'NJCB', name : '南京银行', logoPos : 'nanjingyinhang' },
+//  { code : 'BHB', name : '河北银行', logo : 'hebeiyinhang' },
+//  { code : 'GCB', name : '广州银行', logo : 'bank-default' },
+//  { code : 'CDRCB', name : '成都商业银行', logo : 'bank-default' },
+//  { code : 'CQBANK', name : '重庆银行', logo : 'bank-default' },
+//  { code : 'BSB', name : '包商银行', logo : 'bank-default' },
+//  { code : 'H3CB', name : '内蒙古银行', logo : 'neimengguyinhang' }
+//]
 //定义产品
 const PRODUCTS = [
   {
@@ -50,7 +92,7 @@ const VALIDATE = {
   identifyCode : /^\d{4}$/,
   email        : /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/,
   password     : /^\d{6}$/,
-  address      : /^.{8,30}/,
+  address      : /^.{8,30}$/,
   bankCardNo   : /^(\d{16}|\d{19})$/
 }
 export { CODE, BANKS, PRODUCTS, VALIDATE }

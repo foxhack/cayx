@@ -5,7 +5,10 @@
       :title="getBankName(bankCode)"
       :label="subTitle"
       :isLink="isLink">
-    <div slot="icon" class="bank-icon" :style="{backgroundPosition: getBankIcon(bankCode), float:subTitle?'left':'none'}"></div>
+    <div v-if="getBankIcon(bankCode)" slot="icon" class="bank-img" :style="{backgroundPosition: getBankIcon(bankCode), float:subTitle?'left':'none'}"></div>
+    <svg v-else slot="icon" class="bank-icon" aria-hidden="true" :style="{float:subTitle?'left':'none'}">
+      <use xlink:href="#icon-yinxingqia"></use>
+    </svg>
   </mt-cell>
 </template>
 <script>
@@ -28,6 +31,15 @@
       },
       getBankIcon(bcode){
         return BANKS.filter(b => {return b.code==bcode})[0].logoPos
+      },
+      getBankIconStyle(bankCode){
+        let bankIcon=this.getBankIcon(bankCode)
+        if(bankIcon){
+          return ['bank-img',{backgroundPosition: bankIcon, float:this.subTitle?'left':'none'}]
+        }else{
+          return ['bank-icon']
+
+        }
       }
     }
   }
@@ -60,14 +72,21 @@
     border-right 2px solid white
     border-bottom 2px solid white
 
-  .bank-icon
+  .bank-img
     width 2em
     height 2em
-    background-size 400% 500%
-    background-image url('../../assets/icon/bank.jpg')
+    background-size 500% 500%
+    background-image url('../../assets/icon/banks.jpg')
     display inline-block
     vertical-align middle
     margin-right 10px
 
+  .bank-icon
+    width 2em
+    height 2em
+    display inline-block
+    vertical-align middle
+    margin-right 10px
+    fill primary-text-color
 </style>
 
