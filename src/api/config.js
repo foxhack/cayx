@@ -1,6 +1,5 @@
-//const backServerBaseUrl = 'http://testfinance.s1.natapp.cc'//后端测试环境
-const backServerBaseUrl = 'http://caejback.s1.natapp.cc'//本地测试环境
-//const backServerBaseUrl = 'http://localhost:8081'
+import { backServerBaseUrl } from '@/utils/env'
+
 export const authorDomain = 'caejfinance.s1.natapp.cc'
 export const wxAppId = 'wx4e007de45389d924'
 

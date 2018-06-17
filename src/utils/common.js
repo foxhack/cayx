@@ -23,7 +23,6 @@ export function guideToAuth(router_mode) {
   let mode = router_mode=='hash' ? '#/' : ''
   const redirect_uri = encodeURIComponent(`http://${OPTIONS.domain}/${mode}author`)
   window.location.href = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${OPTIONS.appId}&redirect_uri=${redirect_uri}&response_type=${OPTIONS.response_type}&scope=${OPTIONS.scope}&state=${OPTIONS.state}#wechat_redirect`
-//  window.location.href = 'http://localhost:8080/author?code=123'
 }
 
 export function getQueryString(name) {

@@ -20,13 +20,7 @@ npm run build --report
 
 For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
 
-# 开发环境浏览器中调试
-修改author.vue 中的code为固定值
-修改api/config.js中的backServerBaseUrl
 
-
-#上生产，路由改为history模式
-修改router/index.js,打开mode
 
 
 #成功提示信息显示后的确定处理
