@@ -7,7 +7,7 @@
         <li class="cell" v-if="userInfo.cardNo"><span>身份证号</span><span>{{userInfo.cardNo|IDCardNo}}</span></li>
         <li class="cell" v-if="userInfo.mobile"><span>手机号</span><span>{{userInfo.mobile|mobile}}</span></li>
         <li class="cell" v-if="userInfo.email"><span>email</span><span>{{userInfo.email|email}}</span></li>
-        <li class="cell" v-if="userInfo.address"><span>联系地址</span><span>{{userInfo.address}}</span></li>
+        <li class="cell" v-if="userInfo.address"><span>联系地址</span><span>{{userInfo.address|address}}</span></li>
       </ul>
       <span slot="footer" class="dialog-footer">
         <div class="primary-btn plain" @click="show=false">重新注册</div>

@@ -191,22 +191,24 @@
   section
     .title, .tip
       padding 5px 10px
-      color striking-text-color
-      font-size extra-small
     .title
       background white
       font-family font-family-bold
+      color striking-text-color
+      font-size extra-small
 
     .tip
       {second-level}
       text-align right
+      color info-color
+      font-size extra-extra-small
 
   .fix-bottom
     position fixed
     left 0
     right 0
     top calc(100vh - 2.64em - 20px)
-    z-index 2001
+    z-index 2000
 
   input[type="button"].nofix-button
     width calc(100% - 20px)
@@ -438,5 +440,27 @@
 
   b
     color primary-text-color
+
+  .el-icon-info
+    margin-right 4px
+
+  .picker-item.picker-selected
+    color primary-text-color
+
+  .mint-datetime .picker-toolbar, .area-picker .picker-toolbar
+    background-color striking-text-color
+    border-bottom none
+    span
+      color white
+
+  /*与mint-ui datepicker的toolbar保持一致*/
+  .area-picker .picker-toolbar
+    display flex
+    span
+      flex 1
+      line-height 40px
+      text-align center
+      font-size 16px
+
 
 </style>

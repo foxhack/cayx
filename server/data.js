@@ -11,9 +11,9 @@ const USER = {
   'userInfo'   : {
     'name'            : '张珊一一',
     'cardNo'          : '110104198204150848',
-    'mobile'          : '1888888888',
-    'email'           : '1888888888',
-    'address'         : '南横东街八号',
+    'mobile'          : '13401026599',
+    'email'           : 'andreachow@sina.com',
+    'address'         : '',
     'defaultBindCard' : '',
     'bindCard'        : []
   }

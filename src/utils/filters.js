@@ -1,10 +1,10 @@
-export function unit(s,u) {
+export function unit(s, u) {
   return s+u
 }
 
 export function toCent(s) {
   if (s===null || s===undefined) s = 0
- // s = s*100
+  // s = s*100
   return s
 }
 
@@ -65,14 +65,29 @@ export function fName(s) {
 }
 
 export function fAddress(s) {
-  return s.substr(0, 4)+'****'
+  if (s) {
+    s = s+''
+    return s.substr(0, 4)+'****'
+  } else {
+    return s
+  }
 }
 
 export function fBankCardNo(s) {
   if (s) {
     s = s+''
-    return '尾号'+ s.substr(-4)
+    return '尾号'+s.substr(-4)
   } else {
     return s
   }
+}
+
+export function fDate(s) {
+  //if (s) {
+  //  s = s+''
+  //  return s.substr(0, 4)+'-'+s.substr(4, 2)+'-'+s.substr(6, 2)
+  //} else {
+  //  return s
+  //}
+  return s
 }
