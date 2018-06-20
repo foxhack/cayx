@@ -5,6 +5,7 @@
         <div class="title">请输入开户信息</div>
         <name-input ref="name" :initValue="userInfo.name" :initcheck="!!userInfo.name"></name-input>
         <idno-input ref="cardNo" :initValue="userInfo.cardNo" :initcheck="!!userInfo.cardNo"></idno-input>
+        <date-input ref="cardVaildDate" title="证件有效期" :startDate="cardNoDate[0]" :endDate="cardNoDate[1]" placeholder="点击输入截止日期"></date-input>
         <mt-cell title="手机号" label="与注册手机号一致" @click.native="$message({message:'与注册手机号一致，如需修改，请前往我的账户->个人信息设置',duration:4000})">{{userInfo.mobile}}</mt-cell>
         <email-input ref="email" :initValue="userInfo.email" :initcheck="!!userInfo.email"></email-input>
         <address-input ref="address" :initValue="userInfo.address" :initcheck="!!userInfo.email"></address-input>
@@ -16,14 +17,15 @@
       </section>
       <new-bank v-show="!isOpenAccount && currentStep==2" v-on:getBankInfo="getBankInfo"></new-bank>
       <template v-if="!isOpenAccount && currentStep==3">
-        <el-dialog :visible="currentStep==3" title="开户信息确认" center :show-close="false" class="dialog-wrapper" top="0">
+        <div>
           <div class="confirm-tip flex-row">
-            <span class="el-icon-warning"></span>
+            <span class="el-icon-info"></span>
             <span>除email、联系地址之外的信息在您成功开户后不能进行线上修改。请您在提交申请前再次确认。</span>
           </div>
           <div id="confirm-table">
             <div><span class="c-item">持卡人姓名</span><span class="c-content">{{$refs.name.value}}</span></div>
             <div><span class="c-item">身份证号</span><span class="c-content">{{$refs.cardNo.value}}</span></div>
+            <div><span class="c-item">身份证有效期</span><span class="c-content">{{$refs.cardVaildDate.selectedDate.join('-')}}</span></div>
             <div><span class="c-item">手机号</span><span class="c-content">{{userInfo.mobile|fMobile}}</span></div>
             <div><span class="c-item">开户银行</span><span class="c-content">{{getBankName(postData.bankCode)}}</span></div>
             <div><span class="c-item">银行卡号</span><span class="c-content">{{postData.bankCardNo}}</span></div>
@@ -39,11 +41,9 @@
               <img :src="$refs.cardPhotoB.dataUrl" class="id-card">
             </span></div>
           </div>
-          <span slot="footer" class="dialog-footer">
           <input type="button" class="primary-btn plain" :disabled="submitting" @click="currentStep=1" value="我要修改">
           <input type="button" class="primary-btn" :disabled="submitting" @click="submitAccountInfo" value="我已确认">
-        </span>
-        </el-dialog>
+        </div>
       </template>
     </div>
     <result v-show="result.show" :result="result">
@@ -60,6 +60,7 @@
   import ImageUploadInput from '@/components/user/imageUploadInput'
   import EmailInput from '@/components/user/emailInput'
   import AddressInput from '@/components/user/addressInput'
+  import DateInput from '@/components/user/dateInput'
   import NewBank from '@/views/user/newbank'
   import { BANKS } from '@/utils/config'
   import Result from '@/components/user/result'
@@ -71,12 +72,13 @@
         currentStep : 1,
         submitting  : false,
         state       : {
-          name       : false,
-          cardNo     : false,
-          email      : false,
-          address    : false,
-          cardPhotoF : false,
-          cardPhotoB : false
+          name          : false,
+          cardNo        : false,
+          cardVaildDate : false,
+          email         : false,
+          address       : false,
+          cardPhotoF    : false,
+          cardPhotoB    : false
         },
         postData    : {},
         result      : {
@@ -93,10 +95,19 @@
       ImageUploadInput,
       EmailInput,
       AddressInput,
+      DateInput,
       NewBank,
       Result
     },
     computed   : {
+      cardNoDate(){
+        let min, max, fullYear
+        min = new Date()
+        max = new Date()
+        fullYear = new Date().getFullYear()
+        max.setFullYear(fullYear+20)
+        return [min, max]
+      },
       forbidNext(){
         console.log('重新计算是否要禁用提交按钮')
         return (Object.values(this.state).some(e => {return e===false}))
@@ -178,16 +189,17 @@
     border-top none
 
   .confirm-tip
-    margin 0 -15px
+    margin 10px
     background-color striking-text-color
     border-radius 10px
     padding 1em
     color white
-    margin-bottom 1em
+    font-size small
 
   #confirm-table
-    margin 0 -15px
+    margin 0 10px
     border 1px solid striking-text-color
+    font-size small
     div
       display flex
       flex-direction row
