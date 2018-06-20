@@ -1,13 +1,13 @@
 <template>
   <div id="menu" class="fix-bottom">
     <div class="main-menu flex-row">
-      <router-link to="/product" class="main-btn center" :class="{active:path=='/product'}">
+      <router-link to="/product" class="main-btn center" :class="{active:path.indexOf('/product')>-1}">
         <svg class="icon menu-icon" aria-hidden="true">
           <use xlink:href="#icon-licaishouyi"></use>
         </svg>
         长安聚宝盆
       </router-link>
-      <router-link to="/user" class="main-btn center" :class="{active:path=='/user'}">
+      <router-link to="/user" class="main-btn center" :class="{active:path.indexOf('/user')>-1}">
         <svg class="icon menu-icon" aria-hidden="true">
           <use xlink:href="#icon-zhuanjifenxinzhuce"></use>
         </svg>
