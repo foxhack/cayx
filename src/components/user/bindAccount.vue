@@ -28,7 +28,7 @@
       bindUserAccount(){
         let _ = this
         this.$post(
-          'bindUserAccount', { userID : window.localStorage.getItem('userID') },
+          'bindUserAccount', { userID : this.$store.state.userID },
           {
             showProgress   : '用户信息关联中...',
             showSuccessMsg : _.currentPath!=='/user/register',

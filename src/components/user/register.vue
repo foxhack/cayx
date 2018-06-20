@@ -61,7 +61,7 @@
         this.result = result
       },
       register(){
-        let postData={userID:window.localStorage.getItem('userID')}
+        let postData={userID:this.$store.state.userID}
         for (let k in this.state){
           postData[k]=this.$refs[k].value
         }

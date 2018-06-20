@@ -134,7 +134,7 @@ router.beforeEach((to, from, next) => {
   if (to.meta.title) {
     document.title = to.meta.title
   }
-  let userID = window.localStorage.getItem('userID')
+  let userID = this.$store.state.userID
   if (userID || to.path=='/author') {
     console.log('已授权:'+userID)
     next()

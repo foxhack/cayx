@@ -96,10 +96,14 @@
       maxOut(){
         this.post.amount = toYuan(this.asset.availableAsset)
       },
+      alert(){
+        if (this.post.bindId) return
+        this.$message({ message : '请先选择银行卡', duration:0})
+      },
       changeAccount(password){
         this.submitting = true
         let post = {
-          userID   : window.localStorage.getItem('userID'),
+          userID   : this.$store.state.userID,
           amount   : toCent(this.post.amount),
           bindId   : this.post.bindId,
           tradePwd : password

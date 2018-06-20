@@ -31,7 +31,7 @@
         console.log('get code')
         let _ = this
         startCountDown(countDown)
-        let postData = { userID : window.localStorage.getItem('userID'), mobile : this.validMobile }
+        let postData = { userID : this.$store.state.userID, mobile : this.validMobile }
         this.$post('getIdentifyCode', postData,  { showSuccessMsg : false })
         function startCountDown(num) {
           _.count = num

@@ -5,6 +5,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state     : {
+    userID       : null,
     user         : null,
     toPath       : null,
     products     : PRODUCTS,
@@ -36,12 +37,17 @@ export default new Vuex.Store({
     },
     saveToPath(s, toPath){
       s.toPath = toPath
+      console.log('去页面'+toPath)
+    },
+    setUserID(s, userID){
+      s.userID=userID
+      console.log('为userID赋值'+userID)
     },
     setUser(s, user){
       s.user = user
     },
     setDefaultBindCard(s, bid){
-      s.user.userInfo.defaultBindCard=bid
+      s.user.userInfo.defaultBindCard = bid
     },
     setAsset(s, asset){
       s.asset = asset

@@ -96,7 +96,7 @@
       },
       setPassword(){
         this.submitting = true
-        let post = { userID : window.localStorage.getItem('userID'), tradepwd : this.password }
+        let post = { userID : this.$store.state.userID, tradepwd : this.password }
         this.$post('setPassword', post,
           {
             showProgress : '请稍候...',

@@ -54,10 +54,11 @@
         this.$router.push({ path : '/user' })
       },
       updateUser(){
-        let postData = { userID : window.localStorage.getItem('userID') }
+        let postData = { userID : this.$store.state.userID }
         for (let k in this.state) {
           if (this.state[k]) postData[k] = this.$refs[k].value
         }
+
         this.submitting = true
         let _ = this
         this.$post('updateUserInfo', postData, { showProgress : '数据提交中，请稍候...', showSuccessMsg : true, callback : { success : successCallback, always : alwaysCallback } })

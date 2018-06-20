@@ -152,7 +152,8 @@ router.beforeEach((to, from, next) => {
     store.commit('saveToTitle', to.meta.title)
   }
 
-  let userID = window.localStorage.getItem('userID')
+  //let userID = window.localStorage.getItem('userID')
+  let userID = store.state.userID
   if (userID || to.path=='/author') {
     if(userID){
       console.log('已授权:'+userID)
@@ -191,7 +192,7 @@ router.beforeEach((to, from, next) => {
     }
 
   } else {
-    window.localStorage.setItem('toPath', to.fullPath)
+    store.commit('saveToPath', to.fullPath)
     console.log('没有userID,去授权页面')
     next('/author')
   }

@@ -131,7 +131,7 @@
       },
       submitAccountInfo(){
         this.submitting = true
-        let post = { userID : window.localStorage.getItem('userID'), bankCode : this.post.bankCode }
+        let post = { userID : this.$store.state.userID, bankCode : this.post.bankCode }
         for (let k in this.post) {
           if (this.allowSubmit[k]) post[k] = this.post[k]
         }
@@ -153,7 +153,7 @@
       },
       goNext(){
         let _ = this
-        this.$post(api('getUserByUserID', { userID : window.localStorage.getItem('userID') }), { showProgress : '请稍候...', callback : { success : successCallback } })
+        this.$post(api('getUserByUserID', { userID : this.$store.state.userID }), { showProgress : '请稍候...', callback : { success : successCallback } })
         function successCallback(data) {
           _.$store.commit('setUser', data)
         }

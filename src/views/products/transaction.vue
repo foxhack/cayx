@@ -126,7 +126,7 @@
       },
       submitTransaction(password){
         let post = {
-          userID   : window.localStorage.getItem('userID'),
+          userID   : this.$store.state.userID,
           pid      : this.post.pid,
           amount   : toCent(this.post.amount),
           tradePwd : password,

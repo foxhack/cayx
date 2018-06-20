@@ -97,7 +97,7 @@
         this.showBankList = false
       },
       submitBankInfo(){
-        let postData = { userID : window.localStorage.getItem('userID'), bankCode : this.selectedBank }
+        let postData = { userID : this.$store.state.userID, bankCode : this.selectedBank }
         for (let k in this.state) {
           if (k=='mobile' && this.state[k]) {
             postData['bankSavedMobile'] = this.$refs[k].value

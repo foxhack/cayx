@@ -45,7 +45,7 @@
       },
       sendOldPassword(){
         this.submitting = true
-        let post = { userID : window.localStorage.getItem('userID'), tradepwd : this.oldPassword }
+        let post = { userID : this.$store.state.userID, tradepwd : this.oldPassword }
         this.$post('validPassword', post,
           {
             showProgress : '请稍候...',

@@ -63,7 +63,7 @@
         this.operateBindId = bid
       },
       unBindBankCard(){
-        let post = { userID : window.localStorage.getItem('userID'), bindId : this.operateBindId }
+        let post = { userID : this.$store.state.userID, bindId : this.operateBindId }
         let _ = this
         this.$post('unBindBankCard', post, {
           showProgress   : true,
