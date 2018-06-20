@@ -92,9 +92,15 @@ const VALIDATE = {
   identifyCode : /^\d{4}$/,
   email        : /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/,
   password     : /^\d{6}$/,
-  address      : /^.{8,30}$/,
+  address      : /^.{8,40}$/,
   bankCardNo   : /^(\d{16}|\d{19})$/
 }
-export { CODE, BANKS, PRODUCTS, VALIDATE }
+
+//定义需要加密的信息
+const requireEncryption=["name", "cardNo", "mobile", "email", "address", "bankCardNo", "bankSavedMobile", "tradepwd"]
+const pubKey='MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAL2NFNwlHYhvDQZlUeE5P8Qc0nAp7VGPQJd/WnxG7OlUUTyram7ZkCZlDnw8NMrFqJinmr+1rbx2XADgT1ekA2kCAwEAAQ=='
+
+
+export { CODE, BANKS, PRODUCTS, VALIDATE, requireEncryption, pubKey}
 
 
