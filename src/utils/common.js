@@ -3,6 +3,8 @@ import { Message } from 'element-ui'
 import { Indicator, Toast } from 'mint-ui'
 import { CODE } from '@/utils/config'
 import { api } from '@/api/api'
+import { requireEncryption, pubKey } from '@/utils/config'
+import { ENV } from '@/utils/env'
 
 export function getCodeByType(type) {
   let keys = Object.keys(CODE)
@@ -53,7 +55,7 @@ export function post(apiName, postData, options) {
   options.showErrorMsg = options.showErrorMsg || true
   options.showFailMsg = options.showFailMsg || true
 
-  api(apiName, postData)
+  api(apiName, encrypt(postData))
     .done(result => {
       if (result.code==getCodeByType('success')) {
         if (options.showSuccessMsg) {
@@ -168,6 +170,17 @@ export function debounce(func, wait, immediate) {
 
 function merge(a, b) {
   return Object.assign({}, a, b)
+}
+
+function encrypt(dataObject) {
+  if (ENV=='development') return dataObject
+  let encrypt = new JSEncrypt()
+  encrypt.setPublicKey(pubKey)
+  requireEncryption.forEach(k => {
+    if (k in dataObject) dataObject[k] = encrypt.encrypt(dataObject[k])
+  })
+  console.log('加密后'+dataObject)
+  return dataObject
 }
 
 
