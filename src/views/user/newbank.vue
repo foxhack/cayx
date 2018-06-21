@@ -41,7 +41,7 @@
                          v-on:setMobile="mobile=$refs.mobile.value"></telephone-input>
         <identify-code v-if="showIdentifyCode" ref="identifyCode" :validMobile="mobile"></identify-code>
       </div>
-      <input type="button" class="primary-btn fix-bottom" @click="submitBankInfo" :disabled="forbidSubmit" value="提交">
+      <input type="button" class="primary-btn" :class="{'fix-bottom':!showBankList}" @click="submitBankInfo" :disabled="forbidSubmit" value="提交">
     </section>
   </div>
 </template>

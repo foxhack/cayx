@@ -1,6 +1,6 @@
 <template>
   <div id="bank">
-    <div v-if="currentPath=='/user/bank'" class='page-with-top-bottom'>
+    <div v-if="currentPath=='/user/bank'" class='page-with-top'>
       <section v-if="bindCard.length>0">
         <div class="title">已绑定的银行卡</div>
         <bank-item v-for="b in userInfo.bindCard" class="no-top-line"

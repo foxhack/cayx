@@ -1,5 +1,5 @@
 <template>
-  <div id="open-account" class="page-with-top-bottom">
+  <div id="open-account" class="page-with-top">
     <div v-show="!isOpenAccount">
       <section v-show="currentStep==1">
         <div class="title">请输入开户信息</div>
@@ -8,7 +8,10 @@
         <date-input ref="cardVaildDate" title="证件有效期" :startDate="cardNoDate[0]" :endDate="cardNoDate[1]" placeholder="点击输入截止日期"></date-input>
         <mt-cell title="手机号" label="与注册手机号一致" @click.native="$message({message:'与注册手机号一致，如需修改，请前往我的账户->个人信息设置',duration:4000})">{{userInfo.mobile}}</mt-cell>
         <email-input ref="email" :initValue="userInfo.email" :initcheck="!!userInfo.email"></email-input>
-        <address-input ref="address" :initValue="userInfo.address" :initcheck="!!userInfo.email"></address-input>
+        <address-input ref="address" :initValue="userInfo.address" :initcheck="!!userInfo.address"></address-input>
+        <input type="button" class="primary-btn fix-bottom" @click="goNext" :disabled="forbidNext" value="下一步">
+      </section>
+      <section v-show="currentStep==2">
         <div class="title">请上传身份证</div>
         <div class="tip"><i class="el-icon-info"></i>如果你使用的是Android，请至少升级至4.3.1及以上</div>
         <image-upload-input ref="cardPhotoF" name="cardPhotoF" title="点击上传人像面" id="cardPhotoF">
@@ -29,8 +32,8 @@
         </image-upload-input>
         <input type="button" class="primary-btn fix-bottom" @click="goNext" :disabled="forbidNext" value="下一步">
       </section>
-      <new-bank v-show="!isOpenAccount && currentStep==2" v-on:getBankInfo="getBankInfo"></new-bank>
-      <template v-if="!isOpenAccount && currentStep==3">
+      <new-bank v-show="!isOpenAccount && currentStep==3" v-on:getBankInfo="getBankInfo"></new-bank>
+      <template v-if="!isOpenAccount && currentStep==4">
         <div>
           <div class="confirm-tip flex-row">
             <span class="el-icon-info"></span>
@@ -94,6 +97,7 @@
           cardPhotoF    : false,
           cardPhotoB    : false
         },
+        stepKey     : [['name', 'cardNo', 'cardVaildDate', 'email', 'address'], ['cardPhotoF', 'cardPhotoB']],
         postData    : {},
         result      : {
           show    : false,
@@ -123,8 +127,9 @@
         return [min, max]
       },
       forbidNext(){
-        console.log('重新计算是否要禁用提交按钮')
-        return (Object.values(this.state).some(e => {return e===false}))
+        console.log('重新计算是否要禁用下一步按钮')
+        let check = JSON.parse(JSON.stringify(this.state, this.stepKey[this.currentStep-1]))
+        return (Object.values(check).some(e => {return e===false}))
       }
     },
     filters    : {
@@ -141,22 +146,27 @@
         return BANKS.filter(b => {return b.code==bcode})[0].name
       },
       goNext(){
-        for (let k in this.state) {
-          if (this.state[k]) this.postData[k] = this.$refs[k].value
+        if (this.currentStep==2) {
+          for (let k in this.state) {
+            if (this.state[k]) this.postData[k] = this.$refs[k].value
+          }
+          if (this.state.address && this.$refs['address'].postalCode) this.postData.postalCode = this.$refs['address'].postalCode
+
         }
-        this.currentStep = 2
+        this.currentStep++
       },
       getBankInfo(bankInfo){
         for (let k in bankInfo) {
           this.postData[k] = bankInfo[k]
         }
-        this.currentStep = 3
+        this.currentStep++
       },
       modify(){
-//        window.scrollTo(0, 0)
-        setTimeout(()=>{
+        this.currentStep = 0
+        window.scrollTo(0, 0)
+        setTimeout(() => {
           this.currentStep = 1
-        },400)
+        }, 0)
 
       },
       submitAccountInfo(){
@@ -209,10 +219,14 @@
   .no-top-line::after
     border-top none
 
+  .tip
+    background-color white
+
   .photo-prototype
     text-align center
     color black
     opacity 0.3
+    line-height 1.6
     .icon
       width 8em
       height 6em
