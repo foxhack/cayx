@@ -3,22 +3,26 @@
     <div>
       <div v-show="!dataUrl">
         <template v-if="err">{{err}}</template>
-        <template v-else>{{title}}</template>
+        <template v-else>
+          <slot></slot>
+        </template>
       </div>
       <img v-show="dataUrl" :id="'i'+id">
-      <input type="file" accept="image/jpg,image/jpeg,image/png,image/gif" @change="getFile($event)">
+      <input v-if="isAndroid" type="file" accept="image/*" capture="camera" multiple @change="getFile($event)">
+      <input v-else type="file" accept="image/jpg,image/jpeg,image/png,image/gif"  @change="getFile($event)">
     </div>
     <canvas :id="'c'+id" style="display: none"></canvas>
   </div>
 </template>
 <script>
-  import { Indicator} from 'mint-ui'
+  import { Indicator } from 'mint-ui'
   export default{
     data(){
       return {
-        value   : null,
-        dataUrl : null,
-        err     : '',
+        value     : null,
+        dataUrl   : null,
+        err       : '',
+        isAndroid : navigator.userAgent.indexOf('Android') > -1 || navigator.userAgent.indexOf('Linux') > -1
       }
     },
     props   : ['title', 'name', 'id'],

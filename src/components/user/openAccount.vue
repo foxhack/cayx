@@ -11,8 +11,22 @@
         <address-input ref="address" :initValue="userInfo.address" :initcheck="!!userInfo.email"></address-input>
         <div class="title">请上传身份证</div>
         <div class="tip"><i class="el-icon-info"></i>如果你使用的是Android，请至少升级至4.3.1及以上</div>
-        <image-upload-input ref="cardPhotoF" name="cardPhotoF" title="点击上传人像面" id="cardPhotoF"></image-upload-input>
-        <image-upload-input ref="cardPhotoB" name="cardPhotoB" title="点击上传国徽面" id="cardPhotoB"></image-upload-input>
+        <image-upload-input ref="cardPhotoF" name="cardPhotoF" title="点击上传人像面" id="cardPhotoF">
+          <div class="photo-prototype">
+            <svg slot="icon" class="icon" aria-hidden="true">
+              <use xlink:href="#icon-cardfront"></use>
+            </svg>
+            <div>点击上传人像面</div>
+          </div>
+        </image-upload-input>
+        <image-upload-input ref="cardPhotoB" name="cardPhotoB" title="点击上传国徽面" id="cardPhotoB">
+          <div class="photo-prototype">
+            <svg slot="icon" class="icon" aria-hidden="true">
+              <use xlink:href="#icon-cardback"></use>
+            </svg>
+            <div>点击上传国徽面</div>
+          </div>
+        </image-upload-input>
         <input type="button" class="primary-btn fix-bottom" @click="goNext" :disabled="forbidNext" value="下一步">
       </section>
       <new-bank v-show="!isOpenAccount && currentStep==2" v-on:getBankInfo="getBankInfo"></new-bank>
@@ -41,7 +55,7 @@
               <img :src="$refs.cardPhotoB.dataUrl" class="id-card">
             </span></div>
           </div>
-          <input type="button" class="primary-btn plain" :disabled="submitting" @click="currentStep=1" value="我要修改">
+          <input type="button" class="primary-btn plain" :disabled="submitting" @click="modify" value="我要修改">
           <input type="button" class="primary-btn" :disabled="submitting" @click="submitAccountInfo" value="我已确认">
         </div>
       </template>
@@ -138,6 +152,13 @@
         }
         this.currentStep = 3
       },
+      modify(){
+//        window.scrollTo(0, 0)
+        setTimeout(()=>{
+          this.currentStep = 1
+        },400)
+
+      },
       submitAccountInfo(){
         let postData = new FormData()
         for (let k in this.postData) {
@@ -188,6 +209,14 @@
   .no-top-line::after
     border-top none
 
+  .photo-prototype
+    text-align center
+    color black
+    opacity 0.3
+    .icon
+      width 8em
+      height 6em
+
   .confirm-tip
     margin 10px
     background-color striking-text-color
@@ -237,7 +266,7 @@
         width 100%
         height calc(62.8vw - 14.8px)
 
-  .el-icon-warning
+  .el-icon-info
     margin-right 10px
     line-height inherit
 
