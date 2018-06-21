@@ -208,7 +208,7 @@
     left 0
     right 0
     top calc(100vh - 2.64em - 20px)
-    z-index 2000
+    z-index 1000
 
   input[type="button"].nofix-button
     width calc(100% - 20px)
@@ -363,7 +363,7 @@
 
   .error
     position absolute
-    z-index 2000
+    z-index 1
     right 10px
     bottom -20px
     background-color error-color

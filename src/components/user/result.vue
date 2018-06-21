@@ -31,14 +31,14 @@
     top 0
     right 0
     min-height 100vh
-    z-index 2001
+    z-index 2000
     background-color #fff
     padding-top calc(2.8em + 10px)
 
     .top
-      position fixed
+      position absolute
       font-family font-family-bold
-      z-index 2001
+      z-index 1
       left 0
       top 0
       right 0
@@ -58,4 +58,5 @@
     .content
       font-size x-large
       text-align center
+      margin-bottom 1em
 </style>

@@ -132,12 +132,12 @@
     top 0
     right 0
     min-height 100vh
-    z-index 2001
+    z-index 2000
     background-color white
 
     .top
-      position fixed
-      z-index 2001
+      position absolute
+      z-index 1
       left 0
       top 0
       right 0

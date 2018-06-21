@@ -30,13 +30,13 @@
     top 0
     right 0
     min-height 100vh
-    z-index 2001
+    z-index 2000
     background-color #fff
 
     .top
       @extend .center
-      position fixed
-      z-index 1002
+      position absoulte
+      z-index 1
       left 0
       top 0
       right 0

@@ -166,7 +166,7 @@
     position absolute
     top 0
     width 100%
-    z-index 1001
+    z-index 1000
 
   .blank
     height 12em
