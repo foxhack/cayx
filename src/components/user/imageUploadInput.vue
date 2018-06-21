@@ -86,6 +86,7 @@
     width calc(100vw - 20px)
     color silver
     margin 10px auto
+    line-height 0
     height calc(62.8vw - 12.6px)
     font-size extra-large
     {third-level}
@@ -95,13 +96,13 @@
 
   img
     width 100%
-    height calc(62.8vw - 12.6px)
+    height calc(62.8vw - 12.6px - 4px)
 
   input[type='file']
     opacity 0
-    line-height 6.5em
     position absolute
     top 0
+    bottom 0
     left 0
 
 </style>
