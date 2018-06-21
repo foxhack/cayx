@@ -16,7 +16,6 @@
       </mt-cell>
       <mt-field v-if="showRawValue"
                 label="详细地址"
-                :readonly="area==''"
                 type="textarea"
                 :class="{'mint-cell-allow-right':state==''}"
                 disableClear
@@ -29,8 +28,8 @@
       <div v-if="state=='error'" class="error">{{errorMsg}}</div>
       <mt-popup class="area-picker" style="width: 100vw;" v-model="showAreaInput" position="bottom">
         <mt-picker :slots="addressArea" @change="setNewArea" showToolbar>
-            <span @click="showAreaInput=false">取消</span>
-            <span @click="confirmArea">确定</span>
+          <span @click="showAreaInput=false">取消</span>
+          <span @click="confirmArea">确定</span>
         </mt-picker>
       </mt-popup>
     </div>
@@ -41,6 +40,7 @@
   import { inputMixin } from '@/utils/mixin'
   import { Popup, Picker } from 'mint-ui';
   import AREA from '@/assets/area.json'
+  import { postalCode } from '@/utils/config'
   let index = 0
   let index2 = 0
   let province = AREA.map(res => {
@@ -56,7 +56,7 @@
     name       : 'AddressInput',
     data(){
       return {
-        addressArea   : [
+        addressArea            : [
           {
             flex      : 1,
             values    : province,
@@ -85,10 +85,12 @@
             textAlign : 'center'
           }
         ],
-        area          : '',
-        detail        : '',
-        selectedArea  : '',
-        showAreaInput : false
+        area                   : '',
+        detail                 : '',
+        selectedArea           : '',
+        selectedAreaPostalCode : '',
+        showAreaInput          : false,
+        postalCode             : ''
       }
     },
     mixins     : [inputMixin],
@@ -109,6 +111,12 @@
       check(val){
         this.value = val
         console.log('调用联系地址检查方法'+val)
+        if (!this.area) {
+          this.state = 'error'
+          this.errorMsg = '请选择所属地区'
+          this.$parent.state.address = false
+          return
+        }
         if (!VALIDATE.address.test(val)) {
           this.state = 'error'
           let min = this.area < 8 ? 8-this.area.length : 1
@@ -140,10 +148,12 @@
           })
           picker.setSlotValues(2, area)
         }
-        this.selectedArea = values.join('')
+        this.selectedArea = values
+        this.selectedAreaPostalCode = postalCode[AREA[index].code]
       },
       confirmArea(){
-        this.area = this.selectedArea
+        this.area = this.selectedArea.join('')
+        this.postalCode=this.selectedAreaPostalCode
         this.showAreaInput = false
         this.check(this.area+' '+this.detail)
       }

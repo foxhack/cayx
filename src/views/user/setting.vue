@@ -9,7 +9,7 @@
       <address-input :key="id+5" ref="address" filterValue :initValue="userInfo.address"></address-input>
     </section>
     <input type="button" class="primary-btn" value="提交修改" :disabled="forbidSubmit" @click="updateUser" style="margin-bottom: 10px">
-    <input type="button" class="primary-btn plain"  value="放弃修改" @click="abort">
+    <input type="button" class="primary-btn plain" value="放弃修改" @click="abort">
 
   </div>
 </template>
@@ -58,6 +58,7 @@
         for (let k in this.state) {
           if (this.state[k]) postData[k] = this.$refs[k].value
         }
+        if (this.state.address && this.$refs['address'].postalCode) postData.postalCode = this.$refs['address'].postalCode
 
         this.submitting = true
         let _ = this

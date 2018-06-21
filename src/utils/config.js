@@ -97,10 +97,47 @@ const VALIDATE = {
 }
 
 //定义需要加密的信息
-const requireEncryption=["name", "cardNo", "mobile", "email", "address", "bankCardNo", "bankSavedMobile", "tradepwd"]
+const requireEncryption=["name", "cardNo", "mobile", "email", "bankCardNo", "bankSavedMobile", "tradepwd"]
 const pubKey='MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAL2NFNwlHYhvDQZlUeE5P8Qc0nAp7VGPQJd/WnxG7OlUUTyram7ZkCZlDnw8NMrFqJinmr+1rbx2XADgT1ekA2kCAwEAAQ=='
 
+//邮政编码
+const postalCode={
+  "11":"100000",
+  "12":"300000",
+  "13":"050000",
+  "14":"030000",
+  "15":"010000",
+  "21":"110000",
+  "22":"130000",
+  "23":"150000",
+  "31":"201100",
+  "32":"210000",
+  "33":"310000",
+  "34":"230000",
+  "35":"361000",
+  "36":"330000",
+  "37":"250000",
+  "41":"450000",
+  "42":"430000",
+  "43":"410000",
+  "44":"510000",
+  "45":"530000",
+  "46":"570100",
+  "50":"400000",
+  "51":"610000",
+  "52":"550000",
+  "53":"650000",
+  "54":"850000",
+  "61":"710000",
+  "62":"730000",
+  "63":"810000",
+  "64":"750000",
+  "65":"830000"}
 
-export { CODE, BANKS, PRODUCTS, VALIDATE, requireEncryption, pubKey}
+
+
+
+
+export { CODE, BANKS, PRODUCTS, VALIDATE, requireEncryption, pubKey, postalCode}
 
 
