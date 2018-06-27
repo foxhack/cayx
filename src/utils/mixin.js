@@ -18,8 +18,14 @@ let mixin = {
     bindCard(){
       return this.$store.state.user.userInfo.bindCard
     },
+    userID(){
+      return this.$store.state.userID
+    },
     userInfo(){
       return this.$store.state.user.userInfo
+    },
+    userAvatar(){
+      return this.$store.state.user.avatar
     },
     asset(){
       return this.$store.state.asset

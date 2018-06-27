@@ -2,6 +2,7 @@
   <div id="user-home" class="page-with-menu">
     <div class="blank"></div>
     <section v-if="isRegister" class="account-wrapper center">
+      <img v-if="userAvatar" :src="userAvatar" class="avatar top-left">
       <div class="top-part1 center">
         <div>
           <div>
@@ -20,7 +21,8 @@
       </div>
     </section>
     <section v-else class="no-register center">
-      <svg class="icon avatar" aria-hidden="true">
+      <img v-if="userAvatar" :src="userAvatar" class="avatar">
+      <svg v-else class="icon avatar" aria-hidden="true">
         <use xlink:href="#icon-zhuanjifenxinzhuce"></use>
       </svg>
       <div class="register-btn" @click="$router.push('/user/register')">注册</div>
@@ -167,6 +169,19 @@
     top 0
     width 100%
     z-index 1000
+
+  img.avatar
+    width 3.4em
+    height 3.4em
+    border-radius 50%
+
+  img.avatar.top-left
+    margin 0
+    width 2.8em
+    height 2.8em
+    position absolute
+    top 1em
+    left 1em
 
   .blank
     height 12em
