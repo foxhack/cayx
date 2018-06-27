@@ -72,8 +72,7 @@
         <svg slot="icon" class="icon" aria-hidden="true">
           <use xlink:href="#icon-yinxingqia"></use>
         </svg>
-        <div v-if="bindCard.length>0">已绑卡</div>
-        <div v-if="bindCard.length==0">未绑卡</div>
+        <div v-html="bindCard.length>0?'已绑卡':'未绑卡'"></div>
       </mt-cell>
     </section>
     <section v-if="isRegister">
@@ -87,10 +86,11 @@
     </section>
     <section v-if="isOpenAccount">
       <router-link :to="{name:'passwordSetting',params:{type:1}}">
-        <mt-cell title="交易密码" is-link :label="isSetPassword?'已设置':'未设置'">
+        <mt-cell title="交易密码" is-link>
           <svg slot="icon" class="icon" aria-hidden="true">
             <use xlink:href="#icon-zhucedenglumima"></use>
           </svg>
+          <div v-html="isSetPassword?'已设置':'未设置'"></div>
         </mt-cell>
       </router-link>
     </section>
