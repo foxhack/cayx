@@ -4,7 +4,7 @@
     <transition :name="transitionName">
       <router-view key="comp"></router-view>
     </transition>
-    <main-menu key="menu" v-if="!showBack"></main-menu>
+    <main-menu key="menu" v-if="!showBack && $route.path!=='/author' && $route.path!=='/user/register'"></main-menu>
   </div>
 </template>
 
@@ -93,18 +93,18 @@
     fill currentColor
     overflow hidden
 
-  .slide-left-enter, .slide-enter
-    transform translateX(100%)
-
-  .slide-left-enter-to, .slide-enter-to
-    transition transform 0.3s
-    transform translateX(0)
-
   .slide-leave-to
     transform translateX(100%)
     transition transform 0.3s
 
   .slide-leave
+    transform translateX(0)
+
+  .slide-left-enter, .slide-enter
+    transform translateX(100%)
+
+  .slide-left-enter-to, .slide-enter-to
+    transition transform 0.3s
     transform translateX(0)
 
   .slide-right-enter
@@ -397,7 +397,7 @@
      input
       font-size 1.7em
 
-  #name-input, #idno-input, #email-input, #telephone-input, #address-input, #identify-code, #bankcard-input
+  #name-input, #idno-input, #email-input, #telephone-input, #address-input, #area-input, #identify-code, #bankcard-input
     position relative
     input, textarea
       margin-right 20px
@@ -462,5 +462,11 @@
       text-align center
       font-size 16px
 
-
+  /*注册页checkbox*/
+  #register
+    .el-checkbox__input.is-checked .el-checkbox__inner,.el-checkbox__input.is-indeterminate .el-checkbox__inner
+      background-color striking-text-color
+      border-color striking-text-color
+    .el-checkbox__input.is-checked+.el-checkbox__label
+      color striking-text-color
 </style>
