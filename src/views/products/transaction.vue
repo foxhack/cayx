@@ -129,7 +129,7 @@
           userID   : this.$store.state.userID,
           pid      : this.post.pid,
           amount   : toCent(this.post.amount),
-          tradePwd : password,
+          tradepwd : password,
         }
         let operateType
         if (this.$route.params.type=='in') operateType = 'buyAsset'

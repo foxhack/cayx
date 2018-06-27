@@ -106,7 +106,7 @@
           userID   : this.$store.state.userID,
           amount   : toCent(this.post.amount),
           bindId   : this.post.bindId,
-          tradePwd : password
+          tradepwd : password
         }
         let _ = this
         let operateType
