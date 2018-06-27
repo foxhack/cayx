@@ -4,8 +4,10 @@
       <div class="top center">
         <div>{{result.title}}</div>
       </div>
-      <div class="result-icon el-icon-success"></div>
-      <main class="content">
+      <div v-if="result.type=='success'" class="result-icon el-icon-success"></div>
+      <div v-if="result.type=='error'" class="result-icon el-icon-error"></div>
+      <div v-if="result.type=='processing'" class="result-icon el-icon-more"></div>
+      <main class="content" :class="{'content-error':result.type=='error','content-processing':result.type=='processing'}">
         {{result.content}}
       </main>
       <footer class="dialog-footer">
@@ -19,8 +21,8 @@
     data(){
       return {}
     },
-    name       : 'Result',
-    props      : ['result'],
+    name  : 'Result',
+    props : ['result'],
   }
 </script>
 <style lang="stylus" scoped>
@@ -50,7 +52,6 @@
       position absolute
       left 10px
     .result-icon
-      color secondary-text-color
       font-size 3.5em
       line-height 1.6
       margin-left 50%
@@ -59,4 +60,10 @@
       font-size x-large
       text-align center
       margin-bottom 1em
+    .content.content-error, .result-icon.el-icon-error
+      color error-color
+    .content.content-processing, .result-icon.el-icon-error
+      color error-color
+    .result-icon.el-icon-success
+      color secondary-text-color
 </style>
