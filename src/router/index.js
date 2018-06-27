@@ -3,7 +3,7 @@ import Router from 'vue-router'
 import store from '../store'
 import App from '@/App'
 import Author from '@/views/user/author'
-import Register from '@/components/user/register'
+import Register from '@/views/user/register'
 import OpenAccount from '@/components/user/openAccount'
 import PasswordSetting from '@/views/user/passwordSetting'
 import Product from '@/views/products/list'
@@ -152,7 +152,6 @@ router.beforeEach((to, from, next) => {
     store.commit('saveToTitle', to.meta.title)
   }
 
-  //let userID = window.localStorage.getItem('userID')
   let userID = store.state.userID
   if (userID || to.path=='/author') {
     if(userID){
@@ -192,7 +191,7 @@ router.beforeEach((to, from, next) => {
     }
 
   } else {
-    store.commit('saveToPath', to.fullPath)
+    window.localStorage.setItem('toPath', to.fullPath)
     console.log('没有userID,去授权页面')
     next('/author')
   }
