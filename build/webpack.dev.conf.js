@@ -25,7 +25,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
     clientLogLevel     : 'warning',
     historyApiFallback : {
       rewrites : [
-        { from : /MP_verify_QefQosi6pVulmJDU.txt/, to : path.posix.join(config.dev.assetsPublicPath, '/static/MP_verify_QefQosi6pVulmJDU.txt') },
+        //{ from : /MP_verify_u1QrOfbhyW4gGEst.txt, to : path.posix.join(config.dev.assetsPublicPath, '/static/MP_verify_u1QrOfbhyW4gGEst.txt') }
         { from : /.*/, to : path.posix.join(config.dev.assetsPublicPath, 'index.html') }
       ]
     },

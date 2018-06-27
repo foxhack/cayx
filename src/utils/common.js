@@ -1,5 +1,5 @@
 import { authorDomain, wxAppId } from '@/api/config'
-import { Message } from 'element-ui'
+import { Message, Notification } from 'element-ui'
 import { Indicator, Toast } from 'mint-ui'
 import { CODE } from '@/utils/config'
 import { api } from '@/api/api'
@@ -51,9 +51,9 @@ export function post(apiName, postData, options) {
     }, 0)
   }
 
-  options.showSuccessMsg = options.showSuccessMsg || false
-  options.showErrorMsg = options.showErrorMsg || true
-  options.showFailMsg = options.showFailMsg || true
+  options.showSuccessMsg = options.showSuccessMsg===undefined ? false : options.showSuccessMsg
+  options.showErrorMsg = options.showErrorMsg===undefined ? true : options.showErrorMsg
+  options.showFailMsg = options.showFailMsg===undefined ? true : options.showFailMsg
 
   api(apiName, encrypt(postData))
     .done(result => {
@@ -71,16 +71,20 @@ export function post(apiName, postData, options) {
           })
         }
         if (options.callback && typeof options.callback.success==='function') options.callback.success(result.data, result.msg)
-      } else {
+      } else if (result.code==getCodeByType('processing')) {
+        if (options.callback && typeof options.callback.process==='function') options.callback.process(result.data, result.msg)
+      }
+      else {
         if (options.showErrorMsg) {
           Notification({
             showClose : true,
+            title     : '出错了',
             message   : result.msg,
             duration  : 0,
             type      : 'error'
           })
         }
-        if (options.callback && typeof options.callback.error==='function') options.callback.error({ err : { code : result.code, msg : result.msg } }, result.data)
+        if (options.callback && typeof options.callback.error==='function') options.callback.error({ code : result.code, msg : result.msg }, result.data)
       }
     })
     .fail(error => {
@@ -97,8 +101,8 @@ export function post(apiName, postData, options) {
     })
     .always(() => {
       if (options.showProgress) {
-        Indicator.close()
         console.log('关闭loading窗口')
+        setTimeout(() => {Indicator.close()}, 400)
       }
       if (options.callback && typeof options.callback.always==='function') options.callback.always()
     })
@@ -182,6 +186,131 @@ function encrypt(dataObject) {
   console.log('加密后'+dataObject)
   return dataObject
 }
+
+export function Area(areaData) {
+  Area.prototype.areaData = areaData
+}
+Area.prototype.setSelectedItem = function(key, value) {
+  this.check(key, value)
+  let selectedItem = this.list.find(res => {return res[key]==value})
+  if (selectedItem) {
+    this.selectedIndex = selectedItem.index
+    this.selectedName = selectedItem.name
+    this.selectedCode = selectedItem.code
+  } else {
+    console.log('找不到匹配的内容')
+    return
+  }
+}
+Area.prototype.getList = function() {
+  return this.list
+}
+Area.prototype.getSelectedIndex = function() {
+  return this.selectedIndex
+}
+Area.prototype.getSelectedName = function() {
+  return this.selectedName
+}
+Area.prototype.getSelectedCode = function() {
+  return this.selectedCode
+}
+Area.prototype.province = {
+  list          : [],
+  selectedIndex : -1,
+  selectedCode  : '',
+  selectedName  : '',
+  check         : function(key, value) {
+    if (key=='code' && value.length!==2) {
+      console.log('不是有效的provincecode')
+      return
+    }
+    if (key=='name' && !value) {
+      console.log('没有提供provincename')
+      return
+    }
+  },
+  setList       : function() {
+    this.list = Area.prototype.areaData.map((value, index) => {return { name : value.name, code : value.code, index : index }})
+  }
+}
+Area.prototype.city = {
+  list          : [],
+  selectedIndex : -1,
+  selectedCode  : '',
+  selectedName  : '',
+  check         : function(key, value) {
+    if (key=='code' && value.length!==4) {
+      console.log('不是有效的citycode')
+      return
+    }
+    if (key=='name' && !value) {
+      console.log('没有提供cityname')
+      return
+    }
+  },
+  setList       : function() {
+    if (Area.prototype.province.selectedIndex== -1) {
+      console.log('无法获取城市列表，所选省份不存在')
+      return
+    }
+    this.list = Area.prototype.areaData[Area.prototype.province.selectedIndex].children.map((value, index) => {return { name : value.name, code : value.code, index : index }})
+  }
+}
+Area.prototype.district = {
+  list          : [],
+  selectedIndex : -1,
+  selectedCode  : '',
+  selectedName  : '',
+  check         : function(type, value) {
+    if (type=='code' && value.length!==6) {
+      console.log('不是有效的districtcode')
+      return
+    }
+    if (type=='name' && !value) {
+      console.log('没有提供districtname')
+      return
+    }
+  },
+  setList       : function() {
+    if (Area.prototype.province.selectedIndex== -1 || Area.prototype.city.selectedIndex== -1) {
+      console.log('无法获取地区列表，所选省份或者城市不存在')
+      return
+    }
+    this.list = Area.prototype.areaData[Area.prototype.province.selectedIndex].children[Area.prototype.city.selectedIndex].children.map((value, index) => {return { name : value.name, code : value.code, index : index }})
+  }
+}
+Area.prototype.initArea = function() {
+  this.province.setList()
+  this.province.selectedIndex = 0
+  this.province.selectedName = this.province.list[this.province.selectedIndex].name
+  this.province.selectedCode = this.province.list[this.province.selectedIndex].code
+  this.city.setList()
+  this.city.selectedIndex = 0
+  this.city.selectedName = this.province.list[this.city.selectedIndex].name
+  this.city.selectedCode = this.province.list[this.city.selectedIndex].code
+  this.district.setList()
+  this.district.selectedIndex = 0
+  this.district.selectedName = this.district.list[this.district.selectedIndex].name
+  this.district.selectedCode = this.district.list[this.district.selectedIndex].code
+}
+Area.prototype.setAreaByCode = function(code) {
+  this.district.check('code', code)
+  this.province.setList()
+  this.setSelectedItem.call(this.province, 'code', code.substr(0, 2))
+  this.city.setList()
+  this.setSelectedItem.call(this.city, 'code', code.substr(0, 4))
+  this.district.setList()
+  this.setSelectedItem.call(this.district, 'code', code)
+}
+Area.prototype.getAreaFullName = function() {
+  return this.getSelectedName.call(this.province)+this.getSelectedName.call(this.city)+this.getSelectedName.call(this.district)
+}
+
+
+
+
+
+
 
 
 

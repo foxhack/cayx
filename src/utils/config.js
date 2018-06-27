@@ -92,13 +92,13 @@ const VALIDATE = {
   identifyCode : /^\d{4}$/,
   email        : /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/,
   password     : /^\d{6}$/,
-  address      : /^.{8,40}$/,
+  address      : /^.{0,30}$/,
   bankCardNo   : /^(\d{16}|\d{19})$/
 }
 
 //定义需要加密的信息
-const requireEncryption=["name", "cardNo", "mobile", "email", "bankCardNo", "bankSavedMobile", "tradepwd"]
-const pubKey='MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAL2NFNwlHYhvDQZlUeE5P8Qc0nAp7VGPQJd/WnxG7OlUUTyram7ZkCZlDnw8NMrFqJinmr+1rbx2XADgT1ekA2kCAwEAAQ=='
+const requireEncryption=["name", "cardNo", "mobile", "bankCardNo", "bankSavedMobile", "tradepwd"]
+const pubKey='MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBALcXpMaeTMbP5A3nWsYCDffgNcVU6au4r0GeXDC5I2xQ7O6lzgzWnaNFeZXFobiy3TZQ/Wh4QbmEeq2fRdXTApECAwEAAQ=='
 
 //邮政编码
 const postalCode={

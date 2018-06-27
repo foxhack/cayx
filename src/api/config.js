@@ -1,7 +1,7 @@
 import { backServerBaseUrl } from '@/utils/env'
 
 export const authorDomain = 'caejfinance.s1.natapp.cc'
-export const wxAppId = 'wx4e007de45389d924'
+export const wxAppId = 'wx0fa1adf73899b2ae'
 
 export const apiUrl = {
   getProductsRate    : backServerBaseUrl+'/finance/product/getproductrate',
