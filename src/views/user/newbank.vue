@@ -5,7 +5,7 @@
     <section v-if="showNewBank">
       <bank-item v-if="selectedBank" :bankCode="selectedBank" subTitle="已选择" @click.native="showBankList=true" isLink></bank-item>
       <!--<mt-cell v-if="selectedBank" :title="getBankName(selectedBank)" label="已选择" is-link >-->
-      <mt-cell v-else title="请选择一个银行" is-link @click.native="showBankList=true"></mt-cell>
+      <mt-cell v-else title="请选择一个银行" label="仅支持借记卡" is-link @click.native="showBankList=true"></mt-cell>
       <div v-show="showBankList">
         <bank-item v-for="b in bankList"
                    :key="b.code"
