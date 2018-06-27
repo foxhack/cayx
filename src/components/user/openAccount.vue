@@ -8,6 +8,7 @@
         <date-input ref="cardVaildDate" title="证件有效期" :startDate="cardNoDate[0]" :endDate="cardNoDate[1]" placeholder="点击输入截止日期"></date-input>
         <mt-cell title="手机号" label="与注册手机号一致" @click.native="$message({message:'与注册手机号一致，如需修改，请前往我的账户->个人信息设置',duration:4000})">{{userInfo.mobile}}</mt-cell>
         <email-input ref="email" :initValue="userInfo.email" :initcheck="!!userInfo.email"></email-input>
+        <area-input ref="areaCode" :initValue="userInfo.areaCode" :initcheck="!!userInfo.areaCode"></area-input>
         <address-input ref="address" :initValue="userInfo.address" :initcheck="!!userInfo.address"></address-input>
         <input type="button" class="primary-btn fix-bottom" @click="goNext" :disabled="forbidNext" value="下一步">
       </section>
@@ -45,10 +46,11 @@
             <div><span class="c-item">身份证有效期</span><span class="c-content">{{$refs.cardVaildDate.selectedDate.join('-')}}</span></div>
             <div><span class="c-item">手机号</span><span class="c-content">{{userInfo.mobile|fMobile}}</span></div>
             <div><span class="c-item">开户银行</span><span class="c-content">{{getBankName(postData.bankCode)}}</span></div>
-            <div><span class="c-item">银行卡号</span><span class="c-content">{{postData.bankCardNo}}</span></div>
+            <div><span class="c-item">银行卡号(借记卡)</span><span class="c-content">{{postData.bankCardNo}}</span></div>
             <div><span class="c-item">银行预留手机号</span><span class="c-content">{{postData.bankSavedMobile}}</span></div>
             <div><span class="c-item">email</span><span class="c-content">{{$refs.email.value}}</span></div>
-            <div><span class="c-item last">联系地址</span><span class="c-content last">{{$refs.address.value}}</span></div>
+            <div><span class="c-item">所属地区</span><span class="c-content">{{$refs.areaCode.areaFullName}}</span></div>
+            <div><span class="c-item last">详细地址</span><span class="c-content last">{{$refs.address.value}}</span></div>
             <div><span class="photo-title">身份证正面照片</span></div>
             <div><span class="photo-content">
               <img :src="$refs.cardPhotoF.dataUrl" class="id-card">
@@ -76,6 +78,7 @@
   import IdnoInput from '@/components/user/idnoInput'
   import ImageUploadInput from '@/components/user/imageUploadInput'
   import EmailInput from '@/components/user/emailInput'
+  import AreaInput from '@/components/user/areaInput'
   import AddressInput from '@/components/user/addressInput'
   import DateInput from '@/components/user/dateInput'
   import NewBank from '@/views/user/newbank'
@@ -93,11 +96,12 @@
           cardNo        : false,
           cardVaildDate : false,
           email         : false,
+          areaCode      : false,
           address       : false,
           cardPhotoF    : false,
           cardPhotoB    : false
         },
-        stepKey     : [['name', 'cardNo', 'cardVaildDate', 'email', 'address'], ['cardPhotoF', 'cardPhotoB']],
+        stepKey     : [['name', 'cardNo', 'cardVaildDate', 'email', 'areaCode', 'address'], ['cardPhotoF', 'cardPhotoB']],
         postData    : {},
         result      : {
           show    : false,
@@ -112,6 +116,7 @@
       IdnoInput,
       ImageUploadInput,
       EmailInput,
+      AreaInput,
       AddressInput,
       DateInput,
       NewBank,
@@ -141,6 +146,11 @@
         return val
       }
     },
+    watch      : {
+      currentStep(newVal, oldVal){
+        if (newVal!==oldVal) window.scrollTo(0, 0)
+      }
+    },
     methods    : {
       getBankName(bcode){
         return BANKS.filter(b => {return b.code==bcode})[0].name
@@ -150,8 +160,6 @@
           for (let k in this.state) {
             if (this.state[k]) this.postData[k] = this.$refs[k].value
           }
-          if (this.state.address && this.$refs['address'].postalCode) this.postData.postalCode = this.$refs['address'].postalCode
-
         }
         this.currentStep++
       },
@@ -163,7 +171,6 @@
       },
       modify(){
         this.currentStep = 0
-        window.scrollTo(0, 0)
         setTimeout(() => {
           this.currentStep = 1
         }, 0)

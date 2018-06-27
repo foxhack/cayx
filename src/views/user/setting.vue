@@ -6,7 +6,8 @@
       <telephone-input :key="id+2" ref="mobile" :readonly="isOpenAccount" filterValue :initValue="userInfo.mobile" v-on:setMobile="mobile=$refs.mobile.value"></telephone-input>
       <identify-code :key="id+3" v-if="showIdentifyCode" ref="identifyCode" :validMobile="mobile"></identify-code>
       <email-input :key="id+4" ref="email" filterValue :initValue="userInfo.email"></email-input>
-      <address-input :key="id+5" ref="address" filterValue :initValue="userInfo.address"></address-input>
+      <area-input :key="id+5" ref="areaCode" filterValue :initValue="userInfo.areaCode"></area-input>
+      <address-input :key="id+6" ref="address" filterValue :initValue="userInfo.address"></address-input>
     </section>
     <input type="button" class="primary-btn" value="提交修改" :disabled="forbidSubmit" @click="updateUser" style="margin-bottom: 10px">
     <input type="button" class="primary-btn plain" value="放弃修改" @click="abort">
@@ -20,9 +21,10 @@
   import IdentifyCode from '@/components/user/identifyCode'
   import EmailInput from '@/components/user/emailInput'
   import AddressInput from '@/components/user/addressInput'
+  import AreaInput from '@/components/user/areaInput'
 
   export default{
-    components : { NameInput, IdnoInput, TelephoneInput, IdentifyCode, EmailInput, AddressInput },
+    components : { NameInput, IdnoInput, TelephoneInput, IdentifyCode, EmailInput, AddressInput, AreaInput },
     name       : 'UserSetting',
     data(){
       return {
@@ -33,6 +35,7 @@
           name         : false,
           cardNo       : false,
           email        : false,
+          areaCode     : false,
           address      : false,
           mobile       : false,
           identifyCode : false
@@ -54,11 +57,10 @@
         this.$router.push({ path : '/user' })
       },
       updateUser(){
-        let postData = { userID : this.$store.state.userID }
+        let postData = { userID : this.userID }
         for (let k in this.state) {
           if (this.state[k]) postData[k] = this.$refs[k].value
         }
-        if (this.state.address && this.$refs['address'].postalCode) postData.postalCode = this.$refs['address'].postalCode
 
         this.submitting = true
         let _ = this

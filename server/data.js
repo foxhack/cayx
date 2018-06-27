@@ -1,6 +1,6 @@
 const USER = {
   'userID'     : '123456789',
-  'avatar'     : '',
+  'avatar'     : 'http://jf258.com/uploads/2014-09-18/171511119.jpg',
   'userStatus' : {
     'isRegisterCaej'  : true,
     'isRegisterCayx'  : false,
@@ -13,6 +13,7 @@ const USER = {
     'cardNo'          : '110104198204150848',
     'mobile'          : '13401026599',
     'email'           : 'andreachow@sina.com',
+    'areaCode'        : '',
     'address'         : '',
     'defaultBindCard' : '',
     'bindCard'        : []
@@ -38,11 +39,9 @@ const USER_ASSET = {
 //}
 
 const PRODUCT_RATE = [
-  { pid : 'mf201801', rate : { averageRate : 8, rates7Day : [4.3, 4.2, 4.5, 5.0, 5.3, 4.8, 4.9], incomePerUnit : [1.6, 1.7, 1.2, 1.3, 1.2, 1.3, 1.2]} },
-  { pid : 'bf201801', rate : { averageRate : 6, rates7Day : [5.3, 5.2, 4.5, 5.0, 5.3, 5.8, 4.9], incomePerUnit : [1.2, 1.3, 1.2, 1.3, 1.2, 1.3, 1.2]} }
+  { pid : 'mf201801', rate : { averageRate : 8, rates7Day : [4.3, 4.2, 4.5, 5.0, 5.3, 4.8, 4.9], incomePerUnit : [1.6, 1.7, 1.2, 1.3, 1.2, 1.3, 1.2] } },
+  { pid : 'bf201801', rate : { averageRate : 6, rates7Day : [5.3, 5.2, 4.5, 5.0, 5.3, 5.8, 4.9], incomePerUnit : [1.2, 1.3, 1.2, 1.3, 1.2, 1.3, 1.2] } }
 ]
-
-
 
 module.exports = {
   user        : USER,
