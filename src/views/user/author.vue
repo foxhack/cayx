@@ -20,7 +20,7 @@
           function successCallback(data) {
             _.$store.commit('setUserID', data.userID)
             _.$store.commit('setUser', data)
-            _.$router.replace(_.$store.state.toPath)
+            _.$router.replace(window.localStorage.getItem('toPath'))
           }
         } else {
           guideToAuth(_.$router.mode)
@@ -33,21 +33,21 @@
     },
     created(){
       console.log('进入授权页')
+      console.log(window.localStorage.getItem('toPath'))
       switch (ENV){
         case 'production':
           this.getWxAuthor()
           break
         case 'development':
-          //window.localStorage.setItem('userID', 'bea762e21af340a9b75caac26944c597')
-          this.$store.commit('setUserID','bea762e21af340a9b75caac26944c597')
-          this.$router.replace(this.$store.state.toPath)
+          this.$store.commit('setUserID','ef510d48a33f43c5af49dca988cb7ba2')
+          this.$router.replace(window.localStorage.getItem('toPath'))
           break
         case 'test':
           if(window.confirm('您当访问的是测试环境，要使用微信验证进行测试么?确定代表使用，取消代表不使用。')){
             this.getWxAuthor()
           }else{
-            this.$store.commit('setUserID','bea762e21af340a9b75caac26944c597')
-            this.$router.replace(this.$store.state.toPath)
+            this.$store.commit('setUserID','ef510d48a33f43c5af49dca988cb7ba2')
+            this.$router.replace(window.localStorage.getItem('toPath'))
           }
           break
         default:
