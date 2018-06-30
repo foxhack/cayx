@@ -1,4 +1,7 @@
 //定义返回码
+//const MockUserID = '6957db377f754ae68955acdb9dd16a88'//郭丙旭
+const MockUserID = 'ef510d48a33f43c5af49dca988cb7ba2'//周茵
+
 const CODE = {
   0 : { type : 'success', msg : '操作成功' },
   1 : { type : 'error', msg : '操作失败' },
@@ -35,51 +38,27 @@ const BANKS = [
   { code : 'BSB', name : '包商银行', logoPos : '' },
   { code : 'H3CB', name : '内蒙古银行', logoPos : '' }
 ]
-//const BANKS = [
-//  { code : 'ICBC', name : '工商银行', logo : 'gongshangyinhang' },
-//  { code : 'ABC', name : '农业银行', logo : 'nongyeyinhang' },
-//  { code : 'BOC', name : '中国银行', logo : 'zhongguoyinhang' },
-//  { code : 'CCB', name : '建设银行', logo : 'jiansheyinhang' },
-//  { code : 'COMM', name : '交通银行', logo : 'jiaotongyinhang' },
-//  { code : 'CMB', name : '招商银行', logo : 'zhaoshangyinhang' },
-//  { code : 'CEB', name : '光大银行', logo : 'guangdayinhang' },
-//  { code : 'CMBC', name : '⺠⽣银⾏', logo : 'minshengyinhang' },
-//  { code : 'CITIC', name : '中信银行', logo : 'zhongxinyinhang' },
-//  { code : 'CIB', name : '兴业银行', logo : 'xingyeyinhang' },
-//  { code : 'SPDB', name : '浦发银行', logo : 'pufayinhang' },
-//  { code : 'GDB', name : '广发银行', logo : 'guangfayinhang' },
-//  { code : 'SPABANK', name : '平安银行', logo : 'pinganyinhang' },
-//  { code : 'HXBANK', name : '华夏银行', logo : 'huaxiayinhang' },
-//  { code : 'PSBC', name : '邮储银行', logo : 'youchuyinhang' },
-//  { code : 'EGBANK', name : '恒丰银行', logo : 'hengfengyinhang' },
-//  { code : 'CZBANK', name : '浙商银行', logo : 'zheshangyinhang' },
-//  { code : 'BOHAIB', name : '渤海银行', logo : 'bohaiyinhang' },
-//  { code : 'BJBANK', name : '北京银行', logo : 'beijingyinhang' },
-//  { code : 'SHBANK', name : '上海银行', logo : 'shanghaiyinhang' },
-//  { code : 'JSBANK', name : '江苏银行', logo : 'jiangsuyinhang' },
-//  { code : 'NJCB', name : '南京银行', logoPos : 'nanjingyinhang' },
-//  { code : 'BHB', name : '河北银行', logo : 'hebeiyinhang' },
-//  { code : 'GCB', name : '广州银行', logo : 'bank-default' },
-//  { code : 'CDRCB', name : '成都商业银行', logo : 'bank-default' },
-//  { code : 'CQBANK', name : '重庆银行', logo : 'bank-default' },
-//  { code : 'BSB', name : '包商银行', logo : 'bank-default' },
-//  { code : 'H3CB', name : '内蒙古银行', logo : 'neimengguyinhang' }
-//]
+
+//定义风险等级
+const RISKLEVEL = { 1 : '谨慎型', 2 : '稳健型', 4 : '平衡型', 6 : '进取型', 7 : '激进型' }
+
+//定义产品类型
+const PRODUCTTYPE = {
+  1 : '货基类',
+  2 : '滚动型定期'
+}
+
 //定义产品
 const PRODUCTS = [
   {
-    pid         : 'mf201801',
-    name        : '长安严选货基1号',
-    type        : 1,
-    tags        : ['低风险', '存取灵活', '明星产品'],
-    description : 'lorem1'
-  },
-  {
     pid         : 'bf201801',
-    name        : '长安严选理财1号',
+    name        : '季季盈产品1号',
     type        : 2,
-    tags        : ['稳健型', 'T+1'],
-    description : 'lorem2'
+    tags        : ['5万起投', '3个月可赎回', '低风险'],
+    minAmount   : '5万元',
+    period      : '3个月',
+    riskLevel   : 2,
+    description : 'lorem1'
   }
 ]
 
@@ -97,47 +76,44 @@ const VALIDATE = {
 }
 
 //定义需要加密的信息
-const requireEncryption=["name", "cardNo", "mobile", "bankCardNo", "bankSavedMobile", "tradepwd"]
-const pubKey='MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBALcXpMaeTMbP5A3nWsYCDffgNcVU6au4r0GeXDC5I2xQ7O6lzgzWnaNFeZXFobiy3TZQ/Wh4QbmEeq2fRdXTApECAwEAAQ=='
+const requireEncryption = ['name', 'cardNo', 'mobile', 'bankCardNo', 'bankSavedMobile', 'tradepwd']
+const pubKey = 'MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBALcXpMaeTMbP5A3nWsYCDffgNcVU6au4r0GeXDC5I2xQ7O6lzgzWnaNFeZXFobiy3TZQ/Wh4QbmEeq2fRdXTApECAwEAAQ=='
 
 //邮政编码
-const postalCode={
-  "11":"100000",
-  "12":"300000",
-  "13":"050000",
-  "14":"030000",
-  "15":"010000",
-  "21":"110000",
-  "22":"130000",
-  "23":"150000",
-  "31":"201100",
-  "32":"210000",
-  "33":"310000",
-  "34":"230000",
-  "35":"361000",
-  "36":"330000",
-  "37":"250000",
-  "41":"450000",
-  "42":"430000",
-  "43":"410000",
-  "44":"510000",
-  "45":"530000",
-  "46":"570100",
-  "50":"400000",
-  "51":"610000",
-  "52":"550000",
-  "53":"650000",
-  "54":"850000",
-  "61":"710000",
-  "62":"730000",
-  "63":"810000",
-  "64":"750000",
-  "65":"830000"}
+const postalCode = {
+  '11' : '100000',
+  '12' : '300000',
+  '13' : '050000',
+  '14' : '030000',
+  '15' : '010000',
+  '21' : '110000',
+  '22' : '130000',
+  '23' : '150000',
+  '31' : '201100',
+  '32' : '210000',
+  '33' : '310000',
+  '34' : '230000',
+  '35' : '361000',
+  '36' : '330000',
+  '37' : '250000',
+  '41' : '450000',
+  '42' : '430000',
+  '43' : '410000',
+  '44' : '510000',
+  '45' : '530000',
+  '46' : '570100',
+  '50' : '400000',
+  '51' : '610000',
+  '52' : '550000',
+  '53' : '650000',
+  '54' : '850000',
+  '61' : '710000',
+  '62' : '730000',
+  '63' : '810000',
+  '64' : '750000',
+  '65' : '830000'
+}
 
-
-
-
-
-export { CODE, BANKS, PRODUCTS, VALIDATE, requireEncryption, pubKey, postalCode}
+export { MockUserID, RISKLEVEL, CODE, BANKS, PRODUCTS, VALIDATE, requireEncryption, pubKey, postalCode }
 
 

@@ -196,12 +196,18 @@
       font-family font-family-bold
       color striking-text-color
       font-size extra-small
+      position relative
 
     .tip
       {second-level}
       text-align right
       color info-color
       font-size extra-extra-small
+
+  .error-tip
+    color error-color
+    font-size extra-extra-small
+    margin-left 10px
 
   .fix-bottom
     position fixed
@@ -381,7 +387,6 @@
     top -11px
     right 3px
 
-
   .mint-spinner-fading-circle
     margin 10px auto
 
@@ -469,4 +474,17 @@
       border-color striking-text-color
     .el-checkbox__input.is-checked+.el-checkbox__label
       color striking-text-color
+
+
+  .el-collapse-item__header
+    padding 0px 10px
+
+  .el-collapse-item__header
+    font-size medium
+    background-color secondary-light-color
+    color white
+  .el-collapse-item__content
+    color neutral-text-color2
+    font-size small
+    padding 1em 10px
 </style>

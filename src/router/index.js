@@ -82,7 +82,7 @@ const router = new Router({
     }
     ,
     {
-      path      : '/product/:pid/transaction/:type',
+      path      : '/product/:pid/transaction',
       name      : 'transaction',
       component : Transaction,
       meta      : {

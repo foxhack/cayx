@@ -17,7 +17,7 @@
     },
     computed   : {
       title(){
-        return this.$route.params.type==='in' ? '成功转入' : '成功转出'
+        return '成功转入'
       }
     },
     methods    : {
