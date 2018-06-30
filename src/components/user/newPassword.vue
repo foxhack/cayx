@@ -107,6 +107,7 @@
         function successCallback() {
           _.result = {
             show    : true,
+            type    : 'success',
             title   : '设置结果',
             content : '密码设置成功！'
           }

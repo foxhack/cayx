@@ -192,7 +192,7 @@
         })
         function successCallback(data) {
           if (_.currentPath=='/user/openaccount') {
-            _.result = { show : true, title : '开户结果', content : '恭喜您，开户成功' }
+            _.result = { show : true, type:'success', title : '开户结果', content : '恭喜您，开户成功' }
           }//作为路由使用的
           _.$store.commit('setUser', data)
         }

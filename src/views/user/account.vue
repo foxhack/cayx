@@ -8,17 +8,35 @@
     <template v-if="type=='in'">
       <section>
         <div class="title">充值金额（元）</div>
-        <mt-field class="money-input no-top-line" :class="{'active':post.amount}" label="￥" placeholder="请输入充值金额" type="number" v-model="post.amount">
-          <span class="all" @click="post.amount=50000.00">单笔最大充值</span></mt-field>
+        <mt-field
+            class="money-input no-top-line"
+            :class="{'active':post.amount}"
+            label="￥" placeholder="请输入充值金额"
+            type="number"
+            :disabled="!post.bindId"
+            @click.native="alert"
+            v-model="post.amount">
+          <span class="all" v-show="post.bindId" @click="post.amount=50000.00">单笔最大充值</span></mt-field>
+        <div class="title" v-if="err"><i class="el-icon-warning">超过了最大充值金额</i></div>
       </section>
       <input type="button" class="primary-btn fix-bottom" @click="showT=true" :disabled="forbidSubmit" value="立即充值">
     </template>
     <template v-if="type=='out'">
       <section>
         <div class="title">提现金额（元）</div>
-        <mt-field class="money-input" :class="{'active':post.amount}" label="￥" v-if="asset.availableAsset>0" placeholder="最小提现金额0.01元" type="number" v-model="post.amount">
-          <span class="all" @click="maxOut">全部提现</span>
+        <mt-field
+            class="money-input no-top-line"
+            :class="{'active':post.amount}"
+            label="￥"
+            v-if="asset.availableAsset>0"
+            placeholder="最小提现金额0.01元"
+            type="number"
+            @click.native="alert"
+            :disabled="!post.bindId"
+            v-model="post.amount">
+          <span class="all" v-show="post.bindId" @click="maxOut">全部提现</span>
         </mt-field>
+        <div class="title" v-if="err"><i class="el-icon-warning">超过了最提现金额</i></div>
         <mt-cell title="账户余额" :value="asset.availableAsset | toYuan | money | unit('元')"></mt-cell>
         <input type="button" class="primary-btn fix-bottom" @click="showT=true" :disabled="forbidSubmit" value="确认提现">
       </section>
@@ -30,7 +48,8 @@
     </transaction-input>
     <result v-if="result.show" :result="result">
       <div slot="footer">
-        <input type="button" class="primary-btn" value="确定" @click="$router.push({path:from?from+'?buy-amount='+buyAmount:'/user'})">
+        <input v-if="result.type=='success'" type="button" class="primary-btn" value="确定" @click="$router.push({path:from?from+'?buy-amount='+buyAmount:'/user'})">
+        <input v-if="result.type=='error'" type="button" class="primary-btn" value="确定" @click="result.show=false">
       </div>
     </result>
     <template v-if="dialog">
@@ -57,17 +76,19 @@
       return {
         type       : this.$route.params.type,
         from       : null,
-        buyAmount : null,
+        buyAmount  : null,
         post       : {
           bindId : null,
           amount : null
         },
+        err        : '',
         dialog     : null,
         showT      : false,
         submitting : false,
         tag        : 0,
         result     : {
           show    : false,
+          type    : '',
           title   : '',
           content : '',
           reason  : ''
@@ -98,7 +119,7 @@
       },
       alert(){
         if (this.post.bindId) return
-        this.$message({ message : '请先选择银行卡', duration:0})
+        this.$message({ message : '请先选择银行卡' })
       },
       changeAccount(password){
         this.submitting = true
@@ -116,8 +137,10 @@
         this.$post(operateType, post,
           {
             showProgress : '数据提交中，请勿重复提交...',
+            showErrorMsg : false,
             callback     : {
               success : successCallback,
+              process : processCallback,
               error   : errorCallback,
               fail    : failCallback,
               always  : alwaysCallback
@@ -125,18 +148,26 @@
           }
         )
         function successCallback(data, msg) {
-          _.result = { show : true, title : _.operateType+'结果', content : '恭喜您'+_.operateType+'成功' }
+          _.result = { type : 'success', title : _.operateType+'结果', content : '恭喜您'+_.operateType+'成功' }
           _.$store.commit('setAsset', data)
         }
 
-        function errorCallback(data, msg) {
+        function processCallback(data, msg) {
+          _.result.title = '系统处理中'
+          _.result.type = 'processing'
+          _.result.content = msg
+        }
+
+        function errorCallback(err, data) {
           _.result.title = '对不起，操作失败了！'
-          _.result.information = msg
+          _.result.type = 'error'
+          _.result.content = err.msg
         }
 
         function failCallback() {
           _.result.title = '对不起，操作失败了！'
-          _.result.information = '服务器没有响应。'
+          _.result.type = 'error'
+          _.result.content = '服务器没有响应。'
         }
 
         function alwaysCallback() {
@@ -148,15 +179,15 @@
     },
     created(){
       if (!this.isRegister) {
-        this.dialog = { show : true, title : '操作提示', msg : '您现在还不能进行账户操作，您需要前往<b>我的理财</b>依次进行如下操作：',subMsg:'注册<span class=el-icon-d-arrow-right></span>开户<span class=el-icon-d-arrow-right></span>绑卡' }
+        this.dialog = { show : true, title : '操作提示', msg : '您现在还不能进行账户操作，您需要前往<b>我的理财</b>依次进行如下操作：', subMsg : '注册<span class=el-icon-d-arrow-right></span>开户<span class=el-icon-d-arrow-right></span>绑卡' }
         return
       }
       if (!this.isOpenAccount) {
-        this.dialog = { show : true, title : '操作提示', msg : '您现在还不能进行账户操作，您需要前往<b>我的理财</b>依次进行如下操作：',subMsg:'开户<span class=el-icon-d-arrow-right></span>绑卡' }
+        this.dialog = { show : true, title : '操作提示', msg : '您现在还不能进行账户操作，您需要前往<b>我的理财</b>依次进行如下操作：', subMsg : '开户<span class=el-icon-d-arrow-right></span>绑卡' }
         return
       }
       if (this.bindCard.length==0) {
-        this.dialog = { show : true, title : '操作提示', msg : '您现在还不能进行账户操作，您需要前往<b>我的理财</b>进行如下操作：', subMsg:'绑卡' }
+        this.dialog = { show : true, title : '操作提示', msg : '您现在还不能进行账户操作，您需要前往<b>我的理财</b>进行如下操作：', subMsg : '绑卡' }
         return
       }
       this.from = getQueryString("from")
