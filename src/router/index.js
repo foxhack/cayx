@@ -124,7 +124,7 @@ const router = new Router({
       }
     },
     {
-      path      : '/user/transaction/:pid',
+      path      : '/user/transaction',
       name      : 'transaction-record',
       component : TransactionRecord,
       meta      : {
