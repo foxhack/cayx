@@ -28,11 +28,11 @@
           <span style="font-size:14px;text-decoration:underline" @click="showInstruction=true">用户协议</span>
         </div>
       </div>
-      <div class="confirm-wrapper">
-        <input type="button" class="primary-btn" :disabled="forbidSubmit" value="注册" @click="register">
-      </div>
     </div>
-    <instruction v-if="showInstruction" title="用户协议" v-on:closeInstruction="showInstruction=false"> </instruction>
+    <div class="confirm-wrapper">
+      <input type="button" class="primary-btn" :disabled="forbidSubmit" value="注册" @click="register">
+    </div>
+    <instruction v-if="showInstruction" title="用户协议" v-on:closeInstruction="showInstruction=false"></instruction>
     <result v-if="result.show" :result="result">
       <div slot="footer">
         <router-link :to="{path:'/user/openaccount'}"><input type="button" class="primary-btn" value="申请开户"></router-link>
@@ -105,7 +105,7 @@
       register(){
         let postData = { userID : this.userID }
         for (let k in this.state) {
-          postData[k] = this[k].value
+          postData[k] = this[k]
         }
         this.submitting = true
         let _ = this
@@ -116,7 +116,7 @@
         })
         function successCallback(data) {
           if (_.currentPath=='/user/register') {
-            _.result = { show : true, title : '注册结果', content : '恭喜您，注册成功' }
+            _.result = { show : true, type : 'success', title : '注册结果', content : '恭喜您，注册成功' }
           }
           _.$store.commit('setUser', data)
         }
@@ -153,18 +153,23 @@
   @import "../../style/base"
 
   .register-wrapper
+    outline 1px solid red
     width 100vw
-    height 100vh
-    max-height 100vh
     display flex
     flex-direction column
+    max-height 100vh
+    background #ECE9E6 /* fallback for old browsers */
+    background -webkit-linear-gradient(to bottom, #FFFFFF, #ECE9E6) /* Chrome 10-25, Safari 5.1-6 */
+    background linear-gradient(to bottom, #FFFFFF, #ECE9E6)
 
-    .logo-wrapper, .content-wrapper
-      flex 1
-      display flex
-      flex-direction column
-      position relative
-      align-items center
+  /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+  .logo-wrapper, .content-wrapper
+    display flex
+    flex 1
+    flex-direction column
+    position relative
+    align-items center
 
     .avatar-wrapper, .logo-text-wrapper
       display flex
@@ -172,11 +177,9 @@
     .avatar-wrapper
       flex 3
       align-items flex-end
-
     .logo-text-wrapper
       flex 2
       align-items center
-
     .logo
       font-size 2em
 
@@ -189,6 +192,7 @@
     justify-content space-around
     .input-wrapper
       width 15em
+      margin 0 auto
       flex 1
       input
         background none
@@ -202,6 +206,7 @@
       .agree-wrapper
         margin-left -10px
         margin-bottom 1em
+        text-align left
     .confirm-wrapper
       flex 1
       width 100%
@@ -209,6 +214,7 @@
   .el-icon-mobile-phone, .el-icon-edit-outline, .el-icon-circle-check
     font-size 1.4em
     line-height 1.4em
+
   .el-icon-mobile-phone, .el-icon-edit-outline
     margin-right 10px
 
