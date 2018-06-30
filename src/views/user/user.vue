@@ -25,17 +25,8 @@
       <svg v-else class="icon avatar" aria-hidden="true">
         <use xlink:href="#icon-zhuanjifenxinzhuce"></use>
       </svg>
-      <div class="register-btn" @click="$router.push('/user/register')">注册</div>
+      <div class="register-btn" @click="$router.push('/user/register')">立即注册</div>
     </section>
-    <transition name="slide-in">
-      <section v-if="showIncome && asset.detailAsset">
-        <div v-for="asset in asset.detailAsset" :key="asset.productId">
-          <router-link :to="{name:'income-record',params:{pid:asset.productId}}">
-            <mt-cell :title="getProductNameById(asset.productId)" label="累计收益" is-link>{{asset.totalIncome|toYuan|money|mask(showAsset)}}</mt-cell>
-          </router-link>
-        </div>
-      </section>
-    </transition>
     <section>
       <mt-cell title="账户余额" :label="asset.availableAsset|toYuan|money|mask(showAsset)" id="account">
         <svg slot="icon" class="icon" aria-hidden="true">
@@ -49,13 +40,8 @@
           <a><span class="balance" @click="checkOpenAccount">申请开户</span></a>
         </template>
       </mt-cell>
-      <div v-if="asset.detailAsset && asset.detailAsset.length>0">
-        <div v-for="asset in asset.detailAsset">
-          <router-link :to="{name:'transaction-record',params:{pid:asset.productId}}">
-            <mt-cell :title="getProductNameById(asset.productId)" is-link class="no-top-line">{{asset.totalAsset|toYuan|money|mask(showAsset)}}</mt-cell>
-          </router-link>
-        </div>
-      </div>
+      <mt-cell v-if="asset.detailAsset && asset.detailAsset.length>0" title="我的资产" @click.native="$router.push({name:'transaction-record'})" is-link>
+      </mt-cell>
       <div v-else>
         <router-link :to="{name:'productList'}">
           <mt-cell title="无资产" is-link>
@@ -147,12 +133,13 @@
         if (this.bindCard.length==0) {
           this.$message('您未绑卡，不能操作，请您先在-我的银行卡-进行绑卡。')
         } else {
-          this.$router.push({name: 'account',params:{type:type}})
+          this.$router.push({ name : 'account', params : { type : type } })
         }
       }
     },
     created(){
       console.log('组件user')
+      //if (!this.isRegister) this.$router.push({ name : 'register' })
     }
   }
 </script>
