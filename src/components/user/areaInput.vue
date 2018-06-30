@@ -39,7 +39,7 @@
     name       : 'AreaInput',
     data(){
       return {
-        area                 : new Area(areaData),
+        area                 : Area(areaData),
         addressArea          : [
           {
             flex         : 1,
@@ -104,7 +104,7 @@
       },
       check(val){
         console.log('调用联系所属地区检查方法'+val)
-        if (!!val || (val && val.length!==6)) {
+        if (!val || (val && val.length!==6)) {
           this.state = 'error'
           this.errorMsg = '请选择所属地区'
           return
@@ -112,37 +112,35 @@
         this.state = 'success'
         this.$parent.state.areaCode = true
       },
+      initAreaList(){
+        this.area.initArea()
+        this.addressArea[0].values = this.area.province.getList().map(res => {return res.name})
+        this.addressArea[0].defaultIndex = this.area.province.getSelectedIndex()
+        this.addressArea[2].values = this.area.city.getList().map(res => {return res.name})
+        this.addressArea[2].defaultIndex = this.area.city.getSelectedIndex()
+        this.addressArea[4].values = this.area.district.getList().map(res => {return res.name})
+        this.addressArea[4].defaultIndex = this.area.district.getSelectedIndex()
+        this.selectedAreaFullName = this.area.getAreaFullName()
+        this.selectedAreaCode = this.area.district.getSelectedCode()
+      },
       setNewArea(picker, values) {
-        if (!values[0]) {
-          console.log('初始化地区列表')
-          //初始化列表
-          this.area.initArea()
-          this.addressArea[0].values = this.area.getList.call(this.area.province).map(res => {return res.name})
-          this.addressArea[0].defaultIndex = this.area.getSelectedIndex.call(this.area.province)
-          this.addressArea[2].values = this.area.getList.call(this.area.city).map(res => {return res.name})
-          this.addressArea[2].defaultIndex = this.area.getSelectedIndex.call(this.area.city)
-          this.addressArea[4].values = this.area.getList.call(this.area.district).map(res => {return res.name})
-          this.addressArea[4].defaultIndex = this.area.getSelectedIndex.call(this.area.district)
-          this.selectedAreaFullName = this.area.getAreaFullName()
-          this.selectedAreaCode = this.area.getSelectedCode.call(this.area.district)
-        } else {
-          if (!values[0] || !values[1] || !values[2]) {
-            console.log('发生错误，所选值有误')
-            return
-          }
-          this.area.setSelectedItem.call(this.area.province, 'name', values[0])
-          this.addressArea[0].defaultIndex = this.area.getSelectedIndex.call(this.area.province)
-          this.area.city.setList()
-          this.addressArea[2].values = this.area.getList.call(this.area.city).map(res => {return res.name})
-          this.area.setSelectedItem.call(this.area.city, 'name', values[1])
-          this.addressArea[2].defaultIndex = this.area.getSelectedIndex.call(this.area.city)
-          this.area.district.setList()
-          this.addressArea[4].values = this.area.getList.call(this.area.district).map(res => {return res.name})
-          this.area.setSelectedItem.call(this.area.district, 'name', values[2])
-          this.addressArea[4].defaultIndex = this.area.getSelectedIndex.call(this.area.district)
-          this.selectedAreaFullName = values[0]+values[1]+values[2]
-          this.selectedAreaCode = this.area.getSelectedCode.call(this.area.district)
+        if (!values[0] || !values[1] || !values[2]) {
+          this.initAreaList()
+          console.log('发生错误，所选值有误')
+          return
         }
+        this.area.province.setSelectedItem('name', values[0])
+        this.addressArea[0].defaultIndex = this.area.province.getSelectedIndex()
+        this.area.city.setList()
+        this.addressArea[2].values = this.area.city.getList().map(res => {return res.name})
+        this.area.city.setSelectedItem('name', values[1])
+        this.addressArea[2].defaultIndex = this.area.city.getSelectedIndex()
+        this.area.district.setList()
+        this.addressArea[4].values = this.area.district.getList().map(res => {return res.name})
+        this.area.district.setSelectedItem('name', values[2])
+        this.addressArea[4].defaultIndex = this.area.district.getSelectedIndex()
+        this.selectedAreaFullName = values[0]+values[1]+values[2]
+        this.selectedAreaCode = this.area.district.getSelectedCode()
       },
       confirmArea(){
         this.areaFullName = this.selectedAreaFullName
@@ -154,12 +152,13 @@
     created(){
       if (this.value) {
         this.area.setAreaByCode(this.value)
-        this.addressArea[0].values = this.area.getList.call(this.area.province).map(res => {return res.name})
-        this.addressArea[0].defaultIndex = this.area.getSelectedIndex.call(this.area.province)
-        this.addressArea[2].values = this.area.getList.call(this.area.city).map(res => {return res.name})
-        this.addressArea[2].defaultIndex = this.area.getSelectedIndex.call(this.area.city)
-        this.addressArea[4].values = this.area.getList.call(this.area.district).map(res => {return res.name})
-        this.addressArea[4].defaultIndex = this.area.getSelectedIndex.call(this.area.district)
+        this.addressArea[0].values = this.area.province.getList().map(res => {return res.name})
+        this.addressArea[0].defaultIndex = this.area.province.getSelectedIndex()
+        this.addressArea[2].values = this.area.city.getList().map(res => {return res.name})
+        this.addressArea[2].defaultIndex = this.area.city.getSelectedIndex()
+        this.addressArea[4].values = this.area.district.getList().map(res => {return res.name})
+        this.addressArea[4].defaultIndex = this.area.district.getSelectedIndex()
+        console.log('created阶段初始化得到的name并赋值'+this.area.getAreaFullName())
         this.areaFullName = this.area.getAreaFullName()
       }
     }

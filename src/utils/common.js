@@ -5,6 +5,7 @@ import { CODE } from '@/utils/config'
 import { api } from '@/api/api'
 import { requireEncryption, pubKey } from '@/utils/config'
 import { ENV } from '@/utils/env'
+import areaData from '@/assets/area.json'
 
 export function getCodeByType(type) {
   let keys = Object.keys(CODE)
@@ -13,7 +14,7 @@ export function getCodeByType(type) {
   }
 }
 
-export function guideToAuth(router_mode) {
+export function guideToWxAuth(router_mode) {
   console.log('去微信取code')
   const OPTIONS = {
     domain        : authorDomain,
@@ -188,123 +189,149 @@ function encrypt(dataObject) {
 }
 
 export function Area(areaData) {
-  Area.prototype.areaData = areaData
-}
-Area.prototype.setSelectedItem = function(key, value) {
-  this.check(key, value)
-  let selectedItem = this.list.find(res => {return res[key]==value})
-  if (selectedItem) {
-    this.selectedIndex = selectedItem.index
-    this.selectedName = selectedItem.name
-    this.selectedCode = selectedItem.code
-  } else {
-    console.log('找不到匹配的内容')
-    return
+  let province = {
+    list             : [],
+    selectedIndex    : -1,
+    selectedCode     : '',
+    selectedName     : '',
+    check            : function(key, value) {
+      if (key=='code' && value.length!==2) {
+        console.log('不是有效的provincecode')
+        return
+      }
+      if (key=='name' && !value) {
+        console.log('没有提供provincename')
+        return
+      }
+    },
+    setSelectedItem  : setSelectedItem,
+    setList          : function() {
+      this.list = areaData.map((value, index) => {return { name : value.name, code : value.code, index : index }})
+    },
+    getList          : getList,
+    getSelectedCode  : getSelectedCode,
+    getSelectedName  : getSelectedName,
+    getSelectedIndex : getSelectedIndex
+  }
+  let city = {
+    list             : [],
+    selectedIndex    : -1,
+    selectedCode     : '',
+    selectedName     : '',
+    check            : function(key, value) {
+      if (key=='code' && value.length!==4) {
+        console.log('不是有效的citycode')
+        return
+      }
+      if (key=='name' && !value) {
+        console.log('没有提供cityname')
+        return
+      }
+    },
+    setSelectedItem  : setSelectedItem,
+    setList          : function() {
+      if (province.selectedIndex== -1) {
+        console.log('无法获取城市列表，所选省份不存在')
+        return
+      }
+      this.list = areaData[province.selectedIndex].children.map((value, index) => {return { name : value.name, code : value.code, index : index }})
+    },
+    getList          : getList,
+    getSelectedCode  : getSelectedCode,
+    getSelectedName  : getSelectedName,
+    getSelectedIndex : getSelectedIndex
+  }
+  let district = {
+    list             : [],
+    selectedIndex    : -1,
+    selectedCode     : '',
+    selectedName     : '',
+    check            : function(type, value) {
+      if (type=='code' && value.length!==6) {
+        console.log('不是有效的districtcode')
+        return
+      }
+      if (type=='name' && !value) {
+        console.log('没有提供districtname')
+        return
+      }
+    },
+    setSelectedItem  : setSelectedItem,
+    setList          : function() {
+      if (province.selectedIndex== -1 || city.selectedIndex== -1) {
+        console.log('无法获取地区列表，所选省份或者城市不存在')
+        return
+      }
+      this.list = areaData[province.selectedIndex].children[city.selectedIndex].children.map((value, index) => {return { name : value.name, code : value.code, index : index }})
+    },
+    getList          : getList,
+    getSelectedCode  : getSelectedCode,
+    getSelectedName  : getSelectedName,
+    getSelectedIndex : getSelectedIndex
+  }
+
+  return { province, city, district, initArea, setAreaByCode, getAreaFullName }
+
+  function setSelectedItem(key, value) {
+    this.check(key, value)
+    let selectedItem = this.list.find(res => {return res[key]==value})
+    if (selectedItem) {
+      this.selectedIndex = selectedItem.index
+      this.selectedName = selectedItem.name
+      this.selectedCode = selectedItem.code
+    } else {
+      console.log('找不到匹配的内容')
+      return
+    }
+  }
+
+  function getList() {
+    return this.list
+  }
+
+  function getSelectedIndex() {
+    return this.selectedIndex
+  }
+
+  function getSelectedName() {
+    return this.selectedName
+  }
+
+  function getSelectedCode() {
+    return this.selectedCode
+  }
+
+  function initArea() {
+    this.province.setList()
+    this.province.selectedIndex = 0
+    this.province.selectedName = this.province.list[this.province.selectedIndex].name
+    this.province.selectedCode = this.province.list[this.province.selectedIndex].code
+    this.city.setList()
+    this.city.selectedIndex = 0
+    this.city.selectedName = this.province.list[this.city.selectedIndex].name
+    this.city.selectedCode = this.province.list[this.city.selectedIndex].code
+    this.district.setList()
+    this.district.selectedIndex = 0
+    this.district.selectedName = this.district.list[this.district.selectedIndex].name
+    this.district.selectedCode = this.district.list[this.district.selectedIndex].code
+  }
+
+  function setAreaByCode(code) {
+    this.district.check('code', code)
+    this.province.setList()
+    this.province.setSelectedItem('code', code.substr(0, 2))
+    this.city.setList()
+    this.city.setSelectedItem('code', code.substr(0, 4))
+    this.district.setList()
+    this.district.setSelectedItem('code', code)
+  }
+
+  function getAreaFullName() {
+    return this.province.getSelectedName()+this.city.getSelectedName()+this.district.getSelectedName()
   }
 }
-Area.prototype.getList = function() {
-  return this.list
-}
-Area.prototype.getSelectedIndex = function() {
-  return this.selectedIndex
-}
-Area.prototype.getSelectedName = function() {
-  return this.selectedName
-}
-Area.prototype.getSelectedCode = function() {
-  return this.selectedCode
-}
-Area.prototype.province = {
-  list          : [],
-  selectedIndex : -1,
-  selectedCode  : '',
-  selectedName  : '',
-  check         : function(key, value) {
-    if (key=='code' && value.length!==2) {
-      console.log('不是有效的provincecode')
-      return
-    }
-    if (key=='name' && !value) {
-      console.log('没有提供provincename')
-      return
-    }
-  },
-  setList       : function() {
-    this.list = Area.prototype.areaData.map((value, index) => {return { name : value.name, code : value.code, index : index }})
-  }
-}
-Area.prototype.city = {
-  list          : [],
-  selectedIndex : -1,
-  selectedCode  : '',
-  selectedName  : '',
-  check         : function(key, value) {
-    if (key=='code' && value.length!==4) {
-      console.log('不是有效的citycode')
-      return
-    }
-    if (key=='name' && !value) {
-      console.log('没有提供cityname')
-      return
-    }
-  },
-  setList       : function() {
-    if (Area.prototype.province.selectedIndex== -1) {
-      console.log('无法获取城市列表，所选省份不存在')
-      return
-    }
-    this.list = Area.prototype.areaData[Area.prototype.province.selectedIndex].children.map((value, index) => {return { name : value.name, code : value.code, index : index }})
-  }
-}
-Area.prototype.district = {
-  list          : [],
-  selectedIndex : -1,
-  selectedCode  : '',
-  selectedName  : '',
-  check         : function(type, value) {
-    if (type=='code' && value.length!==6) {
-      console.log('不是有效的districtcode')
-      return
-    }
-    if (type=='name' && !value) {
-      console.log('没有提供districtname')
-      return
-    }
-  },
-  setList       : function() {
-    if (Area.prototype.province.selectedIndex== -1 || Area.prototype.city.selectedIndex== -1) {
-      console.log('无法获取地区列表，所选省份或者城市不存在')
-      return
-    }
-    this.list = Area.prototype.areaData[Area.prototype.province.selectedIndex].children[Area.prototype.city.selectedIndex].children.map((value, index) => {return { name : value.name, code : value.code, index : index }})
-  }
-}
-Area.prototype.initArea = function() {
-  this.province.setList()
-  this.province.selectedIndex = 0
-  this.province.selectedName = this.province.list[this.province.selectedIndex].name
-  this.province.selectedCode = this.province.list[this.province.selectedIndex].code
-  this.city.setList()
-  this.city.selectedIndex = 0
-  this.city.selectedName = this.province.list[this.city.selectedIndex].name
-  this.city.selectedCode = this.province.list[this.city.selectedIndex].code
-  this.district.setList()
-  this.district.selectedIndex = 0
-  this.district.selectedName = this.district.list[this.district.selectedIndex].name
-  this.district.selectedCode = this.district.list[this.district.selectedIndex].code
-}
-Area.prototype.setAreaByCode = function(code) {
-  this.district.check('code', code)
-  this.province.setList()
-  this.setSelectedItem.call(this.province, 'code', code.substr(0, 2))
-  this.city.setList()
-  this.setSelectedItem.call(this.city, 'code', code.substr(0, 4))
-  this.district.setList()
-  this.setSelectedItem.call(this.district, 'code', code)
-}
-Area.prototype.getAreaFullName = function() {
-  return this.getSelectedName.call(this.province)+this.getSelectedName.call(this.city)+this.getSelectedName.call(this.district)
-}
+
+
 
 
 
