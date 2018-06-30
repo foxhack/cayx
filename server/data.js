@@ -1,6 +1,7 @@
 const USER = {
   'userID'     : '123456789',
-  'avatar'     : 'http://jf258.com/uploads/2014-09-18/171511119.jpg',
+ // 'avatar'     : 'http://jf258.com/uploads/2014-09-18/171511119.jpg',
+  'avatar'     : '',
   'userStatus' : {
     'isRegisterCaej'  : true,
     'isRegisterCayx'  : false,

@@ -3,7 +3,7 @@
     <bind-account v-if="isRegisterCaej && !isRegister" v-on:bindSuccess="bindSuccess"></bind-account>
     <div class="logo-wrapper">
       <div class="avatar-wrapper">
-        <img v-if="userAvatar" class="avatar" :src="userAvatar">
+        <img class="avatar" :src="userAvatar">
       </div>
       <div class="logo-text-wrapper">
         <div class="logo">长安严选理财Slogan</div>

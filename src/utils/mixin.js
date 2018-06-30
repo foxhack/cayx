@@ -25,7 +25,7 @@ let mixin = {
       return this.$store.state.user.userInfo
     },
     userAvatar(){
-      return this.$store.state.user.avatar
+      return this.$store.state.user.avatar || '/static/img/userImageDefault.jpg'
     },
     asset(){
       return this.$store.state.asset

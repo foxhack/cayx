@@ -2,7 +2,7 @@
   <div id="user-home" class="page-with-menu">
     <div class="blank"></div>
     <section v-if="isRegister" class="account-wrapper center">
-      <img v-if="userAvatar" :src="userAvatar" class="avatar top-left">
+      <img :src="userAvatar" class="avatar top-left">
       <div class="top-part1 center">
         <div>
           <div>
